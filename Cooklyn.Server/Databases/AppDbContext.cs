@@ -1,6 +1,8 @@
 namespace Cooklyn.Server.Databases;
 
 using Domain;
+using Domain.Recipes;
+using Domain.Tags;
 using Domain.Tenants;
 using Domain.Users;
 using MediatR;
@@ -18,6 +20,13 @@ public class AppDbContext(
     public DbSet<Tenant> Tenants => Set<Tenant>();
     public DbSet<User> Users => Set<User>();
     public DbSet<UserPermission> UserPermissions => Set<UserPermission>();
+
+    public DbSet<Tag> Tags => Set<Tag>();
+    public DbSet<Recipe> Recipes => Set<Recipe>();
+    public DbSet<RecipeIngredient> RecipeIngredients => Set<RecipeIngredient>();
+    public DbSet<RecipeTag> RecipeTags => Set<RecipeTag>();
+    public DbSet<RecipeFlagEntry> RecipeFlagEntries => Set<RecipeFlagEntry>();
+    public DbSet<NutritionInfo> NutritionInfos => Set<NutritionInfo>();
     #endregion
 
     /// <summary>

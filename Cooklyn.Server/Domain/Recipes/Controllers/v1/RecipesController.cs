@@ -1,0 +1,161 @@
+namespace Cooklyn.Server.Domain.Recipes.Controllers.v1;
+
+using Asp.Versioning;
+using Dtos;
+using Features;
+using MediatR;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Resources;
+using Resources.Extensions;
+
+[ApiController]
+[Route("api/v{v:apiVersion}/[controller]")]
+[ApiVersion("1.0")]
+public sealed class RecipesController(IMediator mediator) : ControllerBase
+{
+    /// <summary>
+    /// Gets a single Recipe by ID.
+    /// </summary>
+    [Authorize]
+    [HttpGet("{id:guid}", Name = "GetRecipe")]
+    [ProducesResponseType(typeof(RecipeDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<RecipeDto>> GetRecipe(Guid id)
+    {
+        var query = new GetRecipe.Query(id);
+        var result = await mediator.Send(query);
+        return Ok(result);
+    }
+
+    /// <summary>
+    /// Gets a paginated list of Recipes.
+    /// </summary>
+    [Authorize]
+    [HttpGet(Name = "GetRecipeList")]
+    [ProducesResponseType(typeof(PagedList<RecipeSummaryDto>), StatusCodes.Status200OK)]
+    public async Task<ActionResult<PagedList<RecipeSummaryDto>>> GetRecipeList(
+        [FromQuery] RecipeParametersDto parameters)
+    {
+        var query = new GetRecipeList.Query(parameters);
+        var result = await mediator.Send(query);
+
+        Response.AddPaginationHeader(result);
+
+        return Ok(result);
+    }
+
+    /// <summary>
+    /// Creates a new Recipe.
+    /// </summary>
+    [Authorize]
+    [HttpPost(Name = "AddRecipe")]
+    [ProducesResponseType(typeof(RecipeDto), StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<RecipeDto>> AddRecipe(
+        [FromBody] RecipeForCreationDto dto)
+    {
+        var command = new AddRecipe.Command(dto);
+        var result = await mediator.Send(command);
+
+        return CreatedAtRoute("GetRecipe",
+            new { id = result.Id },
+            result);
+    }
+
+    /// <summary>
+    /// Updates an existing Recipe.
+    /// </summary>
+    [Authorize]
+    [HttpPut("{id:guid}", Name = "UpdateRecipe")]
+    [ProducesResponseType(typeof(RecipeDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<RecipeDto>> UpdateRecipe(
+        Guid id,
+        [FromBody] RecipeForUpdateDto dto)
+    {
+        var command = new UpdateRecipe.Command(id, dto);
+        var result = await mediator.Send(command);
+        return Ok(result);
+    }
+
+    /// <summary>
+    /// Deletes a Recipe.
+    /// </summary>
+    [Authorize]
+    [HttpDelete("{id:guid}", Name = "DeleteRecipe")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult> DeleteRecipe(Guid id)
+    {
+        var command = new DeleteRecipe.Command(id);
+        await mediator.Send(command);
+        return NoContent();
+    }
+
+    /// <summary>
+    /// Toggles the favorite status of a Recipe.
+    /// </summary>
+    [Authorize]
+    [HttpPost("{id:guid}/toggle-favorite", Name = "ToggleRecipeFavorite")]
+    [ProducesResponseType(typeof(RecipeDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<RecipeDto>> ToggleFavorite(Guid id)
+    {
+        var command = new ToggleRecipeFavorite.Command(id);
+        var result = await mediator.Send(command);
+        return Ok(result);
+    }
+
+    /// <summary>
+    /// Updates the rating of a Recipe.
+    /// </summary>
+    [Authorize]
+    [HttpPut("{id:guid}/rating", Name = "UpdateRecipeRating")]
+    [ProducesResponseType(typeof(RecipeDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<RecipeDto>> UpdateRating(
+        Guid id,
+        [FromBody] UpdateRecipeRatingDto dto)
+    {
+        var command = new UpdateRecipeRating.Command(id, dto.Rating);
+        var result = await mediator.Send(command);
+        return Ok(result);
+    }
+
+    /// <summary>
+    /// Updates the tags of a Recipe.
+    /// </summary>
+    [Authorize]
+    [HttpPut("{id:guid}/tags", Name = "UpdateRecipeTags")]
+    [ProducesResponseType(typeof(RecipeDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<RecipeDto>> UpdateTags(
+        Guid id,
+        [FromBody] UpdateRecipeTagsDto dto)
+    {
+        var command = new UpdateRecipeTags.Command(id, dto.TagIds);
+        var result = await mediator.Send(command);
+        return Ok(result);
+    }
+
+    /// <summary>
+    /// Updates the flags of a Recipe.
+    /// </summary>
+    [Authorize]
+    [HttpPut("{id:guid}/flags", Name = "UpdateRecipeFlags")]
+    [ProducesResponseType(typeof(RecipeDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<RecipeDto>> UpdateFlags(
+        Guid id,
+        [FromBody] UpdateRecipeFlagsDto dto)
+    {
+        var command = new UpdateRecipeFlags.Command(id, dto.Flags);
+        var result = await mediator.Send(command);
+        return Ok(result);
+    }
+}
