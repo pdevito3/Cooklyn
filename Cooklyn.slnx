@@ -1,0 +1,19 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/tests/">
+    <Project Path="tests/Cooklyn.FunctionalTests/Cooklyn.FunctionalTests.csproj" />
+    <Project Path="tests/Cooklyn.IntegrationTests/Cooklyn.IntegrationTests.csproj" />
+    <Project Path="tests/Cooklyn.SharedTestHelpers/Cooklyn.SharedTestHelpers.csproj" />
+    <Project Path="tests/Cooklyn.UnitTests/Cooklyn.UnitTests.csproj" />
+  </Folder>
+  <Project Path="frontend/frontend.esproj">
+    <Build Solution="*|Any CPU" />
+  </Project>
+  <Project Path="Cooklyn.AppHost/Cooklyn.AppHost.csproj" />
+  <Project Path="Cooklyn.Bff/Cooklyn.Bff.csproj" />
+  <Project Path="Cooklyn.Server/Cooklyn.Server.csproj" />
+</Solution>

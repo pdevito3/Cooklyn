@@ -1,0 +1,6 @@
+@Cooklyn.Bff_HostAddress = http://localhost:5264
+
+GET {{Cooklyn.Bff_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
