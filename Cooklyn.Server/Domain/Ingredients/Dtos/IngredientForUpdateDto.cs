@@ -1,6 +1,6 @@
-namespace Cooklyn.Server.Domain.Recipes.Dtos;
+namespace Cooklyn.Server.Domain.Ingredients.Dtos;
 
-public sealed record RecipeIngredientForUpdateDto
+public sealed record IngredientForUpdateDto
 {
     public string Name { get; init; } = default!;
     public decimal? Quantity { get; init; }

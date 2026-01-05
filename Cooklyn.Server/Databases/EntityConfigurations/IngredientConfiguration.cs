@@ -1,12 +1,12 @@
 namespace Cooklyn.Server.Databases.EntityConfigurations;
 
-using Domain.Recipes;
+using Domain.Ingredients;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-public sealed class RecipeIngredientConfiguration : IEntityTypeConfiguration<RecipeIngredient>
+public sealed class IngredientConfiguration : IEntityTypeConfiguration<Ingredient>
 {
-    public void Configure(EntityTypeBuilder<RecipeIngredient> builder)
+    public void Configure(EntityTypeBuilder<Ingredient> builder)
     {
         builder.HasKey(e => e.Id);
 

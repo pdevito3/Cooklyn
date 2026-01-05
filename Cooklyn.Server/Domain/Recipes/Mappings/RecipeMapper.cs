@@ -1,6 +1,9 @@
 namespace Cooklyn.Server.Domain.Recipes.Mappings;
 
 using Dtos;
+using Ingredients;
+using Ingredients.Dtos;
+using Ingredients.Mappings;
 using Models;
 using Riok.Mapperly.Abstractions;
 

@@ -1,6 +1,8 @@
 namespace Cooklyn.Server.Domain.Recipes;
 
 using Exceptions;
+using Ingredients;
+using Ingredients.Models;
 using Recipes.DomainEvents;
 using Recipes.Models;
 using Tags;
@@ -19,8 +21,8 @@ public class Recipe : BaseEntity, ITenantable
     public string? Notes { get; private set; }
 
     // Navigation properties with encapsulated collections
-    private readonly List<RecipeIngredient> _ingredients = [];
-    public IReadOnlyCollection<RecipeIngredient> Ingredients => _ingredients.AsReadOnly();
+    private readonly List<Ingredient> _ingredients = [];
+    public IReadOnlyCollection<Ingredient> Ingredients => _ingredients.AsReadOnly();
 
     private readonly List<RecipeTag> _recipeTags = [];
     public IReadOnlyCollection<RecipeTag> RecipeTags => _recipeTags.AsReadOnly();
@@ -99,15 +101,15 @@ public class Recipe : BaseEntity, ITenantable
     }
 
     // Ingredient management
-    public RecipeIngredient AddIngredient(RecipeIngredientForCreation forCreation)
+    public Ingredient AddIngredient(IngredientForCreation forCreation)
     {
-        var ingredient = RecipeIngredient.Create(forCreation with { RecipeId = Id });
+        var ingredient = Ingredient.Create(forCreation with { RecipeId = Id });
         _ingredients.Add(ingredient);
         QueueDomainEvent(new RecipeUpdated(Id));
         return ingredient;
     }
 
-    public Recipe RemoveIngredient(RecipeIngredient ingredient)
+    public Recipe RemoveIngredient(Ingredient ingredient)
     {
         _ingredients.RemoveAll(i => i.Id == ingredient.Id);
         QueueDomainEvent(new RecipeUpdated(Id));

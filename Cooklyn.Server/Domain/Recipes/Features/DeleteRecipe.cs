@@ -22,7 +22,7 @@ public static class DeleteRecipe
             // Remove all related entities first due to PropertyAccessMode.Field
             foreach (var ingredient in recipe.Ingredients.ToList())
             {
-                dbContext.RecipeIngredients.Remove(ingredient);
+                dbContext.Ingredients.Remove(ingredient);
             }
 
             foreach (var recipeTag in recipe.RecipeTags.ToList())

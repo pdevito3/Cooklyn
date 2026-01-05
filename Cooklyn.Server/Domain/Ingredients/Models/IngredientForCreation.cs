@@ -1,7 +1,8 @@
-namespace Cooklyn.Server.Domain.Recipes.Dtos;
+namespace Cooklyn.Server.Domain.Ingredients.Models;
 
-public sealed record RecipeIngredientForCreationDto
+public sealed record IngredientForCreation
 {
+    public Guid RecipeId { get; init; }
     public string Name { get; init; } = default!;
     public decimal? Quantity { get; init; }
     public string? Unit { get; init; }

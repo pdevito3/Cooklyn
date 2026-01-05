@@ -1,9 +1,10 @@
-namespace Cooklyn.Server.Domain.Recipes;
+namespace Cooklyn.Server.Domain.Ingredients;
 
 using Exceptions;
-using Recipes.Models;
+using Ingredients.DomainEvents;
+using Ingredients.Models;
 
-public class RecipeIngredient : BaseEntity
+public class Ingredient : BaseEntity
 {
     public Guid RecipeId { get; private set; }
     public string Name { get; private set; } = default!;
@@ -12,9 +13,9 @@ public class RecipeIngredient : BaseEntity
     public int SortOrder { get; private set; }
     public string? Notes { get; private set; }
 
-    public static RecipeIngredient Create(RecipeIngredientForCreation forCreation)
+    public static Ingredient Create(IngredientForCreation forCreation)
     {
-        var ingredient = new RecipeIngredient
+        var ingredient = new Ingredient
         {
             RecipeId = forCreation.RecipeId,
             Name = forCreation.Name,
@@ -25,11 +26,12 @@ public class RecipeIngredient : BaseEntity
         };
 
         ValidateIngredient(ingredient);
+        ingredient.QueueDomainEvent(new IngredientCreated(ingredient));
 
         return ingredient;
     }
 
-    public RecipeIngredient Update(RecipeIngredientForUpdate forUpdate)
+    public Ingredient Update(IngredientForUpdate forUpdate)
     {
         Name = forUpdate.Name;
         Quantity = forUpdate.Quantity;
@@ -38,6 +40,7 @@ public class RecipeIngredient : BaseEntity
         Notes = forUpdate.Notes;
 
         ValidateIngredient(this);
+        QueueDomainEvent(new IngredientUpdated(Id));
 
         return this;
     }
@@ -67,11 +70,11 @@ public class RecipeIngredient : BaseEntity
         }
     }
 
-    private static void ValidateIngredient(RecipeIngredient ingredient)
+    private static void ValidateIngredient(Ingredient ingredient)
     {
         ValidationException.ThrowWhenEmpty(ingredient.RecipeId, "Please provide a recipe.");
         ValidationException.ThrowWhenNullOrWhitespace(ingredient.Name, "Please provide an ingredient name.");
     }
 
-    protected RecipeIngredient() { } // EF Core
+    protected Ingredient() { } // EF Core
 }

@@ -1,5 +1,7 @@
 namespace Cooklyn.Server.Domain.Recipes.Dtos;
 
+using Ingredients.Dtos;
+
 public sealed record RecipeDto
 {
     public Guid Id { get; init; }
@@ -13,7 +15,7 @@ public sealed record RecipeDto
     public int? Servings { get; init; }
     public string? Steps { get; init; }
     public string? Notes { get; init; }
-    public IReadOnlyList<RecipeIngredientDto> Ingredients { get; init; } = [];
+    public IReadOnlyList<IngredientDto> Ingredients { get; init; } = [];
     public IReadOnlyList<string> Tags { get; init; } = [];
     public IReadOnlyList<string> Flags { get; init; } = [];
     public NutritionInfoDto? NutritionInfo { get; init; }

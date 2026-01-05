@@ -3,6 +3,8 @@ namespace Cooklyn.Server.Domain.Recipes.Features;
 using Databases;
 using Dtos;
 using Exceptions;
+using Ingredients.Mappings;
+using Ingredients.Models;
 using Mappings;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -29,7 +31,7 @@ public static class AddRecipe
             for (var i = 0; i < request.Dto.Ingredients.Count; i++)
             {
                 var ingredientDto = request.Dto.Ingredients[i];
-                var ingredientForCreation = new RecipeIngredientForCreation
+                var ingredientForCreation = new IngredientForCreation
                 {
                     RecipeId = recipe.Id,
                     Name = ingredientDto.Name,

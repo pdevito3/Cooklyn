@@ -1,5 +1,6 @@
 namespace Cooklyn.Server.Databases.EntityConfigurations;
 
+using Domain.Ingredients;
 using Domain.Recipes;
 using Domain.Tenants;
 using Microsoft.EntityFrameworkCore;
