@@ -1,5 +1,6 @@
 namespace Cooklyn.Server.Databases.EntityConfigurations;
 
+using Domain.BlobStorageKeys;
 using Domain.Ingredients;
 using Domain.Recipes;
 using Domain.Tenants;
@@ -19,8 +20,15 @@ public sealed class RecipeConfiguration : IEntityTypeConfiguration<Recipe>
         builder.Property(e => e.Description)
             .HasMaxLength(5000);
 
-        builder.Property(e => e.ImageUrl)
-            .HasMaxLength(2000);
+        builder.Property(e => e.ImageS3Bucket)
+            .HasMaxLength(255);
+
+        builder.ComplexProperty(e => e.ImageS3Key, key =>
+        {
+            key.Property(k => k.Value)
+                .HasColumnName("image_s3_key")
+                .HasMaxLength(1024);
+        });
 
         builder.Property(e => e.Source)
             .HasMaxLength(2000);

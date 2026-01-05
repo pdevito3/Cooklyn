@@ -158,4 +158,21 @@ public sealed class RecipesController(IMediator mediator) : ControllerBase
         var result = await mediator.Send(command);
         return Ok(result);
     }
+
+    /// <summary>
+    /// Uploads an image for a Recipe.
+    /// </summary>
+    [Authorize]
+    [HttpPost("{id:guid}/image", Name = "UploadRecipeImage")]
+    [ProducesResponseType(typeof(RecipeImageDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<RecipeImageDto>> UploadImage(
+        Guid id,
+        IFormFile file)
+    {
+        var command = new UploadRecipeImage.Command(id, file);
+        var result = await mediator.Send(command);
+        return Ok(result);
+    }
 }

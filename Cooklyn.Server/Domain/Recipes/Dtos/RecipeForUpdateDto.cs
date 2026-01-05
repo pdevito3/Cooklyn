@@ -4,7 +4,14 @@ public sealed record RecipeForUpdateDto
 {
     public string Title { get; init; } = default!;
     public string? Description { get; init; }
-    public string? ImageUrl { get; init; }
+    /// <summary>
+    /// S3 bucket where the image is stored. Set after uploading via the image upload endpoint.
+    /// </summary>
+    public string? ImageS3Bucket { get; init; }
+    /// <summary>
+    /// S3 key for the image file. Set after uploading via the image upload endpoint.
+    /// </summary>
+    public string? ImageS3Key { get; init; }
     public string? Rating { get; init; }
     public string? Source { get; init; }
     public bool IsFavorite { get; init; }

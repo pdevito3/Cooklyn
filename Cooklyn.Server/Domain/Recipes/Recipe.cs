@@ -1,10 +1,12 @@
 namespace Cooklyn.Server.Domain.Recipes;
 
+using BlobStorageKeys;
 using Exceptions;
 using Ingredients;
 using Ingredients.Models;
 using Recipes.DomainEvents;
 using Recipes.Models;
+using Services;
 using Tags;
 
 public class Recipe : BaseEntity, ITenantable
@@ -12,7 +14,8 @@ public class Recipe : BaseEntity, ITenantable
     public Guid TenantId { get; private set; }
     public string Title { get; private set; } = default!;
     public string? Description { get; private set; }
-    public string? ImageUrl { get; private set; }
+    public string? ImageS3Bucket { get; private set; }
+    public BlobStorageKey ImageS3Key { get; private set; } = BlobStorageKey.Empty();
     public Rating Rating { get; private set; } = default!;
     public string? Source { get; private set; }
     public bool IsFavorite { get; private set; }
@@ -39,7 +42,8 @@ public class Recipe : BaseEntity, ITenantable
             TenantId = forCreation.TenantId,
             Title = forCreation.Title,
             Description = forCreation.Description,
-            ImageUrl = forCreation.ImageUrl,
+            ImageS3Bucket = forCreation.ImageS3Bucket,
+            ImageS3Key = BlobStorageKey.Of(forCreation.ImageS3Key),
             Rating = Rating.Of(forCreation.Rating ?? Rating.NotRated().Value),
             Source = forCreation.Source,
             IsFavorite = forCreation.IsFavorite,
@@ -58,7 +62,8 @@ public class Recipe : BaseEntity, ITenantable
     {
         Title = forUpdate.Title;
         Description = forUpdate.Description;
-        ImageUrl = forUpdate.ImageUrl;
+        ImageS3Bucket = forUpdate.ImageS3Bucket;
+        ImageS3Key = BlobStorageKey.Of(forUpdate.ImageS3Key);
         Rating = Rating.Of(forUpdate.Rating ?? Rating.NotRated().Value);
         Source = forUpdate.Source;
         IsFavorite = forUpdate.IsFavorite;
@@ -72,11 +77,30 @@ public class Recipe : BaseEntity, ITenantable
         return this;
     }
 
-    public Recipe SetImageUrl(string? imageUrl)
+    public Recipe SetImage(string? bucket, string? key)
     {
-        ImageUrl = imageUrl;
+        ImageS3Bucket = bucket;
+        ImageS3Key = BlobStorageKey.Of(key);
         QueueDomainEvent(new RecipeUpdated(Id));
         return this;
+    }
+
+    public Recipe ClearImage()
+    {
+        ImageS3Bucket = null;
+        ImageS3Key = BlobStorageKey.Empty();
+        QueueDomainEvent(new RecipeUpdated(Id));
+        return this;
+    }
+
+    public bool HasImage => !string.IsNullOrEmpty(ImageS3Bucket) && !ImageS3Key.IsEmpty;
+
+    public string? GetImagePreSignedUrl(IFileStorage fileStorage, int durationInMinutes = 5)
+    {
+        if (!HasImage)
+            return null;
+
+        return fileStorage.GetPreSignedUrl(ImageS3Bucket!, ImageS3Key.Value!, durationInMinutes);
     }
 
     public Recipe ToggleFavorite()

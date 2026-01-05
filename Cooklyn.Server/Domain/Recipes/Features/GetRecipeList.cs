@@ -7,12 +7,13 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using QueryKit;
 using Resources;
+using Services;
 
 public static class GetRecipeList
 {
     public sealed record Query(RecipeParametersDto Parameters) : IRequest<PagedList<RecipeSummaryDto>>;
 
-    public sealed class Handler(AppDbContext dbContext) : IRequestHandler<Query, PagedList<RecipeSummaryDto>>
+    public sealed class Handler(AppDbContext dbContext, IFileStorage fileStorage) : IRequestHandler<Query, PagedList<RecipeSummaryDto>>
     {
         public async Task<PagedList<RecipeSummaryDto>> Handle(Query request, CancellationToken cancellationToken)
         {
@@ -31,13 +32,21 @@ public static class GetRecipeList
             else
                 query = query.OrderByDescending(r => r.CreatedOn);
 
-            var dtos = query.ToRecipeSummaryDtoQueryable();
-
-            return await PagedList<RecipeSummaryDto>.CreateAsync(
-                dtos,
+            // Get paginated recipes
+            var pagedRecipes = await PagedList<Recipe>.CreateAsync(
+                query,
                 request.Parameters.PageNumber,
                 request.Parameters.PageSize,
                 cancellationToken);
+
+            // Map to DTOs with presigned URLs
+            var dtos = pagedRecipes.Select(r => r.ToRecipeSummaryDto(fileStorage)).ToList();
+
+            return new PagedList<RecipeSummaryDto>(
+                dtos,
+                pagedRecipes.TotalCount,
+                pagedRecipes.PageNumber,
+                pagedRecipes.PageSize);
         }
     }
 }

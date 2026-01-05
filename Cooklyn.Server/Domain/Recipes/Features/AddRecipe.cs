@@ -18,7 +18,8 @@ public static class AddRecipe
     public sealed class Handler(
         AppDbContext dbContext,
         ITenantIdProvider tenantIdProvider,
-        ICurrentUserService currentUserService) : IRequestHandler<Command, RecipeDto>
+        ICurrentUserService currentUserService,
+        IFileStorage fileStorage) : IRequestHandler<Command, RecipeDto>
     {
         public async Task<RecipeDto> Handle(Command request, CancellationToken cancellationToken)
         {
@@ -81,7 +82,7 @@ public static class AddRecipe
                 .Include(r => r.NutritionInfo)
                 .FirstAsync(r => r.Id == recipe.Id, cancellationToken);
 
-            return loadedRecipe.ToRecipeDto();
+            return loadedRecipe.ToRecipeDto(fileStorage);
         }
     }
 }

@@ -5,12 +5,13 @@ using Dtos;
 using Mappings;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Services;
 
 public static class UpdateRecipeRating
 {
     public sealed record Command(Guid Id, string Rating) : IRequest<RecipeDto>;
 
-    public sealed class Handler(AppDbContext dbContext) : IRequestHandler<Command, RecipeDto>
+    public sealed class Handler(AppDbContext dbContext, IFileStorage fileStorage) : IRequestHandler<Command, RecipeDto>
     {
         public async Task<RecipeDto> Handle(Command request, CancellationToken cancellationToken)
         {
@@ -26,7 +27,7 @@ public static class UpdateRecipeRating
 
             await dbContext.SaveChangesAsync(cancellationToken);
 
-            return recipe.ToRecipeDto();
+            return recipe.ToRecipeDto(fileStorage);
         }
     }
 }

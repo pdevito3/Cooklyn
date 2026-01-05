@@ -32,10 +32,12 @@ public static class WebAppServiceConfiguration
             var connectionString = ConnectionStringHelper
                 .ConvertPostgresUri(builder.Configuration.GetConnectionString(DatabaseConsts.DatabaseName));
             // var connectionString = builder.Configuration.GetConnectionString(DatabaseConsts.DatabaseName);
-            
+
             options.UseNpgsql(connectionString)
                 .UseSnakeCaseNamingConvention();
         });
         builder.EnrichNpgsqlDbContext<AppDbContext>();
+
+        builder.Services.AddS3FileStorage(builder.Configuration);
     }
 }
