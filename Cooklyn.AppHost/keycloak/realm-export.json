@@ -46,16 +46,16 @@
       "clientAuthenticatorType": "client-secret",
       "secret": "super-secret-client-secret-change-in-production",
       "redirectUris": [
-        "http://localhost:5173/*",
-        "https://localhost:5173/*",
+        "http://localhost:6179/*",
+        "https://localhost:6179/*",
         "http://localhost:7130/*",
         "https://localhost:7130/*",
         "http://localhost:7235/*",
         "https://localhost:7235/*"
       ],
       "webOrigins": [
-        "http://localhost:5173",
-        "https://localhost:5173",
+        "http://localhost:6179",
+        "https://localhost:6179",
         "http://localhost:7130",
         "https://localhost:7130",
         "http://localhost:7235",

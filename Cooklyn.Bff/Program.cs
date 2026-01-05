@@ -37,7 +37,7 @@ try
         {
             var frontendUrl = builder.Configuration["services:webfrontend:https:0"]
                 ?? builder.Configuration["services:webfrontend:http:0"]
-                ?? "http://localhost:5173";
+                ?? "http://localhost:6179";
 
             policy.WithOrigins(frontendUrl.TrimEnd('/'))
                   .AllowAnyHeader()

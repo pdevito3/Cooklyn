@@ -39,7 +39,7 @@ try
     var webfrontend = builder.AddViteApp("webfrontend", "../frontend")
         .WithEndpoint("http", endpoint =>
         {
-            endpoint.Port = 5173;
+            endpoint.Port = 6179;
             endpoint.IsProxied = false;
         })
         .WithPnpm();
