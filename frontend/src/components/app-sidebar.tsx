@@ -4,6 +4,7 @@ import {
   InformationCircleIcon,
   DashboardSquare01Icon,
   ArrowRight01Icon,
+  RestaurantIcon,
 } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 
@@ -35,6 +36,11 @@ const navItems = [
     title: "Home",
     url: "/",
     icon: Home01Icon,
+  },
+  {
+    title: "Recipes",
+    url: "/recipes",
+    icon: RestaurantIcon,
   },
   {
     title: "About",

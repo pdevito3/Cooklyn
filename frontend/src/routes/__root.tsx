@@ -20,15 +20,31 @@ export const Route = createRootRoute({
 
 const routeNames: Record<string, string> = {
   '/': 'Home',
+  '/recipes': 'Recipes',
+  '/recipes/new': 'New Recipe',
   '/about': 'About',
   '/components': 'Components',
   '/filter-demo': 'Filter Builder',
 }
 
+// Dynamic route name resolver for parameterized routes
+function getPageName(path: string): string {
+  // Check static routes first
+  if (routeNames[path]) return routeNames[path]
+
+  // Handle /recipes/$id pattern
+  if (/^\/recipes\/[^/]+$/.test(path)) return 'Recipe Details'
+
+  // Handle /recipes/$id/edit pattern
+  if (/^\/recipes\/[^/]+\/edit$/.test(path)) return 'Edit Recipe'
+
+  return 'Page'
+}
+
 function RootComponent() {
   const routerState = useRouterState()
   const currentPath = routerState.location.pathname
-  const pageName = routeNames[currentPath] ?? 'Page'
+  const pageName = getPageName(currentPath)
 
   return (
     <SidebarProvider>
