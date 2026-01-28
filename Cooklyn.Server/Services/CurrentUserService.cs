@@ -87,7 +87,8 @@ public sealed class CurrentUserService(
     public ClaimsPrincipal? User => httpContextAccessor.HttpContext?.User;
 
     public string? UserIdentifier => User?.FindFirstValue(ClaimTypes.NameIdentifier)
-        ?? User?.FindFirstValue("sub");
+        ?? User?.FindFirstValue("sub")
+        ?? User?.FindFirstValue("preferred_username"); // Keycloak fallback when sub is not in access token
 
     public string? Email => User?.FindFirstValue(ClaimTypes.Email)
         ?? User?.FindFirstValue("email");

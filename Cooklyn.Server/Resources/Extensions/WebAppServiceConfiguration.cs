@@ -1,6 +1,7 @@
 namespace Cooklyn.Server.Resources.Extensions;
 
 using Databases;
+using ExceptionHandlers;
 using Microsoft.EntityFrameworkCore;
 using ZiggyCreatures.Caching.Fusion;
 
@@ -9,6 +10,7 @@ public static class WebAppServiceConfiguration
     public static void ConfigureServices(this WebApplicationBuilder builder)
     {
         builder.Services.AddSingleton(TimeProvider.System);
+        builder.Services.AddExceptionHandler<AutoProvisionTenantExceptionHandler>();
         builder.Services.AddProblemDetails();
         builder.Services.AddHttpContextAccessor();
         builder.Services.AddFusionCache()
