@@ -145,22 +145,40 @@ public static class AuthProviders
 
     /// <summary>
     /// Creates a configuration for Keycloak running locally in Docker.
-    /// Uses dev mode with embedded H2 database and realm import for auto-provisioning.
+    /// Uses PostgreSQL for persistent storage and realm import for auto-provisioning.
     /// </summary>
     public static AuthProviderConfig Keycloak(IDistributedApplicationBuilder builder)
     {
         const string realmName = "aspire";
         const string clientId = "aspire-app";
-
-        // Keycloak in dev mode with embedded H2 database
+        
+        var keycloakPostgres = builder.AddPostgres("keycloak-postgres")
+            .WithDataVolume("cooklyn-keycloak-postgres");
+        var keycloakDb = keycloakPostgres.AddDatabase("keycloakdb");
+        
         var keycloak = builder.AddContainer("keycloak", "quay.io/keycloak/keycloak", "26.0")
+            .WithReference(keycloakDb)
+            .WaitFor(keycloakDb)
             .WithHttpEndpoint(port: 8080, targetPort: 8080, name: "http")
             .WithEnvironment("KEYCLOAK_ADMIN", "admin")
             .WithEnvironment("KEYCLOAK_ADMIN_PASSWORD", "admin")
             .WithEnvironment("KC_HEALTH_ENABLED", "true")
             .WithEnvironment("KC_HTTP_ENABLED", "true")
+            .WithEnvironment("KC_DB", "postgres")
+            .WithEnvironment(context =>
+            {
+                // Configure Keycloak to connect to PostgreSQL
+                var pgResource = keycloakDb.Resource.Parent;
+                context.EnvironmentVariables["KC_DB_URL"] = ReferenceExpression.Create(
+                    $"jdbc:postgresql://{pgResource.PrimaryEndpoint.Property(EndpointProperty.Host)}:{pgResource.PrimaryEndpoint.Property(EndpointProperty.Port)}/{keycloakDb.Resource.DatabaseName}");
+                context.EnvironmentVariables["KC_DB_USERNAME"] = pgResource.UserNameReference;
+                context.EnvironmentVariables["KC_DB_PASSWORD"] = pgResource.PasswordParameter;
+            })
             .WithBindMount("./keycloak", "/opt/keycloak/data/import", isReadOnly: true)
-            .WithArgs("start-dev", "--import-realm");
+            .WithArgs("start-dev", "--import-realm")
+            .WaitFor(keycloakDb);
+        
+        keycloakPostgres.WithParentRelationship(keycloak);
 
         return new AuthProviderConfig
         {
