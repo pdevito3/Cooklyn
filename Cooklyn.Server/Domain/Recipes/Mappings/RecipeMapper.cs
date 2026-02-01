@@ -2,9 +2,6 @@ namespace Cooklyn.Server.Domain.Recipes.Mappings;
 
 using BlobStorageKeys;
 using Dtos;
-using Ingredients;
-using Ingredients.Dtos;
-using Ingredients.Mappings;
 using Models;
 using Riok.Mapperly.Abstractions;
 using Services;
@@ -38,7 +35,6 @@ public static partial class RecipeMapper
     [MapperIgnoreSource(nameof(Recipe.DomainEvents))]
     [MapperIgnoreSource(nameof(Recipe.CreatedOn))]
     [MapperIgnoreSource(nameof(Recipe.LastModifiedOn))]
-    [MapperIgnoreSource(nameof(Recipe.Ingredients))]
     [MapperIgnoreSource(nameof(Recipe.NutritionInfo))]
     [MapperIgnoreSource(nameof(Recipe.RecipeTags))]
     [MapperIgnoreSource(nameof(Recipe.Source))]

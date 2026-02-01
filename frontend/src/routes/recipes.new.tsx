@@ -27,7 +27,6 @@ function NewRecipePage() {
         servings: values.servings,
         steps: values.steps,
         notes: values.notes,
-        ingredients: [],
         tagIds: [],
         flags: values.flags.map((f) => f.value),
         nutritionInfo: null,

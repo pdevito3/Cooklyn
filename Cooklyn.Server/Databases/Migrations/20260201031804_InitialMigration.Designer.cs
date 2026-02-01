@@ -13,8 +13,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Cooklyn.Server.Databases.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260105030726_AddRecipeImageS3Properties")]
-    partial class AddRecipeImageS3Properties
+    [Migration("20260201031804_InitialMigration")]
+    partial class InitialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,84 +25,6 @@ namespace Cooklyn.Server.Databases.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
-
-            modelBuilder.Entity("Cooklyn.Server.Domain.Ingredients.Ingredient", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("text")
-                        .HasColumnName("created_by");
-
-                    b.Property<DateTimeOffset>("CreatedOn")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_on");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean")
-                        .HasColumnName("is_deleted");
-
-                    b.Property<string>("LastModifiedBy")
-                        .HasColumnType("text")
-                        .HasColumnName("last_modified_by");
-
-                    b.Property<DateTimeOffset?>("LastModifiedOn")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("last_modified_on");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)")
-                        .HasColumnName("name");
-
-                    b.Property<string>("Notes")
-                        .HasMaxLength(1000)
-                        .HasColumnType("character varying(1000)")
-                        .HasColumnName("notes");
-
-                    b.Property<decimal?>("Quantity")
-                        .HasPrecision(10, 4)
-                        .HasColumnType("numeric(10,4)")
-                        .HasColumnName("quantity");
-
-                    b.Property<Guid>("RecipeId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("recipe_id");
-
-                    b.Property<int>("SortOrder")
-                        .HasColumnType("integer")
-                        .HasColumnName("sort_order");
-
-                    b.ComplexProperty(typeof(Dictionary<string, object>), "Unit", "Cooklyn.Server.Domain.Ingredients.Ingredient.Unit#UnitOfMeasure", b1 =>
-                        {
-                            b1.IsRequired();
-
-                            b1.Property<string>("CustomUnit")
-                                .HasMaxLength(100)
-                                .HasColumnType("character varying(100)")
-                                .HasColumnName("custom_unit");
-
-                            b1.Property<string>("Value")
-                                .HasMaxLength(50)
-                                .HasColumnType("character varying(50)")
-                                .HasColumnName("unit");
-                        });
-
-                    b.HasKey("Id")
-                        .HasName("pk_ingredients");
-
-                    b.HasIndex("RecipeId")
-                        .HasDatabaseName("ix_ingredients_recipe_id");
-
-                    b.HasIndex("SortOrder")
-                        .HasDatabaseName("ix_ingredients_sort_order");
-
-                    b.ToTable("ingredients", (string)null);
-                });
 
             modelBuilder.Entity("Cooklyn.Server.Domain.Recipes.NutritionInfo", b =>
                 {
@@ -668,16 +590,6 @@ namespace Cooklyn.Server.Databases.Migrations
                     b.ToTable("user_permissions", (string)null);
                 });
 
-            modelBuilder.Entity("Cooklyn.Server.Domain.Ingredients.Ingredient", b =>
-                {
-                    b.HasOne("Cooklyn.Server.Domain.Recipes.Recipe", null)
-                        .WithMany("Ingredients")
-                        .HasForeignKey("RecipeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_ingredients_recipes_recipe_id");
-                });
-
             modelBuilder.Entity("Cooklyn.Server.Domain.Recipes.NutritionInfo", b =>
                 {
                     b.HasOne("Cooklyn.Server.Domain.Recipes.Recipe", null)
@@ -762,8 +674,6 @@ namespace Cooklyn.Server.Databases.Migrations
             modelBuilder.Entity("Cooklyn.Server.Domain.Recipes.Recipe", b =>
                 {
                     b.Navigation("Flags");
-
-                    b.Navigation("Ingredients");
 
                     b.Navigation("NutritionInfo");
 

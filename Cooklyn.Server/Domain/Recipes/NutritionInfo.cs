@@ -25,7 +25,7 @@ public class NutritionInfo : BaseEntity
     public decimal? IronPercent { get; private set; }
     public decimal? PotassiumPercent { get; private set; }
 
-    // Indicates if this was manually entered or calculated from ingredients
+    // Indicates if this was manually entered
     public bool IsManuallyEntered { get; private set; }
 
     public static NutritionInfo Create(NutritionInfoForCreation forCreation)

@@ -13,18 +13,12 @@ public static class DeleteRecipe
         public async Task Handle(Command request, CancellationToken cancellationToken)
         {
             var recipe = await dbContext.Recipes
-                .Include(r => r.Ingredients)
                 .Include(r => r.RecipeTags)
                 .Include(r => r.Flags)
                 .Include(r => r.NutritionInfo)
                 .GetById(request.Id, cancellationToken);
 
             // Remove all related entities first due to PropertyAccessMode.Field
-            foreach (var ingredient in recipe.Ingredients.ToList())
-            {
-                dbContext.Ingredients.Remove(ingredient);
-            }
-
             foreach (var recipeTag in recipe.RecipeTags.ToList())
             {
                 dbContext.RecipeTags.Remove(recipeTag);

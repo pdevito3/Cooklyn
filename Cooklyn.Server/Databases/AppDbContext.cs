@@ -1,7 +1,6 @@
 namespace Cooklyn.Server.Databases;
 
 using Domain;
-using Domain.Ingredients;
 using Domain.Recipes;
 using Domain.Tags;
 using Domain.Tenants;
@@ -24,7 +23,6 @@ public class AppDbContext(
 
     public DbSet<Tag> Tags => Set<Tag>();
     public DbSet<Recipe> Recipes => Set<Recipe>();
-    public DbSet<Ingredient> Ingredients => Set<Ingredient>();
     public DbSet<RecipeTag> RecipeTags => Set<RecipeTag>();
     public DbSet<RecipeFlagEntry> RecipeFlagEntries => Set<RecipeFlagEntry>();
     public DbSet<NutritionInfo> NutritionInfos => Set<NutritionInfo>();

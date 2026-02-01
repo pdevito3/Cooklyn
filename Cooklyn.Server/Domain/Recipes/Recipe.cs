@@ -2,8 +2,6 @@ namespace Cooklyn.Server.Domain.Recipes;
 
 using BlobStorageKeys;
 using Exceptions;
-using Ingredients;
-using Ingredients.Models;
 using Recipes.DomainEvents;
 using Recipes.Models;
 using Services;
@@ -24,9 +22,6 @@ public class Recipe : BaseEntity, ITenantable
     public string? Notes { get; private set; }
 
     // Navigation properties with encapsulated collections
-    private readonly List<Ingredient> _ingredients = [];
-    public IReadOnlyCollection<Ingredient> Ingredients => _ingredients.AsReadOnly();
-
     private readonly List<RecipeTag> _recipeTags = [];
     public IReadOnlyCollection<RecipeTag> RecipeTags => _recipeTags.AsReadOnly();
 
@@ -121,33 +116,6 @@ public class Recipe : BaseEntity, ITenantable
     {
         Rating = rating;
         QueueDomainEvent(new RecipeUpdated(Id));
-        return this;
-    }
-
-    // Ingredient management
-    public Ingredient AddIngredient(IngredientForCreation forCreation)
-    {
-        var ingredient = Ingredient.Create(forCreation with { RecipeId = Id });
-        _ingredients.Add(ingredient);
-        QueueDomainEvent(new RecipeUpdated(Id));
-        return ingredient;
-    }
-
-    public Recipe RemoveIngredient(Ingredient ingredient)
-    {
-        _ingredients.RemoveAll(i => i.Id == ingredient.Id);
-        QueueDomainEvent(new RecipeUpdated(Id));
-        return this;
-    }
-
-    public Recipe ReorderIngredients(IEnumerable<Guid> ingredientIds)
-    {
-        var orderedIds = ingredientIds.ToList();
-        for (var i = 0; i < orderedIds.Count; i++)
-        {
-            var ingredient = _ingredients.FirstOrDefault(ing => ing.Id == orderedIds[i]);
-            ingredient?.UpdateSortOrder(i);
-        }
         return this;
     }
 

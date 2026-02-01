@@ -6,11 +6,28 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Cooklyn.Server.Databases.Migrations
 {
     /// <inheritdoc />
-    public partial class AddRecipesAndTags : Migration
+    public partial class InitialMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "tenants",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    name = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
+                    created_on = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    created_by = table.Column<string>(type: "text", nullable: true),
+                    last_modified_on = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    last_modified_by = table.Column<string>(type: "text", nullable: true),
+                    is_deleted = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_tenants", x => x.id);
+                });
+
             migrationBuilder.CreateTable(
                 name: "recipes",
                 columns: table => new
@@ -19,12 +36,13 @@ namespace Cooklyn.Server.Databases.Migrations
                     tenant_id = table.Column<Guid>(type: "uuid", nullable: false),
                     title = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
                     description = table.Column<string>(type: "character varying(5000)", maxLength: 5000, nullable: true),
-                    image_url = table.Column<string>(type: "character varying(2000)", maxLength: 2000, nullable: true),
+                    image_s3bucket = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
                     source = table.Column<string>(type: "character varying(2000)", maxLength: 2000, nullable: true),
                     is_favorite = table.Column<bool>(type: "boolean", nullable: false),
                     servings = table.Column<int>(type: "integer", nullable: true),
                     steps = table.Column<string>(type: "text", nullable: true),
                     notes = table.Column<string>(type: "character varying(10000)", maxLength: 10000, nullable: true),
+                    image_s3_key = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
                     rating = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
                     created_on = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     created_by = table.Column<string>(type: "text", nullable: true),
@@ -65,6 +83,35 @@ namespace Cooklyn.Server.Databases.Migrations
                         principalTable: "tenants",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "users",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    tenant_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    first_name = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
+                    last_name = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
+                    identifier = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
+                    username = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    email = table.Column<string>(type: "character varying(320)", maxLength: 320, nullable: false),
+                    role = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    created_on = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    created_by = table.Column<string>(type: "text", nullable: true),
+                    last_modified_on = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    last_modified_by = table.Column<string>(type: "text", nullable: true),
+                    is_deleted = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_users", x => x.id);
+                    table.ForeignKey(
+                        name: "fk_users_tenants_tenant_id",
+                        column: x => x.tenant_id,
+                        principalTable: "tenants",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -131,35 +178,6 @@ namespace Cooklyn.Server.Databases.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "recipe_ingredients",
-                columns: table => new
-                {
-                    id = table.Column<Guid>(type: "uuid", nullable: false),
-                    recipe_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    name = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
-                    quantity = table.Column<decimal>(type: "numeric(10,4)", precision: 10, scale: 4, nullable: true),
-                    sort_order = table.Column<int>(type: "integer", nullable: false),
-                    notes = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: true),
-                    custom_unit = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
-                    unit = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
-                    created_on = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
-                    created_by = table.Column<string>(type: "text", nullable: true),
-                    last_modified_on = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
-                    last_modified_by = table.Column<string>(type: "text", nullable: true),
-                    is_deleted = table.Column<bool>(type: "boolean", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("pk_recipe_ingredients", x => x.id);
-                    table.ForeignKey(
-                        name: "fk_recipe_ingredients_recipes_recipe_id",
-                        column: x => x.recipe_id,
-                        principalTable: "recipes",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "recipe_tags",
                 columns: table => new
                 {
@@ -189,6 +207,30 @@ namespace Cooklyn.Server.Databases.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "user_permissions",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    user_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    permission = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    created_on = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    created_by = table.Column<string>(type: "text", nullable: true),
+                    last_modified_on = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    last_modified_by = table.Column<string>(type: "text", nullable: true),
+                    is_deleted = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_user_permissions", x => x.id);
+                    table.ForeignKey(
+                        name: "fk_user_permissions_users_user_id",
+                        column: x => x.user_id,
+                        principalTable: "users",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "ix_nutrition_infos_recipe_id",
                 table: "nutrition_infos",
@@ -199,16 +241,6 @@ namespace Cooklyn.Server.Databases.Migrations
                 name: "ix_recipe_flag_entries_recipe_id",
                 table: "recipe_flag_entries",
                 column: "recipe_id");
-
-            migrationBuilder.CreateIndex(
-                name: "ix_recipe_ingredients_recipe_id",
-                table: "recipe_ingredients",
-                column: "recipe_id");
-
-            migrationBuilder.CreateIndex(
-                name: "ix_recipe_ingredients_sort_order",
-                table: "recipe_ingredients",
-                column: "sort_order");
 
             migrationBuilder.CreateIndex(
                 name: "ix_recipe_tags_recipe_id",
@@ -251,6 +283,33 @@ namespace Cooklyn.Server.Databases.Migrations
                 table: "tags",
                 columns: new[] { "tenant_id", "name" },
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "ix_tenants_name",
+                table: "tenants",
+                column: "name",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "ix_user_permissions_user_id",
+                table: "user_permissions",
+                column: "user_id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_users_identifier",
+                table: "users",
+                column: "identifier",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "ix_users_tenant_id",
+                table: "users",
+                column: "tenant_id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_users_username",
+                table: "users",
+                column: "username");
         }
 
         /// <inheritdoc />
@@ -263,16 +322,22 @@ namespace Cooklyn.Server.Databases.Migrations
                 name: "recipe_flag_entries");
 
             migrationBuilder.DropTable(
-                name: "recipe_ingredients");
+                name: "recipe_tags");
 
             migrationBuilder.DropTable(
-                name: "recipe_tags");
+                name: "user_permissions");
 
             migrationBuilder.DropTable(
                 name: "recipes");
 
             migrationBuilder.DropTable(
                 name: "tags");
+
+            migrationBuilder.DropTable(
+                name: "users");
+
+            migrationBuilder.DropTable(
+                name: "tenants");
         }
     }
 }

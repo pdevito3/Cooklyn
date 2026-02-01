@@ -1,7 +1,6 @@
 namespace Cooklyn.Server.Databases.EntityConfigurations;
 
 using Domain.BlobStorageKeys;
-using Domain.Ingredients;
 using Domain.Recipes;
 using Domain.Tenants;
 using Microsoft.EntityFrameworkCore;
@@ -56,14 +55,6 @@ public sealed class RecipeConfiguration : IEntityTypeConfiguration<Recipe>
         });
 
         // Navigation properties with private backing fields
-        builder.HasMany(e => e.Ingredients)
-            .WithOne()
-            .HasForeignKey(i => i.RecipeId)
-            .OnDelete(DeleteBehavior.Cascade);
-
-        builder.Navigation(e => e.Ingredients)
-            .UsePropertyAccessMode(PropertyAccessMode.Field);
-
         builder.HasMany(e => e.RecipeTags)
             .WithOne(rt => rt.Recipe)
             .HasForeignKey(rt => rt.RecipeId)

@@ -16,7 +16,6 @@ public static class UpdateRecipe
         public async Task<RecipeDto> Handle(Command request, CancellationToken cancellationToken)
         {
             var recipe = await dbContext.Recipes
-                .Include(r => r.Ingredients)
                 .Include(r => r.RecipeTags).ThenInclude(rt => rt.Tag)
                 .Include(r => r.Flags)
                 .Include(r => r.NutritionInfo)

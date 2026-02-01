@@ -2,17 +2,6 @@
  * Recipe domain types
  */
 
-export interface IngredientDto {
-  id: string
-  recipeId: string
-  name: string
-  quantity: number | null
-  unit: string | null
-  sortOrder: number
-  notes: string | null
-  displayText: string | null
-}
-
 export interface NutritionInfoDto {
   id: string
   recipeId: string
@@ -48,7 +37,6 @@ export interface RecipeDto {
   servings: number | null
   steps: string | null
   notes: string | null
-  ingredients: IngredientDto[]
   tags: string[]
   flags: string[]
   nutritionInfo: NutritionInfoDto | null
@@ -67,14 +55,6 @@ export interface RecipeSummaryDto {
   tags: string[]
   flags: string[]
   createdOn: string
-}
-
-export interface IngredientForCreationDto {
-  name: string
-  quantity: number | null
-  unit: string | null
-  sortOrder: number
-  notes: string | null
 }
 
 export interface NutritionInfoForCreationDto {
@@ -107,7 +87,6 @@ export interface RecipeForCreationDto {
   servings: number | null
   steps: string | null
   notes: string | null
-  ingredients: IngredientForCreationDto[]
   tagIds: string[]
   flags: string[]
   nutritionInfo: NutritionInfoForCreationDto | null

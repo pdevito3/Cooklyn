@@ -179,31 +179,6 @@ function RecipeDetailPage() {
         </Card>
       )}
 
-      {/* Ingredients */}
-      {recipe.ingredients.length > 0 && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Ingredients</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ul className="list-inside list-disc space-y-1">
-              {recipe.ingredients.map((ingredient) => (
-                <li key={ingredient.id}>
-                  {ingredient.displayText ?? (
-                    <>
-                      {ingredient.quantity && `${ingredient.quantity} `}
-                      {ingredient.unit && `${ingredient.unit} `}
-                      {ingredient.name}
-                      {ingredient.notes && ` (${ingredient.notes})`}
-                    </>
-                  )}
-                </li>
-              ))}
-            </ul>
-          </CardContent>
-        </Card>
-      )}
-
       {/* Steps */}
       {recipe.steps && (
         <Card>
