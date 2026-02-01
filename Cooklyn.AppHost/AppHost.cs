@@ -25,7 +25,8 @@ try
 
     var authProvider = AuthProviders.Keycloak(builder);
 
-    var postgres = builder.AddPostgres("postgres");
+    var postgres = builder.AddPostgres("postgres")
+        .WithDataVolume("cooklyn-postgres");
     var appDb = postgres.AddDatabase("appdb");
 
     var server = builder.AddProject<Projects.Cooklyn_Server>("server")
