@@ -3,10 +3,29 @@ namespace Cooklyn.Server.Resources.Extensions;
 using Amazon;
 using Amazon.Runtime;
 using Amazon.S3;
+using Amazon.S3.Util;
 using Services;
 
 public static class S3Extension
 {
+    public static async Task EnsureBucketsExist(this WebApplication app)
+    {
+        var config = app.Services.GetRequiredService<IConfiguration>();
+        var s3Client = app.Services.GetRequiredService<IAmazonS3>();
+        var bucketName = config["AWS:RecipeImagesBucket"];
+        if (string.IsNullOrEmpty(bucketName)) return;
+
+        try
+        {
+            if (!await AmazonS3Util.DoesS3BucketExistV2Async(s3Client, bucketName))
+                await s3Client.PutBucketAsync(bucketName);
+        }
+        catch (Exception ex)
+        {
+            app.Logger.LogWarning(ex, "Failed to ensure S3 bucket '{BucketName}' exists", bucketName);
+        }
+    }
+
     /// <summary>
     /// Registers AWS S3 services for file storage.
     /// Supports AWS S3, Northflank Object Storage, MinIO, and other S3-compatible providers.
@@ -31,7 +50,12 @@ public static class S3Extension
             var config = new AmazonS3Config
             {
                 RegionEndpoint = RegionEndpoint.GetBySystemName(region),
-                ForcePathStyle = forcePathStyle
+                ForcePathStyle = forcePathStyle,
+                // Only compute checksums when required by the API operation.
+                // AWSSDK v4 adds CRC32 trailing headers by default which
+                // S3-compatible services (MinIO) count toward metadata limits.
+                RequestChecksumCalculation = RequestChecksumCalculation.WHEN_REQUIRED,
+                ResponseChecksumValidation = ResponseChecksumValidation.WHEN_REQUIRED
             };
 
             // For Northflank, MinIO, or other S3-compatible services

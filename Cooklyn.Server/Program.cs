@@ -37,6 +37,8 @@ try
 
     var app = builder.Build();
 
+    await app.EnsureBucketsExist();
+
     app.UseSerilogRequestLogging(options =>
     {
         options.EnrichDiagnosticContext = (diagnosticContext, httpContext) =>

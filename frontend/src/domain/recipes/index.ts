@@ -21,6 +21,8 @@ export {
   toggleRecipeFavorite,
   useUploadRecipeImage,
   uploadRecipeImage,
+  useDeleteRecipeImage,
+  deleteRecipeImage,
   useUpdateRecipeRating,
   updateRecipeRating,
 } from './apis/recipe-mutations'

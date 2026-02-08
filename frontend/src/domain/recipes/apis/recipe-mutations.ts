@@ -142,6 +142,28 @@ export function useUploadRecipeImage() {
 }
 
 /**
+ * Delete the image of a recipe
+ */
+export async function deleteRecipeImage(id: string): Promise<void> {
+  await apiClient.delete(`/api/v1/recipes/${id}/image`)
+}
+
+/**
+ * Hook for deleting a recipe image
+ */
+export function useDeleteRecipeImage() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: deleteRecipeImage,
+    onSuccess: (_, id) => {
+      queryClient.invalidateQueries({ queryKey: RecipeKeys.lists() })
+      queryClient.invalidateQueries({ queryKey: RecipeKeys.detail(id) })
+    },
+  })
+}
+
+/**
  * Update recipe rating
  */
 export async function updateRecipeRating(

@@ -29,13 +29,30 @@ try
         .WithDataVolume("cooklyn-postgres");
     var appDb = postgres.AddDatabase("appdb");
 
+    var minio = builder.AddContainer("minio", "quay.io/minio/minio")
+        .WithHttpEndpoint(port: 9000, targetPort: 9000, name: "http")
+        .WithHttpEndpoint(port: 9001, targetPort: 9001, name: "console")
+        .WithEnvironment("MINIO_ROOT_USER", "minioadmin")
+        .WithEnvironment("MINIO_ROOT_PASSWORD", "miniosecretkey")
+        .WithArgs("server", "--console-address", ":9001", "/data")
+        .WithVolume("cooklyn-minio", "/data");
+
     var server = builder.AddProject<Projects.Cooklyn_Server>("server")
         .WithReference(appDb)
         .WaitFor(appDb)
+        .WaitFor(minio)
         .WithServerAuth(authProvider)
-        .WithHttpHealthCheck("/health")
+        .WithEnvironment(context =>
+        {
+            context.EnvironmentVariables["AWS__ServiceURL"] = minio.GetEndpoint("http");
+        })
+        .WithEnvironment("AWS__AccessKey", "minioadmin")
+        .WithEnvironment("AWS__SecretKey", "miniosecretkey")
+        .WithEnvironment("AWS__RecipeImagesBucket", "recipe-images")
+        .WithHttpHealthCheck("/health", endpointName: "http")
         .WithExternalHttpEndpoints();
     postgres.WithParentRelationship(server);
+    minio.WithParentRelationship(server);
 
     var webfrontend = builder.AddViteApp("webfrontend", "../frontend")
         .WithEndpoint("http", endpoint =>
@@ -50,7 +67,7 @@ try
         .WithReference(server)
         .WithReference(webfrontend)
         .WaitFor(server)
-        .WithHttpHealthCheck("/health")
+        .WithHttpHealthCheck("/health", endpointName: "http")
         .WithExternalHttpEndpoints()
         .WithParentRelationship(webfrontend);
 

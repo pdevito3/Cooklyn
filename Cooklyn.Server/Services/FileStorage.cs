@@ -27,15 +27,24 @@ public interface IFileStorage
 /// S3-compatible file storage implementation.
 /// Works with AWS S3, Northflank Object Storage, MinIO, and other S3-compatible services.
 /// </summary>
-public sealed class FileStorage(IAmazonS3 s3Client) : IFileStorage
+public sealed class FileStorage(IAmazonS3 s3Client, IConfiguration configuration) : IFileStorage
 {
+    private readonly bool _useLocalCompatibility =
+        !string.IsNullOrEmpty(configuration["AWS:ServiceURL"]);
+
+    private readonly Protocol _presignedUrlProtocol =
+        configuration["AWS:ServiceURL"]?.StartsWith("http://", StringComparison.OrdinalIgnoreCase) == true
+            ? Protocol.HTTP
+            : Protocol.HTTPS;
+
     public async Task<string?> UploadFileAsync(string bucketName, string key, Stream fileStream, CancellationToken cancellationToken = default)
     {
         var putObjectRequest = new PutObjectRequest
         {
             BucketName = bucketName,
             Key = key,
-            InputStream = fileStream
+            InputStream = fileStream,
+            UseChunkEncoding = !_useLocalCompatibility
         };
 
         var response = await s3Client.PutObjectAsync(putObjectRequest, cancellationToken);
@@ -53,7 +62,8 @@ public sealed class FileStorage(IAmazonS3 s3Client) : IFileStorage
             BucketName = bucketName,
             Key = key,
             InputStream = stream,
-            ContentType = formFile.ContentType
+            ContentType = formFile.ContentType,
+            UseChunkEncoding = !_useLocalCompatibility
         };
 
         var response = await s3Client.PutObjectAsync(putObjectRequest, cancellationToken);
@@ -66,7 +76,8 @@ public sealed class FileStorage(IAmazonS3 s3Client) : IFileStorage
         {
             BucketName = bucketName,
             Key = key,
-            InputStream = new MemoryStream(fileBytes)
+            InputStream = new MemoryStream(fileBytes),
+            UseChunkEncoding = !_useLocalCompatibility
         };
 
         var response = await s3Client.PutObjectAsync(putObjectRequest, cancellationToken);
@@ -79,7 +90,8 @@ public sealed class FileStorage(IAmazonS3 s3Client) : IFileStorage
         {
             BucketName = bucketName,
             Key = key,
-            FilePath = filePath
+            FilePath = filePath,
+            UseChunkEncoding = !_useLocalCompatibility
         };
 
         var response = await s3Client.PutObjectAsync(putObjectRequest, cancellationToken);
@@ -93,7 +105,8 @@ public sealed class FileStorage(IAmazonS3 s3Client) : IFileStorage
             BucketName = bucketName,
             Key = key,
             FilePath = filePath,
-            ContentType = contentType
+            ContentType = contentType,
+            UseChunkEncoding = !_useLocalCompatibility
         };
 
         var response = await s3Client.PutObjectAsync(putObjectRequest, cancellationToken);
@@ -125,7 +138,8 @@ public sealed class FileStorage(IAmazonS3 s3Client) : IFileStorage
         {
             BucketName = bucketName,
             Key = key,
-            Expires = DateTime.UtcNow.AddMinutes(durationInMinutes)
+            Expires = DateTime.UtcNow.AddMinutes(durationInMinutes),
+            Protocol = _presignedUrlProtocol
         };
 
         return s3Client.GetPreSignedURL(request);

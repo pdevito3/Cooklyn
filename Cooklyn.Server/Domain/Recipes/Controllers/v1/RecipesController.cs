@@ -175,4 +175,18 @@ public sealed class RecipesController(IMediator mediator) : ControllerBase
         var result = await mediator.Send(command);
         return Ok(result);
     }
+
+    /// <summary>
+    /// Deletes the image of a Recipe.
+    /// </summary>
+    [Authorize]
+    [HttpDelete("{id:guid}/image", Name = "DeleteRecipeImage")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult> DeleteImage(Guid id)
+    {
+        var command = new DeleteRecipeImage.Command(id);
+        await mediator.Send(command);
+        return NoContent();
+    }
 }
