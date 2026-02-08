@@ -5,7 +5,7 @@ export * from './types'
 export { RecipeKeys } from './apis/recipe.keys'
 
 // Query Hooks
-export { useRecipes, getRecipes } from './apis/get-recipes'
+export { useRecipes, useInfiniteRecipes, getRecipes } from './apis/get-recipes'
 export type { PaginationInfo, RecipeListResponse } from './apis/get-recipes'
 export { useRecipe, getRecipe } from './apis/get-recipe'
 

@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useInfiniteQuery } from '@tanstack/react-query'
 import { apiClient } from '@/lib/api-client'
 import type { RecipeSummaryDto, RecipeParametersDto } from '../types'
 import { RecipeKeys } from './recipe.keys'
@@ -6,7 +6,7 @@ import { RecipeKeys } from './recipe.keys'
 // Pagination info is returned in response headers from the API
 
 export interface PaginationInfo {
-  currentPage: number
+  pageNumber: number
   totalPages: number
   pageSize: number
   totalCount: number
@@ -40,7 +40,7 @@ export async function getRecipes(
   // Parse pagination from headers
   const paginationHeader = response.headers['x-pagination']
   let pagination: PaginationInfo = {
-    currentPage: 1,
+    pageNumber: 1,
     totalPages: 1,
     pageSize: 10,
     totalCount: response.data.length,
@@ -69,5 +69,18 @@ export function useRecipes(params?: RecipeParametersDto) {
   return useQuery({
     queryKey: RecipeKeys.list(params),
     queryFn: () => getRecipes(params),
+  })
+}
+
+/**
+ * Hook for infinite scrolling recipe list
+ */
+export function useInfiniteRecipes(params?: Omit<RecipeParametersDto, 'pageNumber'>) {
+  return useInfiniteQuery({
+    queryKey: RecipeKeys.list(params),
+    queryFn: ({ pageParam }) => getRecipes({ ...params, pageNumber: pageParam }),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage) =>
+      lastPage.pagination.hasNext ? lastPage.pagination.pageNumber + 1 : undefined,
   })
 }

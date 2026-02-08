@@ -1,10 +1,11 @@
-import { useState } from 'react'
+import { useRef, useState, useEffect, useMemo, useCallback } from 'react'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { Add01Icon, RotateClockwiseIcon, Search01Icon } from '@hugeicons/core-free-icons'
+import { Add01Icon, RotateClockwiseIcon, Search01Icon, Loading03Icon } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
 import { useQueryClient } from '@tanstack/react-query'
+import { useWindowVirtualizer } from '@tanstack/react-virtual'
 
-import { useRecipes, RecipeKeys, useDeleteRecipe, useToggleRecipeFavorite } from '@/domain/recipes'
+import { useInfiniteRecipes, RecipeKeys, useDeleteRecipe, useToggleRecipeFavorite } from '@/domain/recipes'
 import { RecipeCard } from '@/components/recipe-card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -20,9 +21,54 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
 
+const PAGE_SIZE = 24
+
 export const Route = createFileRoute('/recipes/')({
   component: RecipesIndexPage,
 })
+
+function useColumns() {
+  const [columns, setColumns] = useState(() => {
+    if (typeof window === 'undefined') return 1
+    if (window.innerWidth >= 1280) return 4
+    if (window.innerWidth >= 1024) return 3
+    if (window.innerWidth >= 640) return 2
+    return 1
+  })
+
+  useEffect(() => {
+    const xl = window.matchMedia('(min-width: 1280px)')
+    const lg = window.matchMedia('(min-width: 1024px)')
+    const sm = window.matchMedia('(min-width: 640px)')
+
+    function update() {
+      if (xl.matches) setColumns(4)
+      else if (lg.matches) setColumns(3)
+      else if (sm.matches) setColumns(2)
+      else setColumns(1)
+    }
+
+    xl.addEventListener('change', update)
+    lg.addEventListener('change', update)
+    sm.addEventListener('change', update)
+    return () => {
+      xl.removeEventListener('change', update)
+      lg.removeEventListener('change', update)
+      sm.removeEventListener('change', update)
+    }
+  }, [])
+
+  return columns
+}
+
+function useDebouncedValue<T>(value: T, delay: number): T {
+  const [debounced, setDebounced] = useState(value)
+  useEffect(() => {
+    const timer = setTimeout(() => setDebounced(value), delay)
+    return () => clearTimeout(timer)
+  }, [value, delay])
+  return debounced
+}
 
 function RecipesIndexPage() {
   const navigate = useNavigate()
@@ -30,10 +76,53 @@ function RecipesIndexPage() {
   const [searchQuery, setSearchQuery] = useState('')
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [recipeToDelete, setRecipeToDelete] = useState<string | null>(null)
+  const listRef = useRef<HTMLDivElement>(null)
 
-  const { data, isLoading, error, isFetching } = useRecipes()
+  const columns = useColumns()
+  const debouncedSearch = useDebouncedValue(searchQuery, 300)
+
+  const filters = debouncedSearch
+    ? `title @=* "${debouncedSearch}"`
+    : undefined
+
+  const {
+    data,
+    isLoading,
+    error,
+    isFetching,
+    hasNextPage,
+    isFetchingNextPage,
+    fetchNextPage,
+  } = useInfiniteRecipes({ pageSize: PAGE_SIZE, filters })
+
   const deleteRecipe = useDeleteRecipe()
   const toggleFavorite = useToggleRecipeFavorite()
+
+  const allRecipes = useMemo(
+    () => data?.pages.flatMap((p) => p.items) ?? [],
+    [data]
+  )
+
+  const totalCount = data?.pages[0]?.pagination.totalCount ?? 0
+  const rowCount = Math.ceil(allRecipes.length / columns)
+
+  const virtualizer = useWindowVirtualizer({
+    count: rowCount,
+    estimateSize: () => 260,
+    overscan: 3,
+    scrollMargin: listRef.current?.offsetTop ?? 0,
+  })
+
+  // Infinite scroll: fetch next page when the last virtual row is visible
+  useEffect(() => {
+    const items = virtualizer.getVirtualItems()
+    const lastItem = items[items.length - 1]
+    if (!lastItem) return
+
+    if (lastItem.index >= rowCount - 1 && hasNextPage && !isFetchingNextPage) {
+      fetchNextPage()
+    }
+  }, [virtualizer.getVirtualItems(), hasNextPage, isFetchingNextPage, fetchNextPage, rowCount])
 
   const handleRefresh = () => {
     queryClient.invalidateQueries({ queryKey: RecipeKeys.all })
@@ -43,14 +132,14 @@ function RecipesIndexPage() {
     navigate({ to: '/recipes/new' })
   }
 
-  const handleEditRecipe = (id: string) => {
+  const handleEditRecipe = useCallback((id: string) => {
     navigate({ to: '/recipes/$id/edit', params: { id } })
-  }
+  }, [navigate])
 
-  const handleDeleteRecipe = (id: string) => {
+  const handleDeleteRecipe = useCallback((id: string) => {
     setRecipeToDelete(id)
     setDeleteDialogOpen(true)
-  }
+  }, [])
 
   const confirmDelete = () => {
     if (recipeToDelete) {
@@ -63,15 +152,11 @@ function RecipesIndexPage() {
     }
   }
 
-  const handleToggleFavorite = (id: string) => {
+  const handleToggleFavorite = useCallback((id: string) => {
     toggleFavorite.mutate(id)
-  }
+  }, [toggleFavorite])
 
-  const filteredRecipes = data?.items.filter((recipe) =>
-    recipe.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    recipe.description?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    recipe.tags.some((tag) => tag.toLowerCase().includes(searchQuery.toLowerCase()))
-  ) ?? []
+  const virtualItems = virtualizer.getVirtualItems()
 
   return (
     <div className="space-y-6">
@@ -144,23 +229,68 @@ function RecipesIndexPage() {
         </div>
       )}
 
-      {/* Recipe Grid */}
-      {!isLoading && filteredRecipes.length > 0 && (
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {filteredRecipes.map((recipe) => (
-            <RecipeCard
-              key={recipe.id}
-              recipe={recipe}
-              onEdit={handleEditRecipe}
-              onDelete={handleDeleteRecipe}
-              onToggleFavorite={handleToggleFavorite}
-            />
-          ))}
+      {/* Virtualized Recipe Grid */}
+      {!isLoading && allRecipes.length > 0 && (
+        <div ref={listRef}>
+          <div
+            style={{
+              height: `${virtualizer.getTotalSize()}px`,
+              width: '100%',
+              position: 'relative',
+            }}
+          >
+            {virtualItems.map((virtualRow) => {
+              const startIdx = virtualRow.index * columns
+              const rowRecipes = allRecipes.slice(startIdx, startIdx + columns)
+
+              return (
+                <div
+                  key={virtualRow.key}
+                  data-index={virtualRow.index}
+                  ref={virtualizer.measureElement}
+                  style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    transform: `translateY(${virtualRow.start - (virtualizer.options.scrollMargin ?? 0)}px)`,
+                  }}
+                >
+                  <div
+                    className="pb-6"
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))`,
+                      gap: '1.5rem',
+                    }}
+                  >
+                    {rowRecipes.map((recipe) => (
+                      <RecipeCard
+                        key={recipe.id}
+                        recipe={recipe}
+                        onEdit={handleEditRecipe}
+                        onDelete={handleDeleteRecipe}
+                        onToggleFavorite={handleToggleFavorite}
+                      />
+                    ))}
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+
+          {/* Loading more indicator */}
+          {isFetchingNextPage && (
+            <div className="flex items-center justify-center py-6">
+              <HugeiconsIcon icon={Loading03Icon} className="h-6 w-6 animate-spin text-muted-foreground" />
+              <span className="ml-2 text-sm text-muted-foreground">Loading more recipes...</span>
+            </div>
+          )}
         </div>
       )}
 
       {/* Empty State */}
-      {!isLoading && !error && filteredRecipes.length === 0 && (
+      {!isLoading && !error && allRecipes.length === 0 && (
         <div className="flex flex-col items-center justify-center rounded-lg border border-dashed py-12">
           {searchQuery ? (
             <>
@@ -190,16 +320,11 @@ function RecipesIndexPage() {
       )}
 
       {/* Pagination Info */}
-      {data && data.pagination.totalCount > 0 && (
-        <div className="flex items-center justify-between text-sm text-muted-foreground">
+      {totalCount > 0 && (
+        <div className="text-sm text-muted-foreground">
           <p>
-            Showing {filteredRecipes.length} of {data.pagination.totalCount} recipes
+            Showing {allRecipes.length} of {totalCount} recipes
           </p>
-          {data.pagination.totalPages > 1 && (
-            <p>
-              Page {data.pagination.currentPage} of {data.pagination.totalPages}
-            </p>
-          )}
         </div>
       )}
 
