@@ -1,22 +1,27 @@
-import { Link } from '@tanstack/react-router'
-import { MoreVerticalIcon, Delete01Icon, Edit01Icon, FavouriteIcon } from '@hugeicons/core-free-icons'
-import { HugeiconsIcon } from '@hugeicons/react'
-import { Button } from '@/components/ui/button'
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import type { RecipeSummaryDto } from '@/domain/recipes'
-import { cn } from '@/lib/utils'
+} from "@/components/ui/dropdown-menu";
+import type { RecipeSummaryDto } from "@/domain/recipes";
+import { cn } from "@/lib/utils";
+import {
+  Delete01Icon,
+  Edit01Icon,
+  FavouriteIcon,
+  MoreVerticalIcon,
+} from "@hugeicons/core-free-icons";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { Link } from "@tanstack/react-router";
 
 interface RecipeCardProps {
-  recipe: RecipeSummaryDto
-  onEdit?: (id: string) => void
-  onDelete?: (id: string) => void
-  onToggleFavorite?: (id: string) => void
+  recipe: RecipeSummaryDto;
+  onEdit?: (id: string) => void;
+  onDelete?: (id: string) => void;
+  onToggleFavorite?: (id: string) => void;
 }
 
 export function RecipeCard({
@@ -25,12 +30,17 @@ export function RecipeCard({
   onDelete,
   onToggleFavorite,
 }: RecipeCardProps) {
-  const placeholderImage = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300"%3E%3Crect fill="%23374151" width="400" height="300"/%3E%3Ctext fill="%239ca3af" font-family="system-ui" font-size="20" x="50%25" y="50%25" text-anchor="middle" dominant-baseline="middle"%3ENo Image%3C/text%3E%3C/svg%3E'
+  const placeholderImage =
+    'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300"%3E%3Crect fill="%23374151" width="400" height="300"/%3E%3Ctext fill="%239ca3af" font-family="system-ui" font-size="20" x="50%25" y="50%25" text-anchor="middle" dominant-baseline="middle"%3ENo Image%3C/text%3E%3C/svg%3E';
 
   return (
     <div className="group relative aspect-[4/3] overflow-hidden rounded-xl shadow-md transition-all hover:shadow-xl">
       {/* Full card background image */}
-      <Link to="/recipes/$id" params={{ id: recipe.id }} className="absolute inset-0">
+      <Link
+        to="/recipes/$id"
+        params={{ id: recipe.id }}
+        className="absolute inset-0"
+      >
         <img
           src={recipe.imageUrl ?? placeholderImage}
           alt={recipe.title}
@@ -64,19 +74,27 @@ export function RecipeCard({
                 className="h-8 w-8 bg-white/90 shadow-sm hover:bg-white"
                 onClick={(e) => e.stopPropagation()}
               >
-                <HugeiconsIcon icon={MoreVerticalIcon} className="h-4 w-4 text-gray-700" />
+                <HugeiconsIcon
+                  icon={MoreVerticalIcon}
+                  className="h-4 w-4 text-gray-700"
+                />
                 <span className="sr-only">Open menu</span>
               </Button>
             }
           />
-          <DropdownMenuContent align="end">
+          <DropdownMenuContent align="end" className="w-auto">
             {onToggleFavorite && (
               <DropdownMenuItem onClick={() => onToggleFavorite(recipe.id)}>
                 <HugeiconsIcon
                   icon={FavouriteIcon}
-                  className={cn('mr-2 h-4 w-4', recipe.isFavorite && 'text-red-500')}
+                  className={cn(
+                    "mr-2 h-4 w-4",
+                    recipe.isFavorite && "text-red-500",
+                  )}
                 />
-                {recipe.isFavorite ? 'Remove from favorites' : 'Add to favorites'}
+                {recipe.isFavorite
+                  ? "Remove from favorites"
+                  : "Add to favorites"}
               </DropdownMenuItem>
             )}
             {onEdit && (
@@ -103,11 +121,7 @@ export function RecipeCard({
 
       {/* Bottom content overlay */}
       <div className="absolute inset-x-0 bottom-0 z-10 p-4">
-        <Link
-          to="/recipes/$id"
-          params={{ id: recipe.id }}
-          className="block"
-        >
+        <Link to="/recipes/$id" params={{ id: recipe.id }} className="block">
           <h3 className="text-xl font-bold leading-tight text-white drop-shadow-md transition-colors hover:text-white/90 sm:text-2xl">
             {recipe.title}
           </h3>
@@ -121,12 +135,12 @@ export function RecipeCard({
         )}
 
         {/* Rating */}
-        {recipe.rating && recipe.rating !== 'Not Rated' && (
+        {recipe.rating && recipe.rating !== "Not Rated" && (
           <p className="mt-2 text-xs font-medium text-white/70">
             {recipe.rating}
           </p>
         )}
       </div>
     </div>
-  )
+  );
 }
