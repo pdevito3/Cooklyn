@@ -18,6 +18,7 @@ public static partial class RecipeMapper
     [MapperIgnoreTarget(nameof(RecipeDto.ImageUrl))]
     [MapProperty(nameof(Recipe.RecipeTags), nameof(RecipeDto.Tags))]
     [MapProperty(nameof(Recipe.Flags), nameof(RecipeDto.Flags))]
+    [MapProperty(nameof(Recipe.Ingredients), nameof(RecipeDto.Ingredients))]
     private static partial RecipeDto ToRecipeDtoInternal(this Recipe recipe);
 
     /// <summary>
@@ -44,7 +45,9 @@ public static partial class RecipeMapper
     [MapperIgnoreSource(nameof(Recipe.ImageS3Bucket))]
     [MapperIgnoreSource(nameof(Recipe.ImageS3Key))]
     [MapperIgnoreSource(nameof(Recipe.HasImage))]
+    [MapperIgnoreSource(nameof(Recipe.Ingredients))]
     [MapperIgnoreTarget(nameof(RecipeSummaryDto.ImageUrl))]
+    [MapperIgnoreTarget(nameof(RecipeSummaryDto.IngredientCount))]
     [MapProperty(nameof(Recipe.RecipeTags), nameof(RecipeSummaryDto.Tags))]
     [MapProperty(nameof(Recipe.Flags), nameof(RecipeSummaryDto.Flags))]
     private static partial RecipeSummaryDto ToRecipeSummaryDtoInternal(this Recipe recipe);
@@ -55,7 +58,11 @@ public static partial class RecipeMapper
     public static RecipeSummaryDto ToRecipeSummaryDto(this Recipe recipe, IFileStorage fileStorage)
     {
         var dto = recipe.ToRecipeSummaryDtoInternal();
-        return dto with { ImageUrl = recipe.GetImagePreSignedUrl(fileStorage) };
+        return dto with
+        {
+            ImageUrl = recipe.GetImagePreSignedUrl(fileStorage),
+            IngredientCount = recipe.Ingredients.Count
+        };
     }
 
     /// <summary>
@@ -103,6 +110,24 @@ public static partial class RecipeMapper
 
     public static partial RecipeForUpdate ToRecipeForUpdate(this RecipeForUpdateDto dto);
 
+    public static IngredientForCreation ToIngredientForCreation(this IngredientForCreationDto dto, Guid recipeId)
+    {
+        return new IngredientForCreation
+        {
+            RecipeId = recipeId,
+            RawText = dto.RawText,
+            Name = dto.Name,
+            Amount = dto.Amount,
+            AmountText = dto.AmountText,
+            Unit = dto.Unit,
+            CustomUnit = dto.CustomUnit,
+            GroupName = dto.GroupName,
+            SortOrder = dto.SortOrder
+        };
+    }
+
+    public static partial IngredientForUpdate ToIngredientForUpdate(this IngredientForCreationDto dto);
+
     // Value object mappings
     private static string MapRating(Rating rating) => rating.Value;
 
@@ -113,4 +138,18 @@ public static partial class RecipeMapper
 
     private static IReadOnlyList<string> MapFlagsToStrings(IReadOnlyCollection<RecipeFlagEntry> flags)
         => flags.Select(f => f.Flag.Value).ToList();
+
+    private static IReadOnlyList<IngredientDto> MapIngredientsToDto(IReadOnlyCollection<Ingredient> ingredients)
+        => ingredients.OrderBy(i => i.SortOrder).Select(i => new IngredientDto
+        {
+            Id = i.Id,
+            RawText = i.RawText,
+            Name = i.Name,
+            Amount = i.Amount,
+            AmountText = i.AmountText,
+            Unit = i.Unit.Value,
+            CustomUnit = i.CustomUnit,
+            GroupName = i.GroupName,
+            SortOrder = i.SortOrder
+        }).ToList();
 }

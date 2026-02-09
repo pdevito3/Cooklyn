@@ -21,8 +21,25 @@ import {
   SelectIcon,
 } from '@/components/ui/select'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { RECIPE_RATINGS, RECIPE_FLAGS, type RecipeDto } from '@/domain/recipes'
+import { IngredientEditor } from '@/components/ingredient-editor'
+import {
+  RECIPE_RATINGS,
+  RECIPE_FLAGS,
+  type RecipeDto,
+  type IngredientForCreationDto,
+} from '@/domain/recipes'
 import { cn } from '@/lib/utils'
+
+const ingredientSchema = z.object({
+  rawText: z.string(),
+  name: z.string().nullable(),
+  amount: z.number().nullable(),
+  amountText: z.string().nullable(),
+  unit: z.string().nullable(),
+  customUnit: z.string().nullable(),
+  groupName: z.string().nullable(),
+  sortOrder: z.number(),
+})
 
 const recipeFormSchema = z.object({
   title: z.string().min(1, 'Title is required').max(200, 'Title is too long'),
@@ -34,6 +51,7 @@ const recipeFormSchema = z.object({
   steps: z.string().nullable(),
   notes: z.string().nullable(),
   flags: z.array(z.object({ value: z.string(), label: z.string() })),
+  ingredients: z.array(ingredientSchema),
 })
 
 export type RecipeFormValues = z.infer<typeof recipeFormSchema>
@@ -42,6 +60,7 @@ interface RecipeFormProps {
   defaultValues?: Partial<RecipeFormValues>
   existingRecipe?: RecipeDto
   onSubmit: (values: RecipeFormValues) => void
+  onCancel?: () => void
   isSubmitting?: boolean
   submitLabel?: string
 }
@@ -60,6 +79,7 @@ export function RecipeForm({
   defaultValues,
   existingRecipe,
   onSubmit,
+  onCancel,
   isSubmitting = false,
   submitLabel = 'Save Recipe',
 }: RecipeFormProps) {
@@ -75,6 +95,16 @@ export function RecipeForm({
         steps: existingRecipe.steps,
         notes: existingRecipe.notes,
         flags: existingRecipe.flags.map((f) => ({ value: f, label: f })),
+        ingredients: (existingRecipe.ingredients ?? []).map((i) => ({
+          rawText: i.rawText,
+          name: i.name,
+          amount: i.amount,
+          amountText: i.amountText,
+          unit: i.unit,
+          customUnit: i.customUnit,
+          groupName: i.groupName,
+          sortOrder: i.sortOrder,
+        })),
       }
     : {
         title: defaultValues?.title ?? '',
@@ -86,6 +116,7 @@ export function RecipeForm({
         steps: defaultValues?.steps ?? null,
         notes: defaultValues?.notes ?? null,
         flags: defaultValues?.flags ?? [],
+        ingredients: defaultValues?.ingredients ?? [],
       }
 
   const {
@@ -101,8 +132,23 @@ export function RecipeForm({
 
   const isFavorite = watch('isFavorite')
 
+  const formButtons = (
+    <div className="flex justify-end gap-4">
+      {onCancel && (
+        <Button type="button" variant="outline" onClick={onCancel} disabled={isSubmitting}>
+          Cancel
+        </Button>
+      )}
+      <Button type="submit" disabled={isSubmitting}>
+        {isSubmitting ? 'Saving...' : submitLabel}
+      </Button>
+    </div>
+  )
+
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      {formButtons}
+
       {/* Basic Information */}
       <Card>
         <CardHeader>
@@ -175,6 +221,25 @@ export function RecipeForm({
               )}
             </div>
           </div>
+        </CardContent>
+      </Card>
+
+      {/* Ingredients */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Ingredients</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Controller
+            control={control}
+            name="ingredients"
+            render={({ field }) => (
+              <IngredientEditor
+                value={field.value as IngredientForCreationDto[]}
+                onChange={field.onChange}
+              />
+            )}
+          />
         </CardContent>
       </Card>
 
@@ -298,12 +363,7 @@ export function RecipeForm({
         </CardContent>
       </Card>
 
-      {/* Submit Button */}
-      <div className="flex justify-end gap-4">
-        <Button type="submit" disabled={isSubmitting}>
-          {isSubmitting ? 'Saving...' : submitLabel}
-        </Button>
-      </div>
+      {formButtons}
     </form>
   )
 }

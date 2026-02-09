@@ -14,5 +14,6 @@ public sealed record RecipeSummaryDto
     public int? Servings { get; init; }
     public IReadOnlyList<string> Tags { get; init; } = [];
     public IReadOnlyList<string> Flags { get; init; } = [];
+    public int IngredientCount { get; init; }
     public DateTimeOffset CreatedOn { get; init; }
 }

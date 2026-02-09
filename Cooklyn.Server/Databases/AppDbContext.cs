@@ -25,6 +25,7 @@ public class AppDbContext(
     public DbSet<Recipe> Recipes => Set<Recipe>();
     public DbSet<RecipeTag> RecipeTags => Set<RecipeTag>();
     public DbSet<RecipeFlagEntry> RecipeFlagEntries => Set<RecipeFlagEntry>();
+    public DbSet<Ingredient> Ingredients => Set<Ingredient>();
     public DbSet<NutritionInfo> NutritionInfos => Set<NutritionInfo>();
     #endregion
 

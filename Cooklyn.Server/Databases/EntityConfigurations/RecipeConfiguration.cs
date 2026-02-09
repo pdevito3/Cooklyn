@@ -71,6 +71,14 @@ public sealed class RecipeConfiguration : IEntityTypeConfiguration<Recipe>
         builder.Navigation(e => e.Flags)
             .UsePropertyAccessMode(PropertyAccessMode.Field);
 
+        builder.HasMany(e => e.Ingredients)
+            .WithOne()
+            .HasForeignKey(i => i.RecipeId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Navigation(e => e.Ingredients)
+            .UsePropertyAccessMode(PropertyAccessMode.Field);
+
         // One-to-one with NutritionInfo
         builder.HasOne(e => e.NutritionInfo)
             .WithOne()

@@ -160,6 +160,37 @@ public sealed class RecipesController(IMediator mediator) : ControllerBase
     }
 
     /// <summary>
+    /// Updates the ingredients of a Recipe.
+    /// </summary>
+    [Authorize]
+    [HttpPut("{id:guid}/ingredients", Name = "UpdateRecipeIngredients")]
+    [ProducesResponseType(typeof(RecipeDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<RecipeDto>> UpdateIngredients(
+        Guid id,
+        [FromBody] UpdateIngredientsDto dto)
+    {
+        var command = new UpdateRecipeIngredients.Command(id, dto.Ingredients);
+        var result = await mediator.Send(command);
+        return Ok(result);
+    }
+
+    /// <summary>
+    /// Parses free-text ingredients into structured data.
+    /// </summary>
+    [Authorize]
+    [HttpPost("parse-ingredients", Name = "ParseIngredients")]
+    [ProducesResponseType(typeof(IReadOnlyList<IngredientForCreationDto>), StatusCodes.Status200OK)]
+    public async Task<ActionResult<IReadOnlyList<IngredientForCreationDto>>> ParseIngredients(
+        [FromBody] ParseIngredientsRequestDto dto)
+    {
+        var command = new ParseIngredients.Command(dto.Text);
+        var result = await mediator.Send(command);
+        return Ok(result);
+    }
+
+    /// <summary>
     /// Uploads an image for a Recipe.
     /// </summary>
     [Authorize]

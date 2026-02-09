@@ -22,7 +22,8 @@ public static class GetRecipeList
             IQueryable<Recipe> query = dbContext.Recipes
                 .AsNoTracking()
                 .Include(r => r.RecipeTags).ThenInclude(rt => rt.Tag)
-                .Include(r => r.Flags);
+                .Include(r => r.Flags)
+                .Include(r => r.Ingredients);
 
             if (!string.IsNullOrWhiteSpace(request.Parameters.Filters))
                 query = query.ApplyQueryKitFilter(request.Parameters.Filters, queryKitConfig);

@@ -46,6 +46,14 @@ public static class AddRecipe
                 recipe.AddFlag(flag);
             }
 
+            // Add ingredients
+            if (request.Dto.Ingredients.Any())
+            {
+                var ingredients = request.Dto.Ingredients.Select(dto =>
+                    Ingredient.Create(dto.ToIngredientForCreation(recipe.Id)));
+                recipe.SetIngredients(ingredients);
+            }
+
             // Add nutrition info if provided
             if (request.Dto.NutritionInfo != null)
             {
@@ -60,6 +68,7 @@ public static class AddRecipe
             var loadedRecipe = await dbContext.Recipes
                 .Include(r => r.RecipeTags).ThenInclude(rt => rt.Tag)
                 .Include(r => r.Flags)
+                .Include(r => r.Ingredients)
                 .Include(r => r.NutritionInfo)
                 .FirstAsync(r => r.Id == recipe.Id, cancellationToken);
 

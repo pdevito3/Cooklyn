@@ -29,6 +29,7 @@ function NewRecipePage() {
         notes: values.notes,
         tagIds: [],
         flags: values.flags.map((f) => f.value),
+        ingredients: values.ingredients,
         nutritionInfo: null,
       },
       {
@@ -62,6 +63,7 @@ function NewRecipePage() {
       <div className="mx-auto max-w-3xl">
         <RecipeForm
           onSubmit={handleSubmit}
+          onCancel={handleBack}
           isSubmitting={createRecipe.isPending}
           submitLabel="Create Recipe"
         />

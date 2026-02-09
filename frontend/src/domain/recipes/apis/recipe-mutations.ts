@@ -5,6 +5,7 @@ import type {
   RecipeForCreationDto,
   RecipeForUpdateDto,
   RecipeImageDto,
+  IngredientForCreationDto,
 } from '../types'
 import { RecipeKeys } from './recipe.keys'
 
@@ -160,6 +161,63 @@ export function useDeleteRecipeImage() {
       queryClient.invalidateQueries({ queryKey: RecipeKeys.lists() })
       queryClient.invalidateQueries({ queryKey: RecipeKeys.detail(id) })
     },
+  })
+}
+
+/**
+ * Update recipe ingredients
+ */
+export async function updateRecipeIngredients(
+  id: string,
+  ingredients: IngredientForCreationDto[]
+): Promise<RecipeDto> {
+  const response = await apiClient.put<RecipeDto>(
+    `/api/v1/recipes/${id}/ingredients`,
+    { ingredients }
+  )
+  return response.data
+}
+
+/**
+ * Hook for updating recipe ingredients
+ */
+export function useUpdateRecipeIngredients() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: ({
+      id,
+      ingredients,
+    }: {
+      id: string
+      ingredients: IngredientForCreationDto[]
+    }) => updateRecipeIngredients(id, ingredients),
+    onSuccess: (_, { id }) => {
+      queryClient.invalidateQueries({ queryKey: RecipeKeys.lists() })
+      queryClient.invalidateQueries({ queryKey: RecipeKeys.detail(id) })
+    },
+  })
+}
+
+/**
+ * Parse free-text ingredients into structured data
+ */
+export async function parseIngredients(
+  text: string
+): Promise<IngredientForCreationDto[]> {
+  const response = await apiClient.post<IngredientForCreationDto[]>(
+    '/api/v1/recipes/parse-ingredients',
+    { text }
+  )
+  return response.data
+}
+
+/**
+ * Hook for parsing ingredients
+ */
+export function useParseIngredients() {
+  return useMutation({
+    mutationFn: parseIngredients,
   })
 }
 

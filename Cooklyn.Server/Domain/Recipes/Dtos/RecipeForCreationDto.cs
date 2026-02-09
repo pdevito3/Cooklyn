@@ -20,5 +20,6 @@ public sealed record RecipeForCreationDto
     public string? Notes { get; init; }
     public IReadOnlyList<Guid> TagIds { get; init; } = [];
     public IReadOnlyList<string> Flags { get; init; } = [];
+    public IReadOnlyList<IngredientForCreationDto> Ingredients { get; init; } = [];
     public NutritionInfoForCreationDto? NutritionInfo { get; init; }
 }

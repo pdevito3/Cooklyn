@@ -26,6 +26,7 @@ public sealed record RecipeDto
     public string? Notes { get; init; }
     public IReadOnlyList<string> Tags { get; init; } = [];
     public IReadOnlyList<string> Flags { get; init; } = [];
+    public IReadOnlyList<IngredientDto> Ingredients { get; init; } = [];
     public NutritionInfoDto? NutritionInfo { get; init; }
     public DateTimeOffset CreatedOn { get; init; }
     public DateTimeOffset? LastModifiedOn { get; init; }

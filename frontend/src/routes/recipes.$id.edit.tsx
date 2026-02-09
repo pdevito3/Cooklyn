@@ -8,6 +8,7 @@ import {
   useUpdateRecipe,
   useUploadRecipeImage,
   useDeleteRecipeImage,
+  useUpdateRecipeIngredients,
 } from '@/domain/recipes'
 import { RecipeForm, type RecipeFormValues } from '@/components/recipe-form'
 import { Button } from '@/components/ui/button'
@@ -153,6 +154,7 @@ function EditRecipePage() {
 
   const { data: recipe, isLoading, error } = useRecipe(id)
   const updateRecipe = useUpdateRecipe()
+  const updateIngredients = useUpdateRecipeIngredients()
 
   const handleSubmit = (values: RecipeFormValues) => {
     updateRecipe.mutate(
@@ -173,7 +175,19 @@ function EditRecipePage() {
       },
       {
         onSuccess: () => {
-          navigate({ to: '/recipes/$id', params: { id } })
+          // Save ingredients separately
+          updateIngredients.mutate(
+            { id, ingredients: values.ingredients },
+            {
+              onSuccess: () => {
+                navigate({ to: '/recipes/$id', params: { id } })
+              },
+              onError: () => {
+                // Recipe was saved but ingredients failed — still navigate
+                navigate({ to: '/recipes/$id', params: { id } })
+              },
+            }
+          )
         },
       }
     )
@@ -245,6 +259,7 @@ function EditRecipePage() {
         <RecipeForm
           existingRecipe={recipe}
           onSubmit={handleSubmit}
+          onCancel={handleBack}
           isSubmitting={updateRecipe.isPending}
           submitLabel="Update Recipe"
         />

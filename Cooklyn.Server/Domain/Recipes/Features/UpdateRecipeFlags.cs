@@ -18,6 +18,7 @@ public static class UpdateRecipeFlags
             var recipe = await dbContext.Recipes
                 .Include(r => r.RecipeTags).ThenInclude(rt => rt.Tag)
                 .Include(r => r.Flags)
+                .Include(r => r.Ingredients)
                 .Include(r => r.NutritionInfo)
                 .GetById(request.Id, cancellationToken);
 

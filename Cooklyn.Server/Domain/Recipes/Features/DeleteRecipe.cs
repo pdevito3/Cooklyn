@@ -16,6 +16,7 @@ public static class DeleteRecipe
             var recipe = await dbContext.Recipes
                 .Include(r => r.RecipeTags)
                 .Include(r => r.Flags)
+                .Include(r => r.Ingredients)
                 .Include(r => r.NutritionInfo)
                 .GetById(request.Id, cancellationToken);
 
@@ -34,6 +35,11 @@ public static class DeleteRecipe
             foreach (var flag in recipe.Flags.ToList())
             {
                 dbContext.RecipeFlagEntries.Remove(flag);
+            }
+
+            foreach (var ingredient in recipe.Ingredients.ToList())
+            {
+                dbContext.Ingredients.Remove(ingredient);
             }
 
             if (recipe.NutritionInfo != null)

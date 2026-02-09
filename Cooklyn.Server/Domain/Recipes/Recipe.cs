@@ -28,6 +28,9 @@ public class Recipe : BaseEntity, ITenantable
     private readonly List<RecipeFlagEntry> _flags = [];
     public IReadOnlyCollection<RecipeFlagEntry> Flags => _flags.AsReadOnly();
 
+    private readonly List<Ingredient> _ingredients = [];
+    public IReadOnlyCollection<Ingredient> Ingredients => _ingredients.AsReadOnly();
+
     public NutritionInfo? NutritionInfo { get; private set; }
 
     public static Recipe Create(RecipeForCreation forCreation)
@@ -199,6 +202,15 @@ public class Recipe : BaseEntity, ITenantable
     public Recipe ClearNutritionInfo()
     {
         NutritionInfo = null;
+        QueueDomainEvent(new RecipeUpdated(Id));
+        return this;
+    }
+
+    // Ingredient management
+    public Recipe SetIngredients(IEnumerable<Ingredient> ingredients)
+    {
+        _ingredients.Clear();
+        _ingredients.AddRange(ingredients);
         QueueDomainEvent(new RecipeUpdated(Id));
         return this;
     }

@@ -193,6 +193,86 @@ function RecipeDetailPage() {
         </Card>
       )}
 
+      {/* Ingredients */}
+      {recipe.ingredients && recipe.ingredients.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle>
+              Ingredients ({recipe.ingredients.length})
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {(() => {
+              // Group ingredients by groupName
+              const grouped = new Map<string, typeof recipe.ingredients>();
+              const ungrouped: typeof recipe.ingredients = [];
+
+              for (const ingredient of recipe.ingredients) {
+                if (ingredient.groupName) {
+                  const existing = grouped.get(ingredient.groupName) ?? [];
+                  existing.push(ingredient);
+                  grouped.set(ingredient.groupName, existing);
+                } else {
+                  ungrouped.push(ingredient);
+                }
+              }
+
+              return (
+                <div className="space-y-4">
+                  {ungrouped.length > 0 && (
+                    <ul className="space-y-1">
+                      {ungrouped
+                        .sort((a, b) => a.sortOrder - b.sortOrder)
+                        .map((ingredient) => (
+                          <li key={ingredient.id} className="flex gap-1">
+                            {ingredient.amountText && (
+                              <span className="font-medium">
+                                {ingredient.amountText}
+                              </span>
+                            )}
+                            {ingredient.unit && (
+                              <span className="text-muted-foreground">
+                                {ingredient.unit}
+                              </span>
+                            )}
+                            <span>{ingredient.name ?? ingredient.rawText}</span>
+                          </li>
+                        ))}
+                    </ul>
+                  )}
+                  {Array.from(grouped.entries()).map(([groupName, items]) => (
+                    <div key={groupName}>
+                      <h4 className="mb-1 font-semibold">{groupName}</h4>
+                      <ul className="space-y-1">
+                        {items
+                          .sort((a, b) => a.sortOrder - b.sortOrder)
+                          .map((ingredient) => (
+                            <li key={ingredient.id} className="flex gap-1">
+                              {ingredient.amountText && (
+                                <span className="font-medium">
+                                  {ingredient.amountText}
+                                </span>
+                              )}
+                              {ingredient.unit && (
+                                <span className="text-muted-foreground">
+                                  {ingredient.unit}
+                                </span>
+                              )}
+                              <span>
+                                {ingredient.name ?? ingredient.rawText}
+                              </span>
+                            </li>
+                          ))}
+                      </ul>
+                    </div>
+                  ))}
+                </div>
+              );
+            })()}
+          </CardContent>
+        </Card>
+      )}
+
       {/* Steps */}
       {recipe.steps && (
         <Card>
