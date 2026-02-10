@@ -7,7 +7,7 @@ using MediatR;
 
 public static class UpdateTag
 {
-    public sealed record Command(Guid Id, TagForUpdateDto Dto) : IRequest<TagDto>;
+    public sealed record Command(string Id, TagForUpdateDto Dto) : IRequest<TagDto>;
 
     public sealed class Handler(AppDbContext dbContext) : IRequestHandler<Command, TagDto>
     {

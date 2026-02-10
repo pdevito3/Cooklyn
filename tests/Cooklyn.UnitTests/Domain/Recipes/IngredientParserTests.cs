@@ -1,11 +1,12 @@
 namespace Cooklyn.UnitTests.Domain.Recipes;
 
 using Cooklyn.Server.Domain.Recipes;
+using Cooklyn.SharedTestHelpers;
 using Shouldly;
 
 public class IngredientParserTests
 {
-    private static readonly Guid RecipeId = Guid.NewGuid();
+    private static readonly string RecipeId = IdGenerator.Recipe();
 
     // --- Single line: amount parsing ---
 

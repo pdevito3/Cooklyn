@@ -9,6 +9,7 @@ public sealed class UserPermissionConfiguration : IEntityTypeConfiguration<UserP
     public void Configure(EntityTypeBuilder<UserPermission> builder)
     {
         builder.HasKey(e => e.Id);
+        builder.Property(e => e.Id).WithPrefix("usr-perm");
 
         builder.Property(e => e.UserId)
             .IsRequired();

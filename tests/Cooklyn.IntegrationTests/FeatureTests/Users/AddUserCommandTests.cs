@@ -93,6 +93,6 @@ public class AddUserCommandTests : TestBase
 
         // Assert
         userReturned.ShouldNotBeNull();
-        userReturned.Id.ShouldNotBe(Guid.Empty);
+        userReturned.Id.ShouldNotBeNullOrEmpty();
     }
 }

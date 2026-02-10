@@ -2,7 +2,7 @@ namespace Cooklyn.Server.Domain.Recipes.Dtos;
 
 public sealed record IngredientDto
 {
-    public Guid Id { get; init; }
+    public string Id { get; init; } = default!;
     public string RawText { get; init; } = default!;
     public string? Name { get; init; }
     public decimal? Amount { get; init; }

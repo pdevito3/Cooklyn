@@ -2,10 +2,10 @@ namespace Cooklyn.Server.Domain.Recipes;
 
 public class RecipeFlagEntry : BaseEntity
 {
-    public Guid RecipeId { get; private set; }
+    public string RecipeId { get; private set; } = default!;
     public RecipeFlag Flag { get; private set; } = default!;
 
-    public static RecipeFlagEntry Create(Guid recipeId, RecipeFlag flag)
+    public static RecipeFlagEntry Create(string recipeId, RecipeFlag flag)
     {
         return new RecipeFlagEntry
         {

@@ -2,7 +2,7 @@ namespace Cooklyn.Server.Domain.Users;
 
 public class UserPermission : BaseEntity
 {
-    public Guid UserId { get; private set; }
+    public string UserId { get; private set; } = default!;
     public Permission Permission { get; private set; } = default!;
 
     public static UserPermission Create(User user, Permission permission)

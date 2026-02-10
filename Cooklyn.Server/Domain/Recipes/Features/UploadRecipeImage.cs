@@ -9,7 +9,7 @@ using Services;
 
 public static class UploadRecipeImage
 {
-    public sealed record Command(Guid RecipeId, IFormFile File) : IRequest<RecipeImageDto>;
+    public sealed record Command(string RecipeId, IFormFile File) : IRequest<RecipeImageDto>;
 
     public sealed class Handler(
         AppDbContext dbContext,

@@ -7,7 +7,7 @@ using MediatR;
 
 public static class GetTag
 {
-    public sealed record Query(Guid Id) : IRequest<TagDto>;
+    public sealed record Query(string Id) : IRequest<TagDto>;
 
     public sealed class Handler(AppDbContext dbContext) : IRequestHandler<Query, TagDto>
     {

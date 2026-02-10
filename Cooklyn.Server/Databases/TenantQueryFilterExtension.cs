@@ -50,10 +50,9 @@ public static class TenantQueryFilterExtension
         // Build: context.CurrentTenantId == null || e.TenantId == context.CurrentTenantId.Value
         var nullCheck = Expression.Equal(
             currentTenantIdExpr,
-            Expression.Constant(null, typeof(Guid?)));
+            Expression.Constant(null, typeof(string)));
 
-        var tenantIdAsNullable = Expression.Convert(tenantIdProperty, typeof(Guid?));
-        var tenantMatch = Expression.Equal(tenantIdAsNullable, currentTenantIdExpr);
+        var tenantMatch = Expression.Equal(tenantIdProperty, currentTenantIdExpr);
 
         var filterBody = Expression.OrElse(nullCheck, tenantMatch);
         return Expression.Lambda(filterBody, parameter);
@@ -76,10 +75,9 @@ public static class TenantQueryFilterExtension
         // Build: context.CurrentTenantId == null || navigation.TenantId == context.CurrentTenantId
         var nullCheck = Expression.Equal(
             currentTenantIdExpr,
-            Expression.Constant(null, typeof(Guid?)));
+            Expression.Constant(null, typeof(string)));
 
-        var tenantIdAsNullable = Expression.Convert(navigationBody, typeof(Guid?));
-        var tenantMatch = Expression.Equal(tenantIdAsNullable, currentTenantIdExpr);
+        var tenantMatch = Expression.Equal(navigationBody, currentTenantIdExpr);
 
         var filterBody = Expression.OrElse(nullCheck, tenantMatch);
         return Expression.Lambda(filterBody, parameter);

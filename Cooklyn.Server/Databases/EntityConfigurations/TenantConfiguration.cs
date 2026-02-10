@@ -9,6 +9,7 @@ public sealed class TenantConfiguration : IEntityTypeConfiguration<Tenant>
     public void Configure(EntityTypeBuilder<Tenant> builder)
     {
         builder.HasKey(e => e.Id);
+        builder.Property(e => e.Id).WithPrefix("tenant");
 
         builder.Property(e => e.Name)
             .IsRequired()

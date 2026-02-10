@@ -9,6 +9,7 @@ public sealed class RecipeFlagEntryConfiguration : IEntityTypeConfiguration<Reci
     public void Configure(EntityTypeBuilder<RecipeFlagEntry> builder)
     {
         builder.HasKey(e => e.Id);
+        builder.Property(e => e.Id).WithPrefix("rfe");
 
         builder.Property(e => e.RecipeId)
             .IsRequired();

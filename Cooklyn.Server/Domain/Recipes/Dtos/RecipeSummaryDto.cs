@@ -2,7 +2,7 @@ namespace Cooklyn.Server.Domain.Recipes.Dtos;
 
 public sealed record RecipeSummaryDto
 {
-    public Guid Id { get; init; }
+    public string Id { get; init; } = default!;
     public string Title { get; init; } = default!;
     public string? Description { get; init; }
     /// <summary>

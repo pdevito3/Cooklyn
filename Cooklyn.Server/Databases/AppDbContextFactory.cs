@@ -42,8 +42,8 @@ public class AppDbContextFactory : IDesignTimeDbContextFactory<AppDbContext>
 
     private sealed class DesignTimeTenantIdProvider : ITenantIdProvider
     {
-        public Task<Guid?> GetTenantIdAsync(string userIdentifier, CancellationToken cancellationToken = default)
-            => Task.FromResult<Guid?>(null);
+        public Task<string?> GetTenantIdAsync(string userIdentifier, CancellationToken cancellationToken = default)
+            => Task.FromResult<string?>(null);
 
         public Task InvalidateCacheAsync(string userIdentifier, CancellationToken cancellationToken = default)
             => Task.CompletedTask;

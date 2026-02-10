@@ -17,7 +17,7 @@ public static partial class NutritionInfoMapper
 
     public static NutritionInfoForCreation ToNutritionInfoForCreation(
         this NutritionInfoForCreationDto dto,
-        Guid recipeId)
+        string recipeId)
     {
         return new NutritionInfoForCreation
         {

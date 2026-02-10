@@ -2,7 +2,7 @@ namespace Cooklyn.Server.Domain.Recipes.Models;
 
 public sealed record NutritionInfoForCreation
 {
-    public Guid RecipeId { get; init; }
+    public string RecipeId { get; init; } = default!;
     public decimal? Calories { get; init; }
     public decimal? TotalFatGrams { get; init; }
     public decimal? SaturatedFatGrams { get; init; }

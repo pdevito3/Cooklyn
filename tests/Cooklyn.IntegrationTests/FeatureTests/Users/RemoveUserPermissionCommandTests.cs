@@ -3,6 +3,7 @@ namespace Cooklyn.IntegrationTests.FeatureTests.Users;
 using Cooklyn.Server.Domain.Users;
 using Cooklyn.Server.Domain.Users.Features;
 using Cooklyn.Server.Exceptions;
+using Cooklyn.SharedTestHelpers;
 using Cooklyn.SharedTestHelpers.Fakes.User;
 using Microsoft.EntityFrameworkCore;
 using Shouldly;
@@ -82,7 +83,7 @@ public class RemoveUserPermissionCommandTests : TestBase
     {
         // Arrange
         var testingServiceScope = new TestingServiceScope();
-        var nonExistentId = Guid.NewGuid();
+        var nonExistentId = IdGenerator.User();
 
         // Act & Assert
         var command = new RemoveUserPermission.Command(nonExistentId, "do_something_special");

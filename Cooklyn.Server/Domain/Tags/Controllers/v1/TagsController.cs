@@ -18,10 +18,10 @@ public sealed class TagsController(IMediator mediator) : ControllerBase
     /// Gets a single Tag by ID.
     /// </summary>
     [Authorize]
-    [HttpGet("{id:guid}", Name = "GetTag")]
+    [HttpGet("{id}", Name = "GetTag")]
     [ProducesResponseType(typeof(TagDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<TagDto>> GetTag(Guid id)
+    public async Task<ActionResult<TagDto>> GetTag(string id)
     {
         var query = new GetTag.Query(id);
         var result = await mediator.Send(query);
@@ -67,12 +67,12 @@ public sealed class TagsController(IMediator mediator) : ControllerBase
     /// Updates an existing Tag.
     /// </summary>
     [Authorize]
-    [HttpPut("{id:guid}", Name = "UpdateTag")]
+    [HttpPut("{id}", Name = "UpdateTag")]
     [ProducesResponseType(typeof(TagDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<TagDto>> UpdateTag(
-        Guid id,
+        string id,
         [FromBody] TagForUpdateDto dto)
     {
         var command = new UpdateTag.Command(id, dto);
@@ -84,10 +84,10 @@ public sealed class TagsController(IMediator mediator) : ControllerBase
     /// Deletes a Tag.
     /// </summary>
     [Authorize]
-    [HttpDelete("{id:guid}", Name = "DeleteTag")]
+    [HttpDelete("{id}", Name = "DeleteTag")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult> DeleteTag(Guid id)
+    public async Task<ActionResult> DeleteTag(string id)
     {
         var command = new DeleteTag.Command(id);
         await mediator.Send(command);

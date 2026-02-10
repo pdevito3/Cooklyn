@@ -11,5 +11,5 @@ public static class TestContext
     /// Initialized with a placeholder GUID for unit tests.
     /// Integration tests override this after creating a real tenant in the database.
     /// </summary>
-    public static Guid DefaultTenantId { get; set; } = Guid.Parse("11111111-1111-1111-1111-111111111111");
+    public static string DefaultTenantId { get; set; } = "tenant_11111111111111111111111111111111";
 }

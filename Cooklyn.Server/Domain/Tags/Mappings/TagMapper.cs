@@ -17,7 +17,7 @@ public static partial class TagMapper
 
     public static partial IQueryable<TagDto> ToTagDtoQueryable(this IQueryable<Tag> queryable);
 
-    public static TagForCreation ToTagForCreation(this TagForCreationDto dto, Guid tenantId)
+    public static TagForCreation ToTagForCreation(this TagForCreationDto dto, string tenantId)
     {
         return new TagForCreation
         {

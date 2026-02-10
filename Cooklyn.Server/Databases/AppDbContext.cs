@@ -33,7 +33,7 @@ public class AppDbContext(
     /// The current user's tenant ID for query filtering.
     /// Returns null to allow access to all tenants (e.g., for system operations or unauthenticated requests).
     /// </summary>
-    public Guid? CurrentTenantId
+    public string? CurrentTenantId
     {
         get
         {

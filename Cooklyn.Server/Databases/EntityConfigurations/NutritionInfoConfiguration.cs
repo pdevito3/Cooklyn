@@ -9,6 +9,7 @@ public sealed class NutritionInfoConfiguration : IEntityTypeConfiguration<Nutrit
     public void Configure(EntityTypeBuilder<NutritionInfo> builder)
     {
         builder.HasKey(e => e.Id);
+        builder.Property(e => e.Id).WithPrefix("ntrn-info");
 
         builder.Property(e => e.RecipeId)
             .IsRequired();

@@ -6,7 +6,7 @@ using Services;
 
 public static class DeleteRecipeImage
 {
-    public sealed record Command(Guid RecipeId) : IRequest;
+    public sealed record Command(string RecipeId) : IRequest;
 
     public sealed class Handler(
         AppDbContext dbContext,

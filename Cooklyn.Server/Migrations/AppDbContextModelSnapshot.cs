@@ -4,20 +4,17 @@ using System.Collections.Generic;
 using Cooklyn.Server.Databases;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace Cooklyn.Server.Databases.Migrations
+namespace Cooklyn.Server.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260210014424_RenameToIngredients")]
-    partial class RenameToIngredients
+    partial class AppDbContextModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -28,9 +25,8 @@ namespace Cooklyn.Server.Databases.Migrations
 
             modelBuilder.Entity("Cooklyn.Server.Domain.Recipes.Ingredient", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
+                    b.Property<string>("Id")
+                        .HasColumnType("text")
                         .HasColumnName("id");
 
                     b.Property<decimal?>("Amount")
@@ -84,8 +80,9 @@ namespace Cooklyn.Server.Databases.Migrations
                         .HasColumnType("character varying(500)")
                         .HasColumnName("raw_text");
 
-                    b.Property<Guid>("RecipeId")
-                        .HasColumnType("uuid")
+                    b.Property<string>("RecipeId")
+                        .IsRequired()
+                        .HasColumnType("text")
                         .HasColumnName("recipe_id");
 
                     b.Property<int>("SortOrder")
@@ -114,9 +111,8 @@ namespace Cooklyn.Server.Databases.Migrations
 
             modelBuilder.Entity("Cooklyn.Server.Domain.Recipes.NutritionInfo", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
+                    b.Property<string>("Id")
+                        .HasColumnType("text")
                         .HasColumnName("id");
 
                     b.Property<decimal?>("AddedSugarsGrams")
@@ -183,8 +179,9 @@ namespace Cooklyn.Server.Databases.Migrations
                         .HasColumnType("numeric(10,2)")
                         .HasColumnName("protein_grams");
 
-                    b.Property<Guid>("RecipeId")
-                        .HasColumnType("uuid")
+                    b.Property<string>("RecipeId")
+                        .IsRequired()
+                        .HasColumnType("text")
                         .HasColumnName("recipe_id");
 
                     b.Property<decimal?>("SaturatedFatGrams")
@@ -234,9 +231,8 @@ namespace Cooklyn.Server.Databases.Migrations
 
             modelBuilder.Entity("Cooklyn.Server.Domain.Recipes.Recipe", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
+                    b.Property<string>("Id")
+                        .HasColumnType("text")
                         .HasColumnName("id");
 
                     b.Property<string>("CreatedBy")
@@ -291,8 +287,9 @@ namespace Cooklyn.Server.Databases.Migrations
                         .HasColumnType("text")
                         .HasColumnName("steps");
 
-                    b.Property<Guid>("TenantId")
-                        .HasColumnType("uuid")
+                    b.Property<string>("TenantId")
+                        .IsRequired()
+                        .HasColumnType("text")
                         .HasColumnName("tenant_id");
 
                     b.Property<string>("Title")
@@ -339,9 +336,8 @@ namespace Cooklyn.Server.Databases.Migrations
 
             modelBuilder.Entity("Cooklyn.Server.Domain.Recipes.RecipeFlagEntry", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
+                    b.Property<string>("Id")
+                        .HasColumnType("text")
                         .HasColumnName("id");
 
                     b.Property<string>("CreatedBy")
@@ -364,8 +360,9 @@ namespace Cooklyn.Server.Databases.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("last_modified_on");
 
-                    b.Property<Guid>("RecipeId")
-                        .HasColumnType("uuid")
+                    b.Property<string>("RecipeId")
+                        .IsRequired()
+                        .HasColumnType("text")
                         .HasColumnName("recipe_id");
 
                     b.ComplexProperty(typeof(Dictionary<string, object>), "Flag", "Cooklyn.Server.Domain.Recipes.RecipeFlagEntry.Flag#RecipeFlag", b1 =>
@@ -390,9 +387,8 @@ namespace Cooklyn.Server.Databases.Migrations
 
             modelBuilder.Entity("Cooklyn.Server.Domain.Recipes.RecipeTag", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
+                    b.Property<string>("Id")
+                        .HasColumnType("text")
                         .HasColumnName("id");
 
                     b.Property<string>("CreatedBy")
@@ -415,12 +411,14 @@ namespace Cooklyn.Server.Databases.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("last_modified_on");
 
-                    b.Property<Guid>("RecipeId")
-                        .HasColumnType("uuid")
+                    b.Property<string>("RecipeId")
+                        .IsRequired()
+                        .HasColumnType("text")
                         .HasColumnName("recipe_id");
 
-                    b.Property<Guid>("TagId")
-                        .HasColumnType("uuid")
+                    b.Property<string>("TagId")
+                        .IsRequired()
+                        .HasColumnType("text")
                         .HasColumnName("tag_id");
 
                     b.HasKey("Id")
@@ -441,9 +439,8 @@ namespace Cooklyn.Server.Databases.Migrations
 
             modelBuilder.Entity("Cooklyn.Server.Domain.Tags.Tag", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
+                    b.Property<string>("Id")
+                        .HasColumnType("text")
                         .HasColumnName("id");
 
                     b.Property<string>("CreatedBy")
@@ -472,8 +469,9 @@ namespace Cooklyn.Server.Databases.Migrations
                         .HasColumnType("character varying(100)")
                         .HasColumnName("name");
 
-                    b.Property<Guid>("TenantId")
-                        .HasColumnType("uuid")
+                    b.Property<string>("TenantId")
+                        .IsRequired()
+                        .HasColumnType("text")
                         .HasColumnName("tenant_id");
 
                     b.HasKey("Id")
@@ -491,9 +489,8 @@ namespace Cooklyn.Server.Databases.Migrations
 
             modelBuilder.Entity("Cooklyn.Server.Domain.Tenants.Tenant", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
+                    b.Property<string>("Id")
+                        .HasColumnType("text")
                         .HasColumnName("id");
 
                     b.Property<string>("CreatedBy")
@@ -534,9 +531,8 @@ namespace Cooklyn.Server.Databases.Migrations
 
             modelBuilder.Entity("Cooklyn.Server.Domain.Users.User", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
+                    b.Property<string>("Id")
+                        .HasColumnType("text")
                         .HasColumnName("id");
 
                     b.Property<string>("CreatedBy")
@@ -577,8 +573,9 @@ namespace Cooklyn.Server.Databases.Migrations
                         .HasColumnType("character varying(200)")
                         .HasColumnName("last_name");
 
-                    b.Property<Guid>("TenantId")
-                        .HasColumnType("uuid")
+                    b.Property<string>("TenantId")
+                        .IsRequired()
+                        .HasColumnType("text")
                         .HasColumnName("tenant_id");
 
                     b.Property<string>("Username")
@@ -627,9 +624,8 @@ namespace Cooklyn.Server.Databases.Migrations
 
             modelBuilder.Entity("Cooklyn.Server.Domain.Users.UserPermission", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
+                    b.Property<string>("Id")
+                        .HasColumnType("text")
                         .HasColumnName("id");
 
                     b.Property<string>("CreatedBy")
@@ -652,8 +648,9 @@ namespace Cooklyn.Server.Databases.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("last_modified_on");
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid")
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("text")
                         .HasColumnName("user_id");
 
                     b.ComplexProperty(typeof(Dictionary<string, object>), "Permission", "Cooklyn.Server.Domain.Users.UserPermission.Permission#Permission", b1 =>

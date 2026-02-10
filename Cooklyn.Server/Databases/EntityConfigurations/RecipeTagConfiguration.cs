@@ -10,6 +10,7 @@ public sealed class RecipeTagConfiguration : IEntityTypeConfiguration<RecipeTag>
     public void Configure(EntityTypeBuilder<RecipeTag> builder)
     {
         builder.HasKey(e => e.Id);
+        builder.Property(e => e.Id).WithPrefix("rtag");
 
         builder.Property(e => e.RecipeId)
             .IsRequired();

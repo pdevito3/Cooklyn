@@ -4,9 +4,9 @@ using Tags;
 
 public class RecipeTag : BaseEntity
 {
-    public Guid RecipeId { get; private set; }
+    public string RecipeId { get; private set; } = default!;
     public Recipe Recipe { get; private set; } = default!;
-    public Guid TagId { get; private set; }
+    public string TagId { get; private set; } = default!;
     public Tag Tag { get; private set; } = default!;
 
     public static RecipeTag Create(Recipe recipe, Tag tag)

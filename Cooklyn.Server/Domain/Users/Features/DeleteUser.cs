@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 public static class DeleteUser
 {
-    public sealed record Command(Guid Id) : IRequest;
+    public sealed record Command(string Id) : IRequest;
 
     public sealed class Handler(AppDbContext dbContext) : IRequestHandler<Command>
     {

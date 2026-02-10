@@ -18,10 +18,10 @@ public sealed class RecipesController(IMediator mediator) : ControllerBase
     /// Gets a single Recipe by ID.
     /// </summary>
     [Authorize]
-    [HttpGet("{id:guid}", Name = "GetRecipe")]
+    [HttpGet("{id}", Name = "GetRecipe")]
     [ProducesResponseType(typeof(RecipeDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<RecipeDto>> GetRecipe(Guid id)
+    public async Task<ActionResult<RecipeDto>> GetRecipe(string id)
     {
         var query = new GetRecipe.Query(id);
         var result = await mediator.Send(query);
@@ -67,12 +67,12 @@ public sealed class RecipesController(IMediator mediator) : ControllerBase
     /// Updates an existing Recipe.
     /// </summary>
     [Authorize]
-    [HttpPut("{id:guid}", Name = "UpdateRecipe")]
+    [HttpPut("{id}", Name = "UpdateRecipe")]
     [ProducesResponseType(typeof(RecipeDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<RecipeDto>> UpdateRecipe(
-        Guid id,
+        string id,
         [FromBody] RecipeForUpdateDto dto)
     {
         var command = new UpdateRecipe.Command(id, dto);
@@ -84,10 +84,10 @@ public sealed class RecipesController(IMediator mediator) : ControllerBase
     /// Deletes a Recipe.
     /// </summary>
     [Authorize]
-    [HttpDelete("{id:guid}", Name = "DeleteRecipe")]
+    [HttpDelete("{id}", Name = "DeleteRecipe")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult> DeleteRecipe(Guid id)
+    public async Task<ActionResult> DeleteRecipe(string id)
     {
         var command = new DeleteRecipe.Command(id);
         await mediator.Send(command);
@@ -98,10 +98,10 @@ public sealed class RecipesController(IMediator mediator) : ControllerBase
     /// Toggles the favorite status of a Recipe.
     /// </summary>
     [Authorize]
-    [HttpPost("{id:guid}/toggle-favorite", Name = "ToggleRecipeFavorite")]
+    [HttpPost("{id}/toggle-favorite", Name = "ToggleRecipeFavorite")]
     [ProducesResponseType(typeof(RecipeDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<RecipeDto>> ToggleFavorite(Guid id)
+    public async Task<ActionResult<RecipeDto>> ToggleFavorite(string id)
     {
         var command = new ToggleRecipeFavorite.Command(id);
         var result = await mediator.Send(command);
@@ -112,12 +112,12 @@ public sealed class RecipesController(IMediator mediator) : ControllerBase
     /// Updates the rating of a Recipe.
     /// </summary>
     [Authorize]
-    [HttpPut("{id:guid}/rating", Name = "UpdateRecipeRating")]
+    [HttpPut("{id}/rating", Name = "UpdateRecipeRating")]
     [ProducesResponseType(typeof(RecipeDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<RecipeDto>> UpdateRating(
-        Guid id,
+        string id,
         [FromBody] UpdateRecipeRatingDto dto)
     {
         var command = new UpdateRecipeRating.Command(id, dto.Rating);
@@ -129,12 +129,12 @@ public sealed class RecipesController(IMediator mediator) : ControllerBase
     /// Updates the tags of a Recipe.
     /// </summary>
     [Authorize]
-    [HttpPut("{id:guid}/tags", Name = "UpdateRecipeTags")]
+    [HttpPut("{id}/tags", Name = "UpdateRecipeTags")]
     [ProducesResponseType(typeof(RecipeDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<RecipeDto>> UpdateTags(
-        Guid id,
+        string id,
         [FromBody] UpdateRecipeTagsDto dto)
     {
         var command = new UpdateRecipeTags.Command(id, dto.TagIds);
@@ -146,12 +146,12 @@ public sealed class RecipesController(IMediator mediator) : ControllerBase
     /// Updates the flags of a Recipe.
     /// </summary>
     [Authorize]
-    [HttpPut("{id:guid}/flags", Name = "UpdateRecipeFlags")]
+    [HttpPut("{id}/flags", Name = "UpdateRecipeFlags")]
     [ProducesResponseType(typeof(RecipeDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<RecipeDto>> UpdateFlags(
-        Guid id,
+        string id,
         [FromBody] UpdateRecipeFlagsDto dto)
     {
         var command = new UpdateRecipeFlags.Command(id, dto.Flags);
@@ -163,12 +163,12 @@ public sealed class RecipesController(IMediator mediator) : ControllerBase
     /// Updates the ingredients of a Recipe.
     /// </summary>
     [Authorize]
-    [HttpPut("{id:guid}/ingredients", Name = "UpdateRecipeIngredients")]
+    [HttpPut("{id}/ingredients", Name = "UpdateRecipeIngredients")]
     [ProducesResponseType(typeof(RecipeDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<RecipeDto>> UpdateIngredients(
-        Guid id,
+        string id,
         [FromBody] UpdateIngredientsDto dto)
     {
         var command = new UpdateRecipeIngredients.Command(id, dto.Ingredients);
@@ -194,12 +194,12 @@ public sealed class RecipesController(IMediator mediator) : ControllerBase
     /// Uploads an image for a Recipe.
     /// </summary>
     [Authorize]
-    [HttpPost("{id:guid}/image", Name = "UploadRecipeImage")]
+    [HttpPost("{id}/image", Name = "UploadRecipeImage")]
     [ProducesResponseType(typeof(RecipeImageDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<RecipeImageDto>> UploadImage(
-        Guid id,
+        string id,
         IFormFile file)
     {
         var command = new UploadRecipeImage.Command(id, file);
@@ -211,10 +211,10 @@ public sealed class RecipesController(IMediator mediator) : ControllerBase
     /// Deletes the image of a Recipe.
     /// </summary>
     [Authorize]
-    [HttpDelete("{id:guid}/image", Name = "DeleteRecipeImage")]
+    [HttpDelete("{id}/image", Name = "DeleteRecipeImage")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult> DeleteImage(Guid id)
+    public async Task<ActionResult> DeleteImage(string id)
     {
         var command = new DeleteRecipeImage.Command(id);
         await mediator.Send(command);

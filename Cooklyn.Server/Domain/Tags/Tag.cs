@@ -6,7 +6,7 @@ using Tags.Models;
 
 public class Tag : BaseEntity, ITenantable
 {
-    public Guid TenantId { get; private set; }
+    public string TenantId { get; private set; } = default!;
     public string Name { get; private set; } = default!;
 
     public static Tag Create(TagForCreation tagForCreation)
@@ -35,7 +35,7 @@ public class Tag : BaseEntity, ITenantable
 
     private static void ValidateTag(Tag tag)
     {
-        ValidationException.ThrowWhenEmpty(tag.TenantId, "Please provide a tenant.");
+        ValidationException.ThrowWhenNullOrWhitespace(tag.TenantId, "Please provide a tenant.");
         ValidationException.ThrowWhenNullOrWhitespace(tag.Name, "Please provide a tag name.");
     }
 

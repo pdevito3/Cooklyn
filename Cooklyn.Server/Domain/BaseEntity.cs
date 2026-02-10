@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 public abstract class BaseEntity
 {
 
-    public Guid Id { get; private set; } = Guid.NewGuid();
+    public string Id { get; private set; } = default!;
 
     public DateTimeOffset CreatedOn { get; private set; }
     public string? CreatedBy { get; private set; }
@@ -45,7 +45,7 @@ public abstract class BaseEntity
         IsDeleted = isDeleted;
     }
     
-    public void OverrideId(Guid id)
+    public void OverrideId(string id)
     {
         Id = id;
     }

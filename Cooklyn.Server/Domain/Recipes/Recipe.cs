@@ -9,7 +9,7 @@ using Tags;
 
 public class Recipe : BaseEntity, ITenantable
 {
-    public Guid TenantId { get; private set; }
+    public string TenantId { get; private set; } = default!;
     public string Title { get; private set; } = default!;
     public string? Description { get; private set; }
     public string? ImageS3Bucket { get; private set; }
@@ -217,7 +217,7 @@ public class Recipe : BaseEntity, ITenantable
 
     private static void ValidateRecipe(Recipe recipe)
     {
-        ValidationException.ThrowWhenEmpty(recipe.TenantId, "Please provide a tenant.");
+        ValidationException.ThrowWhenNullOrWhitespace(recipe.TenantId, "Please provide a tenant.");
         ValidationException.ThrowWhenNullOrWhitespace(recipe.Title, "Please provide a recipe title.");
     }
 

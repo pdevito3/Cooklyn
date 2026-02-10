@@ -10,6 +10,7 @@ public sealed class IngredientConfiguration : IEntityTypeConfiguration<Ingredien
     {
         builder.ToTable("ingredients");
         builder.HasKey(e => e.Id);
+        builder.Property(e => e.Id).WithPrefix("ing");
 
         builder.Property(e => e.RecipeId)
             .IsRequired();

@@ -11,7 +11,7 @@ public static class ParseIngredients
     {
         public Task<IReadOnlyList<IngredientForCreationDto>> Handle(Command request, CancellationToken cancellationToken)
         {
-            var ingredients = Ingredient.ParseAll(request.Text, Guid.Empty);
+            var ingredients = Ingredient.ParseAll(request.Text, string.Empty);
             var result = ingredients.Select(i => new IngredientForCreationDto
             {
                 RawText = i.RawText,

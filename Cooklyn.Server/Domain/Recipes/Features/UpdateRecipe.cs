@@ -9,7 +9,7 @@ using Services;
 
 public static class UpdateRecipe
 {
-    public sealed record Command(Guid Id, RecipeForUpdateDto Dto) : IRequest<RecipeDto>;
+    public sealed record Command(string Id, RecipeForUpdateDto Dto) : IRequest<RecipeDto>;
 
     public sealed class Handler(AppDbContext dbContext, IFileStorage fileStorage) : IRequestHandler<Command, RecipeDto>
     {

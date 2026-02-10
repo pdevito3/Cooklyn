@@ -9,7 +9,7 @@ using Services;
 
 public static class GetRecipe
 {
-    public sealed record Query(Guid Id) : IRequest<RecipeDto>;
+    public sealed record Query(string Id) : IRequest<RecipeDto>;
 
     public sealed class Handler(AppDbContext dbContext, IFileStorage fileStorage) : IRequestHandler<Query, RecipeDto>
     {

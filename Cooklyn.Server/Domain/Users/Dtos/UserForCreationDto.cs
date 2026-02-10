@@ -2,7 +2,7 @@ namespace Cooklyn.Server.Domain.Users.Dtos;
 
 public sealed record UserForCreationDto
 {
-    public Guid TenantId { get; init; }
+    public string TenantId { get; init; } = default!;
     public string FirstName { get; init; } = default!;
     public string LastName { get; init; } = default!;
     public string Identifier { get; init; } = default!;

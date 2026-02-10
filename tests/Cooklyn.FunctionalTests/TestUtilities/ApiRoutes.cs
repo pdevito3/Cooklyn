@@ -9,10 +9,10 @@ public static class ApiRoutes
     public static class Users
     {
         public static string GetList => $"{Base}/users";
-        public static string GetRecord(Guid id) => $"{Base}/users/{id}";
+        public static string GetRecord(string id) => $"{Base}/users/{id}";
         public static string Create => $"{Base}/users";
-        public static string Put(Guid id) => $"{Base}/users/{id}";
-        public static string Delete(Guid id) => $"{Base}/users/{id}";
+        public static string Put(string id) => $"{Base}/users/{id}";
+        public static string Delete(string id) => $"{Base}/users/{id}";
     }
 
     public static class Weather

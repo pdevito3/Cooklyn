@@ -4,7 +4,7 @@ using Recipes.Models;
 
 public class NutritionInfo : BaseEntity
 {
-    public Guid RecipeId { get; private set; }
+    public string RecipeId { get; private set; } = default!;
 
     // Macronutrients (per serving)
     public decimal? Calories { get; private set; }

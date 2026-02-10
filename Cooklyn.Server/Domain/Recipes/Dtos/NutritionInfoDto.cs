@@ -2,8 +2,8 @@ namespace Cooklyn.Server.Domain.Recipes.Dtos;
 
 public sealed record NutritionInfoDto
 {
-    public Guid Id { get; init; }
-    public Guid RecipeId { get; init; }
+    public string Id { get; init; } = default!;
+    public string RecipeId { get; init; } = default!;
     public decimal? Calories { get; init; }
     public decimal? TotalFatGrams { get; init; }
     public decimal? SaturatedFatGrams { get; init; }

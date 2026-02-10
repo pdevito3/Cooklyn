@@ -1,6 +1,7 @@
 namespace Cooklyn.IntegrationTests.FeatureTests.Users;
 
 using Cooklyn.Server.Domain.Users.Features;
+using Cooklyn.SharedTestHelpers;
 using Cooklyn.SharedTestHelpers.Fakes.User;
 using Shouldly;
 
@@ -53,7 +54,7 @@ public class GetUserQueryTests : TestBase
     {
         // Arrange
         var testingServiceScope = new TestingServiceScope();
-        var nonExistentId = Guid.NewGuid();
+        var nonExistentId = IdGenerator.User();
 
         // Act & Assert
         var query = new GetUser.Query(nonExistentId);

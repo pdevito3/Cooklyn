@@ -90,7 +90,7 @@ public static partial class RecipeMapper
         }).ToList();
     }
 
-    public static RecipeForCreation ToRecipeForCreation(this RecipeForCreationDto dto, Guid tenantId)
+    public static RecipeForCreation ToRecipeForCreation(this RecipeForCreationDto dto, string tenantId)
     {
         return new RecipeForCreation
         {
@@ -110,7 +110,7 @@ public static partial class RecipeMapper
 
     public static partial RecipeForUpdate ToRecipeForUpdate(this RecipeForUpdateDto dto);
 
-    public static IngredientForCreation ToIngredientForCreation(this IngredientForCreationDto dto, Guid recipeId)
+    public static IngredientForCreation ToIngredientForCreation(this IngredientForCreationDto dto, string recipeId)
     {
         return new IngredientForCreation
         {

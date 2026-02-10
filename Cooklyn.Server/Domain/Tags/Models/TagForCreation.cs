@@ -2,6 +2,6 @@ namespace Cooklyn.Server.Domain.Tags.Models;
 
 public sealed record TagForCreation
 {
-    public Guid TenantId { get; init; }
+    public string TenantId { get; init; } = default!;
     public string Name { get; init; } = default!;
 }

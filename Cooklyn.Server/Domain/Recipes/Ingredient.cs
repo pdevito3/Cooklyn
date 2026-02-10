@@ -6,7 +6,7 @@ using Models;
 
 public partial class Ingredient : BaseEntity
 {
-    public Guid RecipeId { get; private set; }
+    public string RecipeId { get; private set; } = default!;
     public string RawText { get; private set; } = default!;
     public string? Name { get; private set; }
     public decimal? Amount { get; private set; }
@@ -56,7 +56,7 @@ public partial class Ingredient : BaseEntity
     /// Parses a multi-line text block into structured Ingredient entities.
     /// Lines ending with ":" (e.g. "Biscuit:") are treated as group headers.
     /// </summary>
-    public static IReadOnlyList<Ingredient> ParseAll(string text, Guid recipeId)
+    public static IReadOnlyList<Ingredient> ParseAll(string text, string recipeId)
     {
         if (string.IsNullOrWhiteSpace(text))
             return [];
@@ -96,7 +96,7 @@ public partial class Ingredient : BaseEntity
     /// <summary>
     /// Parses a single ingredient line into a structured Ingredient entity.
     /// </summary>
-    public static Ingredient Parse(string line, Guid recipeId, int sortOrder, string? groupName = null)
+    public static Ingredient Parse(string line, string recipeId, int sortOrder, string? groupName = null)
     {
         var trimmed = line.Trim();
         var remaining = trimmed;
