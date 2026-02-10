@@ -1,8 +1,9 @@
+import { useEffect, useMemo, useRef } from 'react'
 import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { HugeiconsIcon } from '@hugeicons/react'
-import { FavouriteIcon } from '@hugeicons/core-free-icons'
+import { FavouriteIcon, ImageUploadIcon, Delete02Icon } from '@hugeicons/core-free-icons'
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -63,6 +64,8 @@ interface RecipeFormProps {
   onCancel?: () => void
   isSubmitting?: boolean
   submitLabel?: string
+  imageFile?: File | null
+  onImageFileChange?: (file: File | null) => void
 }
 
 const flagOptions: MultiSelectOption[] = RECIPE_FLAGS.map((flag) => ({
@@ -82,7 +85,19 @@ export function RecipeForm({
   onCancel,
   isSubmitting = false,
   submitLabel = 'Save Recipe',
+  imageFile,
+  onImageFileChange,
 }: RecipeFormProps) {
+  const imageInputRef = useRef<HTMLInputElement>(null)
+  const imagePreviewUrl = useMemo(
+    () => (imageFile ? URL.createObjectURL(imageFile) : null),
+    [imageFile]
+  )
+  useEffect(() => {
+    return () => {
+      if (imagePreviewUrl) URL.revokeObjectURL(imagePreviewUrl)
+    }
+  }, [imagePreviewUrl])
   // Transform existing recipe to form values
   const initialValues: RecipeFormValues = existingRecipe
     ? {
@@ -182,6 +197,64 @@ export function RecipeForm({
               <p className="text-sm font-medium text-destructive">{errors.description.message}</p>
             )}
           </div>
+
+          {onImageFileChange && (
+            <div className="flex flex-col gap-2">
+              <Label>Image</Label>
+              {imagePreviewUrl ? (
+                <div className="relative overflow-hidden rounded-lg border">
+                  <img
+                    src={imagePreviewUrl}
+                    alt="Recipe preview"
+                    className="h-48 w-full object-cover"
+                  />
+                </div>
+              ) : (
+                <div
+                  className="flex h-48 cursor-pointer items-center justify-center rounded-lg border border-dashed transition-colors hover:border-primary/50 hover:bg-muted/50"
+                  onClick={() => imageInputRef.current?.click()}
+                >
+                  <div className="text-center text-muted-foreground">
+                    <HugeiconsIcon icon={ImageUploadIcon} className="mx-auto size-8" />
+                    <p className="mt-2 text-sm">Click to add an image</p>
+                  </div>
+                </div>
+              )}
+              <input
+                ref={imageInputRef}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={(e) => {
+                  const file = e.target.files?.[0] ?? null
+                  onImageFileChange(file)
+                  e.target.value = ''
+                }}
+              />
+              {imageFile && (
+                <div className="flex gap-2">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => imageInputRef.current?.click()}
+                  >
+                    <HugeiconsIcon icon={ImageUploadIcon} className="mr-2 size-4" />
+                    Replace
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => onImageFileChange(null)}
+                  >
+                    <HugeiconsIcon icon={Delete02Icon} className="mr-2 size-4" />
+                    Remove
+                  </Button>
+                </div>
+              )}
+            </div>
+          )}
 
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="flex flex-col gap-2">

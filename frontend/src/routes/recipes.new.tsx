@@ -1,8 +1,9 @@
+import { useState } from 'react'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { ArrowLeft02Icon, InternetIcon } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
 
-import { useCreateRecipe } from '@/domain/recipes'
+import { useCreateRecipe, uploadRecipeImage } from '@/domain/recipes'
 import { RecipeForm, type RecipeFormValues } from '@/components/recipe-form'
 import { Button } from '@/components/ui/button'
 
@@ -13,6 +14,7 @@ export const Route = createFileRoute('/recipes/new')({
 function NewRecipePage() {
   const navigate = useNavigate()
   const createRecipe = useCreateRecipe()
+  const [imageFile, setImageFile] = useState<File | null>(null)
 
   const handleSubmit = (values: RecipeFormValues) => {
     createRecipe.mutate(
@@ -34,7 +36,14 @@ function NewRecipePage() {
         imageUrl: null,
       },
       {
-        onSuccess: (recipe) => {
+        onSuccess: async (recipe) => {
+          if (imageFile) {
+            try {
+              await uploadRecipeImage(recipe.id, imageFile)
+            } catch {
+              // Image upload failed but recipe was created - navigate anyway
+            }
+          }
           navigate({ to: '/recipes/$id', params: { id: recipe.id } })
         },
       }
@@ -71,6 +80,8 @@ function NewRecipePage() {
           onCancel={handleBack}
           isSubmitting={createRecipe.isPending}
           submitLabel="Create Recipe"
+          imageFile={imageFile}
+          onImageFileChange={setImageFile}
         />
 
         {createRecipe.isError && (
