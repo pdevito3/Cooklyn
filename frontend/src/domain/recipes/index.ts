@@ -33,4 +33,5 @@ export {
   importRecipePreview,
   useUploadRecipeImageFromUrl,
   uploadRecipeImageFromUrl,
+  proxyImageUrl,
 } from './apis/recipe-mutations'

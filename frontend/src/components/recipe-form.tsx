@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -23,6 +23,7 @@ import {
 } from '@/components/ui/select'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { IngredientEditor } from '@/components/ingredient-editor'
+import { ImageCropDialog } from '@/components/image-crop-dialog'
 import {
   RECIPE_RATINGS,
   RECIPE_FLAGS,
@@ -89,6 +90,8 @@ export function RecipeForm({
   onImageFileChange,
 }: RecipeFormProps) {
   const imageInputRef = useRef<HTMLInputElement>(null)
+  const [cropDialogOpen, setCropDialogOpen] = useState(false)
+  const [rawImageUrl, setRawImageUrl] = useState<string | null>(null)
   const imagePreviewUrl = useMemo(
     () => (imageFile ? URL.createObjectURL(imageFile) : null),
     [imageFile]
@@ -226,8 +229,12 @@ export function RecipeForm({
                 accept="image/*"
                 className="hidden"
                 onChange={(e) => {
-                  const file = e.target.files?.[0] ?? null
-                  onImageFileChange(file)
+                  const file = e.target.files?.[0]
+                  if (file) {
+                    const url = URL.createObjectURL(file)
+                    setRawImageUrl(url)
+                    setCropDialogOpen(true)
+                  }
                   e.target.value = ''
                 }}
               />
@@ -252,6 +259,24 @@ export function RecipeForm({
                     Remove
                   </Button>
                 </div>
+              )}
+              {rawImageUrl && (
+                <ImageCropDialog
+                  imageSrc={rawImageUrl}
+                  open={cropDialogOpen}
+                  onOpenChange={(open) => {
+                    setCropDialogOpen(open)
+                    if (!open) {
+                      URL.revokeObjectURL(rawImageUrl)
+                      setRawImageUrl(null)
+                    }
+                  }}
+                  onCropComplete={(croppedFile) => {
+                    onImageFileChange(croppedFile)
+                    if (rawImageUrl) URL.revokeObjectURL(rawImageUrl)
+                    setRawImageUrl(null)
+                  }}
+                />
               )}
             </div>
           )}

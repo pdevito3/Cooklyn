@@ -174,11 +174,11 @@ function RecipeDetailPage() {
       </div>
 
       {/* Image */}
-      <div className="group relative overflow-hidden rounded-lg">
+      <div className="group relative max-w-sm overflow-hidden rounded-lg">
         <img
           src={recipe.imageUrl ?? placeholderImage}
           alt={recipe.title}
-          className="aspect-[4/3] w-full object-cover"
+          className="aspect-square w-full object-cover"
         />
         {recipe.source?.startsWith("http") && (
           <Button

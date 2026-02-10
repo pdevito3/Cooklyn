@@ -2,6 +2,7 @@ import { useRef, useState } from 'react'
 import { ImageUploadIcon, Delete02Icon, Image02Icon } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
 
+import { ImageCropDialog } from '@/components/image-crop-dialog'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -26,6 +27,8 @@ export function RecipeImageSection({ recipeId, imageUrl, source }: RecipeImageSe
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
   const [imagePickerOpen, setImagePickerOpen] = useState(false)
+  const [cropDialogOpen, setCropDialogOpen] = useState(false)
+  const [rawImageUrl, setRawImageUrl] = useState<string | null>(null)
 
   const uploadImage = useUploadRecipeImage()
   const deleteImage = useDeleteRecipeImage()
@@ -39,11 +42,21 @@ export function RecipeImageSection({ recipeId, imageUrl, source }: RecipeImageSe
     const file = e.target.files?.[0]
     if (!file) return
 
-    const objectUrl = URL.createObjectURL(file)
+    const url = URL.createObjectURL(file)
+    setRawImageUrl(url)
+    setCropDialogOpen(true)
+    e.target.value = ''
+  }
+
+  const handleCropComplete = (croppedFile: File) => {
+    if (rawImageUrl) URL.revokeObjectURL(rawImageUrl)
+    setRawImageUrl(null)
+
+    const objectUrl = URL.createObjectURL(croppedFile)
     setPreviewUrl(objectUrl)
 
     uploadImage.mutate(
-      { id: recipeId, file },
+      { id: recipeId, file: croppedFile },
       {
         onSuccess: () => {
           setPreviewUrl(null)
@@ -55,8 +68,6 @@ export function RecipeImageSection({ recipeId, imageUrl, source }: RecipeImageSe
         },
       }
     )
-
-    e.target.value = ''
   }
 
   const handleRemoveImage = () => {
@@ -76,11 +87,11 @@ export function RecipeImageSection({ recipeId, imageUrl, source }: RecipeImageSe
         </CardHeader>
         <CardContent className="space-y-4">
           {displayUrl ? (
-            <div className="relative overflow-hidden rounded-lg border">
+            <div className="relative max-w-sm overflow-hidden rounded-lg border">
               <img
                 src={displayUrl}
                 alt="Recipe"
-                className="h-64 w-full object-cover"
+                className="aspect-square w-full object-cover"
               />
               {(isUploading || isDeleting) && (
                 <div className="absolute inset-0 flex items-center justify-center bg-background/60">
@@ -89,7 +100,7 @@ export function RecipeImageSection({ recipeId, imageUrl, source }: RecipeImageSe
               )}
             </div>
           ) : (
-            <div className="flex h-64 items-center justify-center rounded-lg border border-dashed">
+            <div className="flex aspect-square max-w-sm items-center justify-center rounded-lg border border-dashed">
               <div className="text-center text-muted-foreground">
                 <HugeiconsIcon icon={ImageUploadIcon} className="mx-auto size-10" />
                 <p className="mt-2 text-sm">No image uploaded</p>
@@ -162,6 +173,21 @@ export function RecipeImageSection({ recipeId, imageUrl, source }: RecipeImageSe
           source={source!}
           open={imagePickerOpen}
           onOpenChange={setImagePickerOpen}
+        />
+      )}
+
+      {rawImageUrl && (
+        <ImageCropDialog
+          imageSrc={rawImageUrl}
+          open={cropDialogOpen}
+          onOpenChange={(open) => {
+            setCropDialogOpen(open)
+            if (!open) {
+              URL.revokeObjectURL(rawImageUrl)
+              setRawImageUrl(null)
+            }
+          }}
+          onCropComplete={handleCropComplete}
         />
       )}
     </>

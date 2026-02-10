@@ -275,6 +275,13 @@ export function useUploadRecipeImageFromUrl() {
 }
 
 /**
+ * Returns a proxy URL for an external image, to avoid CORS canvas tainting.
+ */
+export function proxyImageUrl(url: string): string {
+  return `/api/v1/recipes/proxy-image?url=${encodeURIComponent(url)}`
+}
+
+/**
  * Update recipe rating
  */
 export async function updateRecipeRating(

@@ -252,4 +252,18 @@ public sealed class RecipesController(IMediator mediator) : ControllerBase
         await mediator.Send(command);
         return NoContent();
     }
+
+    /// <summary>
+    /// Proxies an external image to avoid CORS issues when cropping.
+    /// </summary>
+    [Authorize]
+    [HttpGet("proxy-image", Name = "ProxyImage")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> ProxyImage([FromQuery] string url)
+    {
+        var query = new Features.ProxyImage.Query(url);
+        var result = await mediator.Send(query);
+        return result;
+    }
 }
