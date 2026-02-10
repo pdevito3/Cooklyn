@@ -7,7 +7,8 @@ import { Textarea } from '@/components/ui/textarea'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import type { IngredientForCreationDto } from '@/domain/recipes'
-import { parseText } from '@/domain/recipes/utils/ingredient-parser'
+import { parseText, ingredientsToText } from '@/domain/recipes/utils/ingredient-parser'
+import { cn } from '@/lib/utils'
 
 interface IngredientEditorProps {
   value: IngredientForCreationDto[]
@@ -17,7 +18,7 @@ interface IngredientEditorProps {
 export function IngredientEditor({ value, onChange }: IngredientEditorProps) {
   const [mode, setMode] = useState<'text' | 'structured'>('text')
   const [rawText, setRawText] = useState(() =>
-    value.length > 0 ? value.map((i) => i.rawText).join('\n') : ''
+    value.length > 0 ? ingredientsToText(value) : ''
   )
 
   const handleTextChange = useCallback(
@@ -35,7 +36,7 @@ export function IngredientEditor({ value, onChange }: IngredientEditorProps) {
       // Re-assign sort orders
       const reordered = updated.map((item, i) => ({ ...item, sortOrder: i }))
       onChange(reordered)
-      setRawText(reordered.map((i) => i.rawText).join('\n'))
+      setRawText(ingredientsToText(reordered))
     },
     [value, onChange]
   )
@@ -50,7 +51,7 @@ export function IngredientEditor({ value, onChange }: IngredientEditorProps) {
       updated.splice(newIndex, 0, moved)
       const reordered = updated.map((item, i) => ({ ...item, sortOrder: i }))
       onChange(reordered)
-      setRawText(reordered.map((i) => i.rawText).join('\n'))
+      setRawText(ingredientsToText(reordered))
     },
     [value, onChange]
   )
@@ -81,7 +82,7 @@ export function IngredientEditor({ value, onChange }: IngredientEditorProps) {
 
       updated[index] = item
       onChange(updated)
-      setRawText(updated.map((i) => i.rawText).join('\n'))
+      setRawText(ingredientsToText(updated))
     },
     [value, onChange]
   )
@@ -103,7 +104,7 @@ export function IngredientEditor({ value, onChange }: IngredientEditorProps) {
       {mode === 'text' ? (
         <div className="space-y-3">
           <Textarea
-            placeholder={`Enter ingredients, one per line...\n\nExamples:\n2 cups flour\n1 1/2 tsp salt\n3 large eggs\n1 lb chicken breast`}
+            placeholder={`Enter ingredients, one per line...\nUse "GroupName:" to create groups.\n\nExamples:\nBiscuit:\n2 cups flour\n1 1/2 tsp salt\nGravy:\n2 T butter\n3 large eggs`}
             className="min-h-[200px] font-mono text-sm"
             value={rawText}
             onChange={(e) => handleTextChange(e.target.value)}
@@ -114,28 +115,45 @@ export function IngredientEditor({ value, onChange }: IngredientEditorProps) {
                 Parsed preview ({value.length} ingredient{value.length !== 1 ? 's' : ''})
               </p>
               <div className="rounded-md border bg-muted/30 p-2">
-                {value.map((ingredient, i) => (
-                  <div
-                    key={i}
-                    className="flex items-baseline gap-2 py-0.5 text-sm"
-                  >
-                    <span className="min-w-5 text-right text-xs text-muted-foreground">
-                      {i + 1}.
-                    </span>
-                    {ingredient.amountText && (
-                      <span className="font-medium">{ingredient.amountText}</span>
-                    )}
-                    {ingredient.unit && (
-                      <span className="text-muted-foreground">{ingredient.unit}</span>
-                    )}
-                    {ingredient.name && <span>{ingredient.name}</span>}
-                    {!ingredient.amountText && !ingredient.unit && !ingredient.name && (
-                      <span className="italic text-muted-foreground">
-                        {ingredient.rawText}
-                      </span>
-                    )}
-                  </div>
-                ))}
+                {(() => {
+                  let lastGroup: string | null = null
+                  return value.map((ingredient, i) => {
+                    const showGroupHeader = ingredient.groupName !== lastGroup && ingredient.groupName !== null
+                    const isFirstGroup = lastGroup === null && ingredient.groupName !== null
+                    lastGroup = ingredient.groupName
+                    return (
+                      <div key={i}>
+                        {showGroupHeader && (
+                          <div
+                            className={cn(
+                              'mb-1 border-b border-muted pb-0.5 text-xs font-bold uppercase tracking-wide text-foreground/70',
+                              isFirstGroup ? 'mt-0' : 'mt-3'
+                            )}
+                          >
+                            {ingredient.groupName}
+                          </div>
+                        )}
+                        <div className="flex items-baseline gap-2 py-0.5 text-sm">
+                          <span className="min-w-5 text-right text-xs text-muted-foreground">
+                            {i + 1}.
+                          </span>
+                          {ingredient.amountText && (
+                            <span className="font-medium">{ingredient.amountText}</span>
+                          )}
+                          {ingredient.unit && (
+                            <span className="text-muted-foreground">{ingredient.unit}</span>
+                          )}
+                          {ingredient.name && <span>{ingredient.name}</span>}
+                          {!ingredient.amountText && !ingredient.unit && !ingredient.name && (
+                            <span className="italic text-muted-foreground">
+                              {ingredient.rawText}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    )
+                  })
+                })()}
               </div>
             </div>
           )}

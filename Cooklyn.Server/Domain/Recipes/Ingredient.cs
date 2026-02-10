@@ -54,6 +54,7 @@ public partial class Ingredient : BaseEntity
 
     /// <summary>
     /// Parses a multi-line text block into structured Ingredient entities.
+    /// Lines ending with ":" (e.g. "Biscuit:") are treated as group headers.
     /// </summary>
     public static IReadOnlyList<Ingredient> ParseAll(string text, Guid recipeId)
     {
@@ -63,22 +64,39 @@ public partial class Ingredient : BaseEntity
         var lines = text.Split('\n', StringSplitOptions.TrimEntries);
         var results = new List<Ingredient>();
         var sortOrder = 0;
+        string? currentGroup = null;
 
         foreach (var line in lines)
         {
             if (string.IsNullOrWhiteSpace(line))
                 continue;
 
-            results.Add(Parse(line, recipeId, sortOrder++));
+            var groupName = ParseGroupHeader(line);
+            if (groupName != null)
+            {
+                currentGroup = groupName;
+                continue;
+            }
+
+            var ingredient = Parse(line, recipeId, sortOrder++, currentGroup);
+            results.Add(ingredient);
         }
 
         return results;
     }
 
+    private static string? ParseGroupHeader(string line)
+    {
+        var trimmed = line.Trim();
+        if (trimmed.EndsWith(':') && trimmed.Length > 1 && !char.IsDigit(trimmed[0]))
+            return trimmed[..^1].Trim();
+        return null;
+    }
+
     /// <summary>
     /// Parses a single ingredient line into a structured Ingredient entity.
     /// </summary>
-    public static Ingredient Parse(string line, Guid recipeId, int sortOrder)
+    public static Ingredient Parse(string line, Guid recipeId, int sortOrder, string? groupName = null)
     {
         var trimmed = line.Trim();
         var remaining = trimmed;
@@ -119,6 +137,7 @@ public partial class Ingredient : BaseEntity
             Amount = amount,
             AmountText = amountText,
             Unit = unit.Value,
+            GroupName = groupName,
             SortOrder = sortOrder
         });
     }

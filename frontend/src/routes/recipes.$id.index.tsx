@@ -22,6 +22,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { StepViewer } from "@/components/step-viewer";
 import {
   useDeleteRecipe,
   useRecipe,
@@ -203,69 +204,45 @@ function RecipeDetailPage() {
           </CardHeader>
           <CardContent>
             {(() => {
-              // Group ingredients by groupName
-              const grouped = new Map<string, typeof recipe.ingredients>();
-              const ungrouped: typeof recipe.ingredients = [];
-
-              for (const ingredient of recipe.ingredients) {
-                if (ingredient.groupName) {
-                  const existing = grouped.get(ingredient.groupName) ?? [];
-                  existing.push(ingredient);
-                  grouped.set(ingredient.groupName, existing);
-                } else {
-                  ungrouped.push(ingredient);
-                }
-              }
+              // Render ingredients in sort order, inserting group headers when groupName changes
+              const sorted = [...recipe.ingredients].sort((a, b) => a.sortOrder - b.sortOrder);
+              let lastGroup: string | null | undefined = undefined; // sentinel to distinguish "no group yet" from null
 
               return (
-                <div className="space-y-4">
-                  {ungrouped.length > 0 && (
-                    <ul className="space-y-1">
-                      {ungrouped
-                        .sort((a, b) => a.sortOrder - b.sortOrder)
-                        .map((ingredient) => (
-                          <li key={ingredient.id} className="flex gap-1">
-                            {ingredient.amountText && (
-                              <span className="font-medium">
-                                {ingredient.amountText}
-                              </span>
+                <div className="space-y-1">
+                  {sorted.map((ingredient) => {
+                    const showGroupHeader = ingredient.groupName !== lastGroup && ingredient.groupName !== null;
+                    const isFirstGroup = lastGroup === undefined;
+                    lastGroup = ingredient.groupName;
+
+                    return (
+                      <div key={ingredient.id}>
+                        {showGroupHeader && (
+                          <h4
+                            className={cn(
+                              "border-b pb-1 text-sm font-semibold uppercase tracking-wide text-foreground/70",
+                              isFirstGroup ? "mt-0 mb-2" : "mt-4 mb-2"
                             )}
-                            {ingredient.unit && (
-                              <span className="text-muted-foreground">
-                                {ingredient.unit}
-                              </span>
-                            )}
-                            <span>{ingredient.name ?? ingredient.rawText}</span>
-                          </li>
-                        ))}
-                    </ul>
-                  )}
-                  {Array.from(grouped.entries()).map(([groupName, items]) => (
-                    <div key={groupName}>
-                      <h4 className="mb-1 font-semibold">{groupName}</h4>
-                      <ul className="space-y-1">
-                        {items
-                          .sort((a, b) => a.sortOrder - b.sortOrder)
-                          .map((ingredient) => (
-                            <li key={ingredient.id} className="flex gap-1">
-                              {ingredient.amountText && (
-                                <span className="font-medium">
-                                  {ingredient.amountText}
-                                </span>
-                              )}
-                              {ingredient.unit && (
-                                <span className="text-muted-foreground">
-                                  {ingredient.unit}
-                                </span>
-                              )}
-                              <span>
-                                {ingredient.name ?? ingredient.rawText}
-                              </span>
-                            </li>
-                          ))}
-                      </ul>
-                    </div>
-                  ))}
+                          >
+                            {ingredient.groupName}
+                          </h4>
+                        )}
+                        <li className="flex gap-1 list-none">
+                          {ingredient.amountText && (
+                            <span className="font-medium">
+                              {ingredient.amountText}
+                            </span>
+                          )}
+                          {ingredient.unit && (
+                            <span className="text-muted-foreground">
+                              {ingredient.unit}
+                            </span>
+                          )}
+                          <span>{ingredient.name ?? ingredient.rawText}</span>
+                        </li>
+                      </div>
+                    );
+                  })}
                 </div>
               );
             })()}
@@ -280,7 +257,7 @@ function RecipeDetailPage() {
             <CardTitle>Instructions</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="whitespace-pre-wrap">{recipe.steps}</div>
+            <StepViewer steps={recipe.steps} />
           </CardContent>
         </Card>
       )}

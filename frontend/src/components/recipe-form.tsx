@@ -132,8 +132,8 @@ export function RecipeForm({
 
   const isFavorite = watch('isFavorite')
 
-  const formButtons = (
-    <div className="flex justify-end gap-4">
+  const actionButtons = (
+    <>
       {onCancel && (
         <Button type="button" variant="outline" onClick={onCancel} disabled={isSubmitting}>
           Cancel
@@ -142,12 +142,14 @@ export function RecipeForm({
       <Button type="submit" disabled={isSubmitting}>
         {isSubmitting ? 'Saving...' : submitLabel}
       </Button>
-    </div>
+    </>
   )
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-      {formButtons}
+    <form onSubmit={handleSubmit(onSubmit)} className="@container space-y-6">
+      <div className="flex justify-end gap-4">
+        {actionButtons}
+      </div>
 
       {/* Basic Information */}
       <Card>
@@ -363,7 +365,9 @@ export function RecipeForm({
         </CardContent>
       </Card>
 
-      {formButtons}
+      <div className="flex justify-end gap-4 @sm:hidden">
+        {actionButtons}
+      </div>
     </form>
   )
 }

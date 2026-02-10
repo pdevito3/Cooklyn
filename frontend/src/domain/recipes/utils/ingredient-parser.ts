@@ -260,7 +260,23 @@ export function parseLine(
 }
 
 /**
+ * Checks if a line is a group header (e.g. "Biscuit:" or "For the gravy:").
+ * Returns the group name without the trailing colon, or null if not a group header.
+ */
+function parseGroupHeader(line: string): string | null {
+  const trimmed = line.trim()
+  if (trimmed.endsWith(':') && trimmed.length > 1) {
+    // Must not start with a digit (otherwise "2:" could be mistaken for a group)
+    if (/^\d/.test(trimmed)) return null
+    return trimmed.slice(0, -1).trim()
+  }
+  return null
+}
+
+/**
  * Parse multi-line text into structured ingredient DTOs.
+ * Lines ending with ":" (e.g. "Biscuit:") are treated as group headers
+ * and set the groupName on subsequent ingredients.
  */
 export function parseText(text: string): IngredientForCreationDto[] {
   if (!text.trim()) return []
@@ -268,11 +284,46 @@ export function parseText(text: string): IngredientForCreationDto[] {
   const lines = text.split('\n')
   const results: IngredientForCreationDto[] = []
   let sortOrder = 0
+  let currentGroup: string | null = null
 
   for (const line of lines) {
     if (!line.trim()) continue
-    results.push(parseLine(line, sortOrder++))
+
+    const groupName = parseGroupHeader(line)
+    if (groupName !== null) {
+      currentGroup = groupName
+      continue
+    }
+
+    const ingredient = parseLine(line, sortOrder++)
+    ingredient.groupName = currentGroup
+    results.push(ingredient)
   }
 
   return results
+}
+
+/**
+ * Convert structured ingredients back to text, inserting group headers as needed.
+ * Adds a blank line before group headers (except at the very start) for readability.
+ */
+export function ingredientsToText(ingredients: IngredientForCreationDto[]): string {
+  const lines: string[] = []
+  let currentGroup: string | null = null
+
+  for (const ingredient of ingredients) {
+    if (ingredient.groupName !== currentGroup) {
+      currentGroup = ingredient.groupName
+      if (currentGroup) {
+        // Add a blank line before group headers (unless it's the first line)
+        if (lines.length > 0) {
+          lines.push('')
+        }
+        lines.push(`${currentGroup}:`)
+      }
+    }
+    lines.push(ingredient.rawText)
+  }
+
+  return lines.join('\n')
 }
