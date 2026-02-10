@@ -22,6 +22,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ScaleInput, formatScaledAmount } from "@/components/scale-input";
 import { StepViewer } from "@/components/step-viewer";
 import {
   useDeleteRecipe,
@@ -38,6 +39,7 @@ function RecipeDetailPage() {
   const { id } = Route.useParams();
   const navigate = useNavigate();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [scale, setScale] = useState(1);
 
   const { data: recipe, isLoading, error } = useRecipe(id);
   const deleteRecipe = useDeleteRecipe();
@@ -197,16 +199,17 @@ function RecipeDetailPage() {
       {/* Ingredients */}
       {recipe.ingredients && recipe.ingredients.length > 0 && (
         <Card>
-          <CardHeader>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0">
             <CardTitle>
               Ingredients ({recipe.ingredients.length})
             </CardTitle>
+            <ScaleInput value={scale} onChange={setScale} />
           </CardHeader>
           <CardContent>
             {(() => {
               // Render ingredients in sort order, inserting group headers when groupName changes
               const sorted = [...recipe.ingredients].sort((a, b) => a.sortOrder - b.sortOrder);
-              let lastGroup: string | null | undefined = undefined; // sentinel to distinguish "no group yet" from null
+              let lastGroup: string | null | undefined = undefined;
 
               return (
                 <div className="space-y-1">
@@ -214,6 +217,10 @@ function RecipeDetailPage() {
                     const showGroupHeader = ingredient.groupName !== lastGroup && ingredient.groupName !== null;
                     const isFirstGroup = lastGroup === undefined;
                     lastGroup = ingredient.groupName;
+
+                    const scaledAmount = ingredient.amount != null
+                      ? formatScaledAmount(ingredient.amount * scale)
+                      : null;
 
                     return (
                       <div key={ingredient.id}>
@@ -228,11 +235,15 @@ function RecipeDetailPage() {
                           </h4>
                         )}
                         <li className="flex gap-1 list-none">
-                          {ingredient.amountText && (
+                          {scaledAmount != null ? (
+                            <span className={cn("font-medium", scale !== 1 && "text-primary")}>
+                              {scaledAmount}
+                            </span>
+                          ) : ingredient.amountText ? (
                             <span className="font-medium">
                               {ingredient.amountText}
                             </span>
-                          )}
+                          ) : null}
                           {ingredient.unit && (
                             <span className="text-muted-foreground">
                               {ingredient.unit}
