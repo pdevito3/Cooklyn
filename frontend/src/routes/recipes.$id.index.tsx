@@ -3,6 +3,7 @@ import {
   Delete01Icon,
   Edit01Icon,
   FavouriteIcon,
+  Image02Icon,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
@@ -22,12 +23,14 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { SourceImagePicker } from "@/components/source-image-picker";
 import { ScaleInput, formatScaledAmount } from "@/components/scale-input";
 import { StepViewer } from "@/components/step-viewer";
 import {
   useDeleteRecipe,
   useRecipe,
   useToggleRecipeFavorite,
+  formatUnit,
 } from "@/domain/recipes";
 import { cn } from "@/lib/utils";
 
@@ -39,6 +42,7 @@ function RecipeDetailPage() {
   const { id } = Route.useParams();
   const navigate = useNavigate();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [imagePickerOpen, setImagePickerOpen] = useState(false);
   const [scale, setScale] = useState(1);
 
   const { data: recipe, isLoading, error } = useRecipe(id);
@@ -128,7 +132,21 @@ function RecipeDetailPage() {
               {recipe.title}
             </h1>
             {recipe.source && (
-              <p className="text-muted-foreground">Source: {recipe.source}</p>
+              <p className="text-muted-foreground">
+                Source:{" "}
+                {recipe.source.startsWith("http") ? (
+                  <a
+                    href={recipe.source}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="underline hover:text-foreground"
+                  >
+                    {recipe.source}
+                  </a>
+                ) : (
+                  recipe.source
+                )}
+              </p>
             )}
           </div>
         </div>
@@ -156,12 +174,23 @@ function RecipeDetailPage() {
       </div>
 
       {/* Image */}
-      <div className="overflow-hidden rounded-lg">
+      <div className="group relative overflow-hidden rounded-lg">
         <img
           src={recipe.imageUrl ?? placeholderImage}
           alt={recipe.title}
           className="aspect-[4/3] w-full object-cover"
         />
+        {recipe.source?.startsWith("http") && (
+          <Button
+            variant="secondary"
+            size="sm"
+            className="absolute right-3 bottom-3 opacity-0 shadow-md transition-opacity group-hover:opacity-100"
+            onClick={() => setImagePickerOpen(true)}
+          >
+            <HugeiconsIcon icon={Image02Icon} className="mr-2 h-4 w-4" />
+            Change Image
+          </Button>
+        )}
       </div>
 
       {/* Meta Info */}
@@ -207,7 +236,6 @@ function RecipeDetailPage() {
           </CardHeader>
           <CardContent>
             {(() => {
-              // Render ingredients in sort order, inserting group headers when groupName changes
               const sorted = [...recipe.ingredients].sort((a, b) => a.sortOrder - b.sortOrder);
               let lastGroup: string | null | undefined = undefined;
 
@@ -246,7 +274,7 @@ function RecipeDetailPage() {
                           ) : null}
                           {ingredient.unit && (
                             <span className="text-muted-foreground">
-                              {ingredient.unit}
+                              {formatUnit(ingredient.unit, ingredient.amount != null ? ingredient.amount * scale : null)}
                             </span>
                           )}
                           <span>{ingredient.name ?? ingredient.rawText}</span>
@@ -349,6 +377,16 @@ function RecipeDetailPage() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Source Image Picker */}
+      {recipe.source?.startsWith("http") && (
+        <SourceImagePicker
+          recipeId={id}
+          source={recipe.source}
+          open={imagePickerOpen}
+          onOpenChange={setImagePickerOpen}
+        />
+      )}
     </div>
   );
 }

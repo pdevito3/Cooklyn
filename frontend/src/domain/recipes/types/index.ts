@@ -116,6 +116,7 @@ export interface RecipeForCreationDto {
   flags: string[]
   ingredients: IngredientForCreationDto[]
   nutritionInfo: NutritionInfoForCreationDto | null
+  imageUrl: string | null
 }
 
 export interface RecipeForUpdateDto {
@@ -135,6 +136,21 @@ export interface RecipeImageDto {
   imageUrl: string | null
   imageS3Bucket: string | null
   imageS3Key: string | null
+}
+
+export interface ImportRecipePreviewDto {
+  title: string | null
+  description: string | null
+  source: string | null
+  servings: number | null
+  steps: string | null
+  ingredients: IngredientForCreationDto[]
+  images: ImportImageDto[]
+}
+
+export interface ImportImageDto {
+  url: string
+  alt: string | null
 }
 
 export interface PagedList<T> {
@@ -228,3 +244,46 @@ export const INGREDIENT_UNITS = [
 ] as const
 
 export type IngredientUnit = (typeof INGREDIENT_UNITS)[number]
+
+/**
+ * Maps canonical singular unit names to their plural forms.
+ */
+export const INGREDIENT_UNIT_PLURALS: Record<string, string> = {
+  Cup: 'Cups',
+  Tablespoon: 'Tablespoons',
+  Teaspoon: 'Teaspoons',
+  FluidOunce: 'Fluid Ounces',
+  Milliliter: 'Milliliters',
+  Liter: 'Liters',
+  Pint: 'Pints',
+  Quart: 'Quarts',
+  Gallon: 'Gallons',
+  Ounce: 'Ounces',
+  Pound: 'Pounds',
+  Gram: 'Grams',
+  Kilogram: 'Kilograms',
+  Piece: 'Pieces',
+  Whole: 'Whole',
+  Slice: 'Slices',
+  Clove: 'Cloves',
+  Pinch: 'Pinches',
+  Dash: 'Dashes',
+  Can: 'Cans',
+  Bunch: 'Bunches',
+  Sprig: 'Sprigs',
+  Stick: 'Sticks',
+  Head: 'Heads',
+  Bag: 'Bags',
+  Jar: 'Jars',
+  Package: 'Packages',
+}
+
+/**
+ * Returns the display name for a unit, pluralized when amount > 1.
+ */
+export function formatUnit(unit: string, amount: number | null): string {
+  if (amount !== null && amount !== 1) {
+    return INGREDIENT_UNIT_PLURALS[unit] ?? unit
+  }
+  return unit
+}

@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import type { IngredientForCreationDto } from '@/domain/recipes'
+import { formatUnit, type IngredientForCreationDto } from '@/domain/recipes'
 import { parseText, ingredientsToText } from '@/domain/recipes/utils/ingredient-parser'
 import { cn } from '@/lib/utils'
 
@@ -141,7 +141,7 @@ export function IngredientEditor({ value, onChange }: IngredientEditorProps) {
                             <span className="font-medium">{ingredient.amountText}</span>
                           )}
                           {ingredient.unit && (
-                            <span className="text-muted-foreground">{ingredient.unit}</span>
+                            <span className="text-muted-foreground">{formatUnit(ingredient.unit, ingredient.amount)}</span>
                           )}
                           {ingredient.name && <span>{ingredient.name}</span>}
                           {!ingredient.amountText && !ingredient.unit && !ingredient.name && (

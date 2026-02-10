@@ -22,4 +22,8 @@ public sealed record RecipeForCreationDto
     public IReadOnlyList<string> Flags { get; init; } = [];
     public IReadOnlyList<IngredientForCreationDto> Ingredients { get; init; } = [];
     public NutritionInfoForCreationDto? NutritionInfo { get; init; }
+    /// <summary>
+    /// Optional external image URL to download and attach during creation (used by recipe import).
+    /// </summary>
+    public string? ImageUrl { get; init; }
 }

@@ -1,6 +1,7 @@
 namespace Cooklyn.Server.Resources.Extensions;
 
 using Databases;
+using Domain.Recipes.Importing;
 using ExceptionHandlers;
 using Microsoft.EntityFrameworkCore;
 using ZiggyCreatures.Caching.Fusion;
@@ -41,5 +42,14 @@ public static class WebAppServiceConfiguration
         builder.EnrichNpgsqlDbContext<AppDbContext>();
 
         builder.Services.AddS3FileStorage(builder.Configuration);
+
+        // Recipe import
+        builder.Services.AddSingleton<IRecipeSourceParser, JsonLdRecipeParser>();
+        builder.Services.AddHttpClient("RecipeImport", client =>
+        {
+            client.Timeout = TimeSpan.FromSeconds(30);
+            client.DefaultRequestHeaders.UserAgent.ParseAdd(
+                "Mozilla/5.0 (compatible; Cooklyn/1.0; +https://github.com/cooklyn)");
+        });
     }
 }

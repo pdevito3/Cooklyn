@@ -191,6 +191,38 @@ public sealed class RecipesController(IMediator mediator) : ControllerBase
     }
 
     /// <summary>
+    /// Imports a recipe from a URL and returns a preview.
+    /// </summary>
+    [Authorize]
+    [HttpPost("import/preview", Name = "ImportRecipePreview")]
+    [ProducesResponseType(typeof(ImportRecipePreviewDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<ImportRecipePreviewDto>> ImportPreview(
+        [FromBody] ImportRecipePreviewRequestDto dto)
+    {
+        var command = new ImportRecipePreview.Command(dto);
+        var result = await mediator.Send(command);
+        return Ok(result);
+    }
+
+    /// <summary>
+    /// Uploads a recipe image from an external URL.
+    /// </summary>
+    [Authorize]
+    [HttpPost("{id}/image-from-url", Name = "UploadRecipeImageFromUrl")]
+    [ProducesResponseType(typeof(RecipeImageDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<RecipeImageDto>> UploadImageFromUrl(
+        string id,
+        [FromBody] UploadImageFromUrlRequestDto dto)
+    {
+        var command = new UploadRecipeImageFromUrl.Command(id, dto.ImageUrl);
+        var result = await mediator.Send(command);
+        return Ok(result);
+    }
+
+    /// <summary>
     /// Uploads an image for a Recipe.
     /// </summary>
     [Authorize]

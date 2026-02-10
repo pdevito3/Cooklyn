@@ -1,5 +1,5 @@
-import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { ArrowLeft02Icon } from '@hugeicons/core-free-icons'
+import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
+import { ArrowLeft02Icon, InternetIcon } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
 
 import { useCreateRecipe } from '@/domain/recipes'
@@ -31,6 +31,7 @@ function NewRecipePage() {
         flags: values.flags.map((f) => f.value),
         ingredients: values.ingredients,
         nutritionInfo: null,
+        imageUrl: null,
       },
       {
         onSuccess: (recipe) => {
@@ -51,12 +52,16 @@ function NewRecipePage() {
         <Button variant="ghost" size="icon" onClick={handleBack}>
           <HugeiconsIcon icon={ArrowLeft02Icon} className="h-5 w-5" />
         </Button>
-        <div>
+        <div className="flex-1">
           <h1 className="text-3xl font-bold tracking-tight">New Recipe</h1>
           <p className="text-muted-foreground">
             Create a new recipe for your collection
           </p>
         </div>
+        <Button variant="outline" render={<Link to="/recipes/import" />}>
+          <HugeiconsIcon icon={InternetIcon} className="mr-2 h-4 w-4" />
+          Import from URL
+        </Button>
       </div>
 
       {/* Form */}

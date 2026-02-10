@@ -6,6 +6,7 @@ import type {
   RecipeForUpdateDto,
   RecipeImageDto,
   IngredientForCreationDto,
+  ImportRecipePreviewDto,
 } from '../types'
 import { RecipeKeys } from './recipe.keys'
 
@@ -218,6 +219,58 @@ export async function parseIngredients(
 export function useParseIngredients() {
   return useMutation({
     mutationFn: parseIngredients,
+  })
+}
+
+/**
+ * Import recipe preview from URL
+ */
+export async function importRecipePreview(
+  url: string
+): Promise<ImportRecipePreviewDto> {
+  const response = await apiClient.post<ImportRecipePreviewDto>(
+    '/api/v1/recipes/import/preview',
+    { url }
+  )
+  return response.data
+}
+
+/**
+ * Hook for importing recipe preview
+ */
+export function useImportRecipePreview() {
+  return useMutation({
+    mutationFn: importRecipePreview,
+  })
+}
+
+/**
+ * Upload recipe image from external URL
+ */
+export async function uploadRecipeImageFromUrl(
+  id: string,
+  imageUrl: string
+): Promise<RecipeImageDto> {
+  const response = await apiClient.post<RecipeImageDto>(
+    `/api/v1/recipes/${id}/image-from-url`,
+    { imageUrl }
+  )
+  return response.data
+}
+
+/**
+ * Hook for uploading recipe image from URL
+ */
+export function useUploadRecipeImageFromUrl() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: ({ id, imageUrl }: { id: string; imageUrl: string }) =>
+      uploadRecipeImageFromUrl(id, imageUrl),
+    onSuccess: (_, { id }) => {
+      queryClient.invalidateQueries({ queryKey: RecipeKeys.lists() })
+      queryClient.invalidateQueries({ queryKey: RecipeKeys.detail(id) })
+    },
   })
 }
 

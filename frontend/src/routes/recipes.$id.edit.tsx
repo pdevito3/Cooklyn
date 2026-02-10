@@ -1,152 +1,20 @@
-import { useRef, useState } from 'react'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { ArrowLeft02Icon, ImageUploadIcon, Delete02Icon } from '@hugeicons/core-free-icons'
+import { ArrowLeft02Icon } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
 
 import {
   useRecipe,
   useUpdateRecipe,
-  useUploadRecipeImage,
-  useDeleteRecipeImage,
   useUpdateRecipeIngredients,
 } from '@/domain/recipes'
 import { RecipeForm, type RecipeFormValues } from '@/components/recipe-form'
+import { RecipeImageSection } from '@/components/recipe-image-section'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
 
 export const Route = createFileRoute('/recipes/$id/edit')({
   component: EditRecipePage,
 })
-
-function RecipeImageSection({ recipeId, imageUrl }: { recipeId: string; imageUrl: string | null }) {
-  const fileInputRef = useRef<HTMLInputElement>(null)
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null)
-  const uploadImage = useUploadRecipeImage()
-  const deleteImage = useDeleteRecipeImage()
-
-  const displayUrl = previewUrl ?? imageUrl
-  const isUploading = uploadImage.isPending
-  const isDeleting = deleteImage.isPending
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
-
-    // Show local preview immediately
-    const objectUrl = URL.createObjectURL(file)
-    setPreviewUrl(objectUrl)
-
-    uploadImage.mutate(
-      { id: recipeId, file },
-      {
-        onSuccess: () => {
-          setPreviewUrl(null)
-          URL.revokeObjectURL(objectUrl)
-        },
-        onError: () => {
-          setPreviewUrl(null)
-          URL.revokeObjectURL(objectUrl)
-        },
-      }
-    )
-
-    // Reset input so the same file can be re-selected
-    e.target.value = ''
-  }
-
-  const handleRemoveImage = () => {
-    deleteImage.mutate(recipeId, {
-      onSuccess: () => {
-        setPreviewUrl(null)
-      },
-    })
-  }
-
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Recipe Image</CardTitle>
-        <CardDescription>Upload an image for this recipe</CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        {displayUrl ? (
-          <div className="relative overflow-hidden rounded-lg border">
-            <img
-              src={displayUrl}
-              alt="Recipe"
-              className="h-64 w-full object-cover"
-            />
-            {(isUploading || isDeleting) && (
-              <div className="absolute inset-0 flex items-center justify-center bg-background/60">
-                <div className="size-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
-              </div>
-            )}
-          </div>
-        ) : (
-          <div className="flex h-64 items-center justify-center rounded-lg border border-dashed">
-            <div className="text-center text-muted-foreground">
-              <HugeiconsIcon icon={ImageUploadIcon} className="mx-auto size-10" />
-              <p className="mt-2 text-sm">No image uploaded</p>
-            </div>
-          </div>
-        )}
-
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept="image/*"
-          className="hidden"
-          onChange={handleFileChange}
-        />
-
-        <div className="flex gap-2">
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => fileInputRef.current?.click()}
-            disabled={isUploading || isDeleting}
-          >
-            <HugeiconsIcon icon={ImageUploadIcon} className="mr-2 size-4" />
-            {displayUrl ? 'Replace Image' : 'Upload Image'}
-          </Button>
-          {imageUrl && !isUploading && (
-            <Button
-              type="button"
-              variant="outline"
-              onClick={handleRemoveImage}
-              disabled={isDeleting}
-            >
-              <HugeiconsIcon icon={Delete02Icon} className="mr-2 size-4" />
-              Remove Image
-            </Button>
-          )}
-        </div>
-
-        {uploadImage.isError && (
-          <p className="text-sm text-destructive">
-            {uploadImage.error instanceof Error
-              ? uploadImage.error.message
-              : 'Failed to upload image'}
-          </p>
-        )}
-        {deleteImage.isError && (
-          <p className="text-sm text-destructive">
-            {deleteImage.error instanceof Error
-              ? deleteImage.error.message
-              : 'Failed to remove image'}
-          </p>
-        )}
-      </CardContent>
-    </Card>
-  )
-}
 
 function EditRecipePage() {
   const { id } = Route.useParams()
@@ -175,7 +43,6 @@ function EditRecipePage() {
       },
       {
         onSuccess: () => {
-          // Save ingredients separately
           updateIngredients.mutate(
             { id, ingredients: values.ingredients },
             {
@@ -183,7 +50,6 @@ function EditRecipePage() {
                 navigate({ to: '/recipes/$id', params: { id } })
               },
               onError: () => {
-                // Recipe was saved but ingredients failed — still navigate
                 navigate({ to: '/recipes/$id', params: { id } })
               },
             }
@@ -254,7 +120,7 @@ function EditRecipePage() {
 
       {/* Image Upload + Form */}
       <div className="mx-auto max-w-3xl space-y-6">
-        <RecipeImageSection recipeId={id} imageUrl={recipe.imageUrl} />
+        <RecipeImageSection recipeId={id} imageUrl={recipe.imageUrl} source={recipe.source} />
 
         <RecipeForm
           existingRecipe={recipe}
