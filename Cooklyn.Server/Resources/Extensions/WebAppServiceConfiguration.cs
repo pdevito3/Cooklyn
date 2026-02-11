@@ -2,7 +2,9 @@ namespace Cooklyn.Server.Resources.Extensions;
 
 using Databases;
 using Domain.Recipes.Importing;
+using Domain.Recipes.Importing.CopyMeThat;
 using ExceptionHandlers;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.EntityFrameworkCore;
 using ZiggyCreatures.Caching.Fusion;
 
@@ -45,11 +47,18 @@ public static class WebAppServiceConfiguration
 
         // Recipe import
         builder.Services.AddSingleton<IRecipeSourceParser, JsonLdRecipeParser>();
+        builder.Services.AddScoped<ICmtImportService, CmtImportService>();
         builder.Services.AddHttpClient("RecipeImport", client =>
         {
             client.Timeout = TimeSpan.FromSeconds(30);
             client.DefaultRequestHeaders.UserAgent.ParseAdd(
                 "Mozilla/5.0 (compatible; Cooklyn/1.0; +https://github.com/cooklyn)");
+        });
+
+        // Allow large file uploads for recipe import (100 MB)
+        builder.Services.Configure<FormOptions>(options =>
+        {
+            options.MultipartBodyLengthLimit = 104_857_600;
         });
     }
 }

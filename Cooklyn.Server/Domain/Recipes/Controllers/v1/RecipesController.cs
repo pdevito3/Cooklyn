@@ -240,6 +240,46 @@ public sealed class RecipesController(IMediator mediator) : ControllerBase
     }
 
     /// <summary>
+    /// Previews a Copy Me That ZIP import, returning all found recipes with duplicate detection.
+    /// </summary>
+    [Authorize]
+    [HttpPost("import/cmt/preview", Name = "PreviewCmtImport")]
+    [ProducesResponseType(typeof(CmtImportPreviewDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [RequestSizeLimit(104_857_600)] // 100 MB
+    public async Task<ActionResult<CmtImportPreviewDto>> PreviewCmtImport(
+        IFormFile file)
+    {
+        var command = new PreviewCmtImport.Command(file);
+        var result = await mediator.Send(command);
+        return Ok(result);
+    }
+
+    /// <summary>
+    /// Imports selected recipes from a Copy Me That ZIP export.
+    /// </summary>
+    [Authorize]
+    [HttpPost("import/cmt", Name = "ImportCmtRecipes")]
+    [ProducesResponseType(typeof(CmtImportResultDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [RequestSizeLimit(104_857_600)] // 100 MB
+    public async Task<ActionResult<CmtImportResultDto>> ImportCmtRecipes(
+        IFormFile file,
+        [FromForm] string selectedIndices,
+        [FromForm] bool importRatings = true)
+    {
+        var indices = System.Text.Json.JsonSerializer.Deserialize<List<int>>(selectedIndices) ?? [];
+        var request = new CmtImportRequestDto
+        {
+            SelectedIndices = indices,
+            ImportRatings = importRatings
+        };
+        var command = new ImportCmtRecipes.Command(file, request);
+        var result = await mediator.Send(command);
+        return Ok(result);
+    }
+
+    /// <summary>
     /// Proxies an external image to avoid CORS issues when cropping.
     /// </summary>
     [Authorize]

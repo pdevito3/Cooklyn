@@ -16,11 +16,9 @@ public sealed class IngredientConfiguration : IEntityTypeConfiguration<Ingredien
             .IsRequired();
 
         builder.Property(e => e.RawText)
-            .IsRequired()
-            .HasMaxLength(500);
+            .IsRequired();
 
-        builder.Property(e => e.Name)
-            .HasMaxLength(300);
+        builder.Property(e => e.Name);
 
         builder.Property(e => e.Amount)
             .HasPrecision(10, 4);

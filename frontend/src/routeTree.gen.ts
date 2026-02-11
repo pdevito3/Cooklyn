@@ -16,6 +16,7 @@ import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as RecipesIndexRouteImport } from './routes/recipes.index'
 import { Route as RecipesNewRouteImport } from './routes/recipes.new'
+import { Route as RecipesImportCmtRouteImport } from './routes/recipes.import-cmt'
 import { Route as RecipesImportRouteImport } from './routes/recipes.import'
 import { Route as RecipesIdRouteImport } from './routes/recipes.$id'
 import { Route as RecipesIdIndexRouteImport } from './routes/recipes.$id.index'
@@ -56,6 +57,11 @@ const RecipesNewRoute = RecipesNewRouteImport.update({
   path: '/new',
   getParentRoute: () => RecipesRoute,
 } as any)
+const RecipesImportCmtRoute = RecipesImportCmtRouteImport.update({
+  id: '/import-cmt',
+  path: '/import-cmt',
+  getParentRoute: () => RecipesRoute,
+} as any)
 const RecipesImportRoute = RecipesImportRouteImport.update({
   id: '/import',
   path: '/import',
@@ -85,6 +91,7 @@ export interface FileRoutesByFullPath {
   '/recipes': typeof RecipesRouteWithChildren
   '/recipes/$id': typeof RecipesIdRouteWithChildren
   '/recipes/import': typeof RecipesImportRoute
+  '/recipes/import-cmt': typeof RecipesImportCmtRoute
   '/recipes/new': typeof RecipesNewRoute
   '/recipes/': typeof RecipesIndexRoute
   '/recipes/$id/edit': typeof RecipesIdEditRoute
@@ -96,6 +103,7 @@ export interface FileRoutesByTo {
   '/components': typeof ComponentsRoute
   '/filter-demo': typeof FilterDemoRoute
   '/recipes/import': typeof RecipesImportRoute
+  '/recipes/import-cmt': typeof RecipesImportCmtRoute
   '/recipes/new': typeof RecipesNewRoute
   '/recipes': typeof RecipesIndexRoute
   '/recipes/$id/edit': typeof RecipesIdEditRoute
@@ -110,6 +118,7 @@ export interface FileRoutesById {
   '/recipes': typeof RecipesRouteWithChildren
   '/recipes/$id': typeof RecipesIdRouteWithChildren
   '/recipes/import': typeof RecipesImportRoute
+  '/recipes/import-cmt': typeof RecipesImportCmtRoute
   '/recipes/new': typeof RecipesNewRoute
   '/recipes/': typeof RecipesIndexRoute
   '/recipes/$id/edit': typeof RecipesIdEditRoute
@@ -125,6 +134,7 @@ export interface FileRouteTypes {
     | '/recipes'
     | '/recipes/$id'
     | '/recipes/import'
+    | '/recipes/import-cmt'
     | '/recipes/new'
     | '/recipes/'
     | '/recipes/$id/edit'
@@ -136,6 +146,7 @@ export interface FileRouteTypes {
     | '/components'
     | '/filter-demo'
     | '/recipes/import'
+    | '/recipes/import-cmt'
     | '/recipes/new'
     | '/recipes'
     | '/recipes/$id/edit'
@@ -149,6 +160,7 @@ export interface FileRouteTypes {
     | '/recipes'
     | '/recipes/$id'
     | '/recipes/import'
+    | '/recipes/import-cmt'
     | '/recipes/new'
     | '/recipes/'
     | '/recipes/$id/edit'
@@ -214,6 +226,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RecipesNewRouteImport
       parentRoute: typeof RecipesRoute
     }
+    '/recipes/import-cmt': {
+      id: '/recipes/import-cmt'
+      path: '/import-cmt'
+      fullPath: '/recipes/import-cmt'
+      preLoaderRoute: typeof RecipesImportCmtRouteImport
+      parentRoute: typeof RecipesRoute
+    }
     '/recipes/import': {
       id: '/recipes/import'
       path: '/import'
@@ -262,6 +281,7 @@ const RecipesIdRouteWithChildren = RecipesIdRoute._addFileChildren(
 interface RecipesRouteChildren {
   RecipesIdRoute: typeof RecipesIdRouteWithChildren
   RecipesImportRoute: typeof RecipesImportRoute
+  RecipesImportCmtRoute: typeof RecipesImportCmtRoute
   RecipesNewRoute: typeof RecipesNewRoute
   RecipesIndexRoute: typeof RecipesIndexRoute
 }
@@ -269,6 +289,7 @@ interface RecipesRouteChildren {
 const RecipesRouteChildren: RecipesRouteChildren = {
   RecipesIdRoute: RecipesIdRouteWithChildren,
   RecipesImportRoute: RecipesImportRoute,
+  RecipesImportCmtRoute: RecipesImportCmtRoute,
   RecipesNewRoute: RecipesNewRoute,
   RecipesIndexRoute: RecipesIndexRoute,
 }

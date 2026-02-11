@@ -7,6 +7,8 @@ import type {
   RecipeImageDto,
   IngredientForCreationDto,
   ImportRecipePreviewDto,
+  CmtImportPreviewDto,
+  CmtImportResultDto,
 } from '../types'
 import { RecipeKeys } from './recipe.keys'
 
@@ -254,6 +256,71 @@ export function useUploadRecipeImageFromUrl() {
  */
 export function proxyImageUrl(url: string): string {
   return `/api/v1/recipes/proxy-image?url=${encodeURIComponent(url)}`
+}
+
+/**
+ * Preview a Copy Me That ZIP import
+ */
+export async function previewCmtImport(file: File): Promise<CmtImportPreviewDto> {
+  const formData = new FormData()
+  formData.append('file', file)
+  const response = await apiClient.post<CmtImportPreviewDto>(
+    '/api/v1/recipes/import/cmt/preview',
+    formData,
+    { headers: { 'Content-Type': 'multipart/form-data' } }
+  )
+  return response.data
+}
+
+/**
+ * Hook for previewing CMT import
+ */
+export function usePreviewCmtImport() {
+  return useMutation({
+    mutationFn: previewCmtImport,
+  })
+}
+
+/**
+ * Import selected recipes from a Copy Me That ZIP
+ */
+export async function importCmtRecipes(
+  file: File,
+  selectedIndices: number[],
+  importRatings: boolean
+): Promise<CmtImportResultDto> {
+  const formData = new FormData()
+  formData.append('file', file)
+  formData.append('selectedIndices', JSON.stringify(selectedIndices))
+  formData.append('importRatings', String(importRatings))
+  const response = await apiClient.post<CmtImportResultDto>(
+    '/api/v1/recipes/import/cmt',
+    formData,
+    { headers: { 'Content-Type': 'multipart/form-data' } }
+  )
+  return response.data
+}
+
+/**
+ * Hook for importing CMT recipes
+ */
+export function useImportCmtRecipes() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: ({
+      file,
+      selectedIndices,
+      importRatings,
+    }: {
+      file: File
+      selectedIndices: number[]
+      importRatings: boolean
+    }) => importCmtRecipes(file, selectedIndices, importRatings),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: RecipeKeys.lists() })
+    },
+  })
 }
 
 /**

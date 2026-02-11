@@ -149,6 +149,31 @@ export interface ImportImageDto {
   alt: string | null
 }
 
+export interface CmtImportPreviewItemDto {
+  index: number
+  title: string
+  source: string | null
+  servings: number | null
+  ingredientCount: number
+  rating: number | null
+  hasImage: boolean
+  isDuplicate: boolean
+  tags: string[]
+}
+
+export interface CmtImportPreviewDto {
+  recipes: CmtImportPreviewItemDto[]
+  totalCount: number
+  duplicateCount: number
+}
+
+export interface CmtImportResultDto {
+  importedCount: number
+  skippedCount: number
+  errorCount: number
+  errors: string[]
+}
+
 export interface PagedList<T> {
   items: T[]
   pageNumber: number

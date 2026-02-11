@@ -70,14 +70,12 @@ namespace Cooklyn.Server.Migrations
                         .HasColumnName("last_modified_on");
 
                     b.Property<string>("Name")
-                        .HasMaxLength(300)
-                        .HasColumnType("character varying(300)")
+                        .HasColumnType("text")
                         .HasColumnName("name");
 
                     b.Property<string>("RawText")
                         .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)")
+                        .HasColumnType("text")
                         .HasColumnName("raw_text");
 
                     b.Property<string>("RecipeId")

@@ -38,7 +38,6 @@ namespace Cooklyn.Server.Migrations
                     description = table.Column<string>(type: "character varying(5000)", maxLength: 5000, nullable: true),
                     image_s3bucket = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
                     source = table.Column<string>(type: "character varying(2000)", maxLength: 2000, nullable: true),
-                    is_favorite = table.Column<bool>(type: "boolean", nullable: false),
                     servings = table.Column<int>(type: "integer", nullable: true),
                     steps = table.Column<string>(type: "text", nullable: true),
                     notes = table.Column<string>(type: "character varying(10000)", maxLength: 10000, nullable: true),
@@ -120,8 +119,8 @@ namespace Cooklyn.Server.Migrations
                 {
                     id = table.Column<string>(type: "text", nullable: false),
                     recipe_id = table.Column<string>(type: "text", nullable: false),
-                    raw_text = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
-                    name = table.Column<string>(type: "character varying(300)", maxLength: 300, nullable: true),
+                    raw_text = table.Column<string>(type: "text", nullable: false),
+                    name = table.Column<string>(type: "text", nullable: true),
                     amount = table.Column<decimal>(type: "numeric(10,4)", precision: 10, scale: 4, nullable: true),
                     amount_text = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
                     custom_unit = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
@@ -293,11 +292,6 @@ namespace Cooklyn.Server.Migrations
                 name: "ix_recipe_tags_tag_id",
                 table: "recipe_tags",
                 column: "tag_id");
-
-            migrationBuilder.CreateIndex(
-                name: "ix_recipes_is_favorite",
-                table: "recipes",
-                column: "is_favorite");
 
             migrationBuilder.CreateIndex(
                 name: "ix_recipes_tenant_id",
