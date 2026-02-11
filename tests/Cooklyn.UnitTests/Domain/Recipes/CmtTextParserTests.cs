@@ -204,8 +204,8 @@ public class CmtTextParserTests
 
         result.Steps.ShouldNotBeNull();
         result.Steps.ShouldBe(
-            "Combine the basil and garlic in a food processor.\n" +
-            "Add oil and process until smooth.\n" +
+            "Combine the basil and garlic in a food processor.\n\n" +
+            "Add oil and process until smooth.\n\n" +
             "Season with salt and pepper.");
     }
 

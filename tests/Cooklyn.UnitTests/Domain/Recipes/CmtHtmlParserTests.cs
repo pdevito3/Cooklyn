@@ -297,7 +297,7 @@ public class CmtHtmlParserTests
 
         var recipes = CmtHtmlParser.Parse(html);
 
-        recipes[0].Steps.ShouldBe("Step one.\nStep two.\nStep three.");
+        recipes[0].Steps.ShouldBe("Step one.\n\nStep two.\n\nStep three.");
     }
 
     [Fact]

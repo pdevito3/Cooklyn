@@ -84,7 +84,7 @@ public static class CmtHtmlParser
                 .Select(s => s.TextContent.Trim())
                 .Where(s => !string.IsNullOrWhiteSpace(s))
                 .ToList();
-            string? steps = stepTexts.Count > 0 ? string.Join("\n", stepTexts) : null;
+            string? steps = stepTexts.Count > 0 ? string.Join("\n\n", stepTexts) : null;
 
             // Notes
             var noteItems = el.QuerySelectorAll(".recipeNote");

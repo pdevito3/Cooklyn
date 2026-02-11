@@ -73,7 +73,7 @@ public static partial class CmtTextParser
         }
 
         if (stepsLines.Count > 0)
-            steps = string.Join("\n", stepsLines);
+            steps = string.Join("\n\n", stepsLines);
 
         if (notesLines.Count > 0)
             notes = string.Join("\n", notesLines);
