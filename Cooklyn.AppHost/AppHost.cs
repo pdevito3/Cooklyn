@@ -66,7 +66,6 @@ try
         .WithBffAuth(authProvider)
         .WithReference(server)
         .WithReference(webfrontend)
-        .WaitFor(server)
         .WithEndpoint("http", e =>
         {
             e.Port = 5234;
@@ -83,8 +82,7 @@ try
     }
 
     webfrontend
-        .WithReference(bff)
-        .WaitFor(bff);
+        .WithReference(bff);
 
     server.PublishWithContainerFiles(webfrontend, "wwwroot");
 
