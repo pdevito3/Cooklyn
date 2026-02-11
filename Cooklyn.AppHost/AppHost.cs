@@ -67,6 +67,11 @@ try
         .WithReference(server)
         .WithReference(webfrontend)
         .WaitFor(server)
+        .WithEndpoint("http", e =>
+        {
+            e.Port = 5234;
+            e.IsProxied = false;
+        })
         .WithHttpHealthCheck("/health", endpointName: "http")
         .WithExternalHttpEndpoints()
         .WithParentRelationship(webfrontend);

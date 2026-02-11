@@ -83,7 +83,7 @@ public static class AuthExtensions
                 // Lax is required for OIDC redirects from external IdP
                 options.Cookie.SameSite = SameSiteMode.Lax;
                 // Ensure cookie works across ports in dev
-                options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+                options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
             })
             .AddRemoteApis();
 
