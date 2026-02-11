@@ -3,7 +3,10 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import svgr from 'vite-plugin-svgr'
+import { reactClickToComponent } from 'vite-plugin-react-click-to-component'
 import { TanStackRouterVite } from '@tanstack/router-plugin/vite'
+
+process.env.LAUNCH_EDITOR = 'code'
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -17,6 +20,7 @@ export default defineConfig({
         exportType: 'default',
       },
     }),
+    reactClickToComponent(),
   ],
   resolve: {
     alias: {
