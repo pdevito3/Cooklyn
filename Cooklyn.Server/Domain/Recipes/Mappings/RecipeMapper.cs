@@ -101,7 +101,6 @@ public static partial class RecipeMapper
             ImageS3Key = dto.ImageS3Key,
             Rating = dto.Rating,
             Source = dto.Source,
-            IsFavorite = dto.IsFavorite,
             Servings = dto.Servings,
             Steps = dto.Steps,
             Notes = dto.Notes

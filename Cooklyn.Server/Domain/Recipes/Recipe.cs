@@ -16,7 +16,6 @@ public class Recipe : BaseEntity, ITenantable
     public BlobStorageKey ImageS3Key { get; private set; } = BlobStorageKey.Empty();
     public Rating Rating { get; private set; } = default!;
     public string? Source { get; private set; }
-    public bool IsFavorite { get; private set; }
     public int? Servings { get; private set; }
     public string? Steps { get; private set; }
     public string? Notes { get; private set; }
@@ -44,7 +43,6 @@ public class Recipe : BaseEntity, ITenantable
             ImageS3Key = BlobStorageKey.Of(forCreation.ImageS3Key),
             Rating = Rating.Of(forCreation.Rating ?? Rating.NotRated().Value),
             Source = forCreation.Source,
-            IsFavorite = forCreation.IsFavorite,
             Servings = forCreation.Servings,
             Steps = forCreation.Steps,
             Notes = forCreation.Notes
@@ -64,7 +62,6 @@ public class Recipe : BaseEntity, ITenantable
         ImageS3Key = BlobStorageKey.Of(forUpdate.ImageS3Key);
         Rating = Rating.Of(forUpdate.Rating ?? Rating.NotRated().Value);
         Source = forUpdate.Source;
-        IsFavorite = forUpdate.IsFavorite;
         Servings = forUpdate.Servings;
         Steps = forUpdate.Steps;
         Notes = forUpdate.Notes;
@@ -99,20 +96,6 @@ public class Recipe : BaseEntity, ITenantable
             return null;
 
         return fileStorage.GetPreSignedUrl(ImageS3Bucket!, ImageS3Key.Value!, durationInMinutes);
-    }
-
-    public Recipe ToggleFavorite()
-    {
-        IsFavorite = !IsFavorite;
-        QueueDomainEvent(new RecipeUpdated(Id));
-        return this;
-    }
-
-    public Recipe SetFavorite(bool isFavorite)
-    {
-        IsFavorite = isFavorite;
-        QueueDomainEvent(new RecipeUpdated(Id));
-        return this;
     }
 
     public Recipe UpdateRating(Rating rating)

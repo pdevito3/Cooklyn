@@ -2,7 +2,6 @@ import {
   ArrowLeft02Icon,
   Delete01Icon,
   Edit01Icon,
-  FavouriteIcon,
   Image02Icon,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
@@ -29,9 +28,9 @@ import { StepViewer } from "@/components/step-viewer";
 import {
   useDeleteRecipe,
   useRecipe,
-  useToggleRecipeFavorite,
   formatUnit,
 } from "@/domain/recipes";
+import { RatingIcon } from "@/components/rating-icon";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/recipes/$id/")({
@@ -47,7 +46,6 @@ function RecipeDetailPage() {
 
   const { data: recipe, isLoading, error } = useRecipe(id);
   const deleteRecipe = useDeleteRecipe();
-  const toggleFavorite = useToggleRecipeFavorite();
 
   const handleBack = () => {
     navigate({ to: "/recipes" });
@@ -67,10 +65,6 @@ function RecipeDetailPage() {
         navigate({ to: "/recipes" });
       },
     });
-  };
-
-  const handleToggleFavorite = () => {
-    toggleFavorite.mutate(id);
   };
 
   const placeholderImage =
@@ -151,17 +145,6 @@ function RecipeDetailPage() {
           </div>
         </div>
         <div className="flex gap-2">
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={handleToggleFavorite}
-            disabled={toggleFavorite.isPending}
-          >
-            <HugeiconsIcon
-              icon={FavouriteIcon}
-              className={cn("h-5 w-5", recipe.isFavorite && "text-red-500")}
-            />
-          </Button>
           <Button variant="outline" onClick={handleEdit}>
             <HugeiconsIcon icon={Edit01Icon} className="w-4 h-4 mr-2" />
             Edit
@@ -196,7 +179,10 @@ function RecipeDetailPage() {
       {/* Meta Info */}
       <div className="flex flex-wrap gap-4">
         {recipe.rating && recipe.rating !== "Not Rated" && (
-          <Badge variant="secondary">Rating: {recipe.rating}</Badge>
+          <Badge variant="secondary" className="flex items-center gap-1.5">
+            <RatingIcon rating={recipe.rating} size="sm" />
+            {recipe.rating}
+          </Badge>
         )}
         {recipe.servings && (
           <Badge variant="outline">Servings: {recipe.servings}</Badge>

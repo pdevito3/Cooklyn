@@ -89,6 +89,5 @@ public sealed class RecipeConfiguration : IEntityTypeConfiguration<Recipe>
         // Indexes
         builder.HasIndex(e => e.TenantId);
         builder.HasIndex(e => e.Title);
-        builder.HasIndex(e => e.IsFavorite);
     }
 }

@@ -25,7 +25,6 @@ function NewRecipePage() {
         imageS3Key: null,
         rating: values.rating,
         source: values.source,
-        isFavorite: values.isFavorite,
         servings: values.servings,
         steps: values.steps,
         notes: values.notes,

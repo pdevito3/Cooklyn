@@ -20,7 +20,6 @@ public sealed record RecipeDto
     public string? ImageS3Key { get; init; }
     public string Rating { get; init; } = default!;
     public string? Source { get; init; }
-    public bool IsFavorite { get; init; }
     public int? Servings { get; init; }
     public string? Steps { get; init; }
     public string? Notes { get; init; }

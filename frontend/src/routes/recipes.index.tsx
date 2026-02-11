@@ -5,7 +5,7 @@ import { HugeiconsIcon } from '@hugeicons/react'
 import { useQueryClient } from '@tanstack/react-query'
 import { useWindowVirtualizer } from '@tanstack/react-virtual'
 
-import { useInfiniteRecipes, RecipeKeys, useDeleteRecipe, useToggleRecipeFavorite } from '@/domain/recipes'
+import { useInfiniteRecipes, RecipeKeys, useDeleteRecipe } from '@/domain/recipes'
 import { RecipeCard } from '@/components/recipe-card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -96,7 +96,6 @@ function RecipesIndexPage() {
   } = useInfiniteRecipes({ pageSize: PAGE_SIZE, filters })
 
   const deleteRecipe = useDeleteRecipe()
-  const toggleFavorite = useToggleRecipeFavorite()
 
   const allRecipes = useMemo(
     () => data?.pages.flatMap((p) => p.items) ?? [],
@@ -151,10 +150,6 @@ function RecipesIndexPage() {
       })
     }
   }
-
-  const handleToggleFavorite = useCallback((id: string) => {
-    toggleFavorite.mutate(id)
-  }, [toggleFavorite])
 
   const virtualItems = virtualizer.getVirtualItems()
 
@@ -270,7 +265,6 @@ function RecipesIndexPage() {
                         recipe={recipe}
                         onEdit={handleEditRecipe}
                         onDelete={handleDeleteRecipe}
-                        onToggleFavorite={handleToggleFavorite}
                       />
                     ))}
                   </div>

@@ -81,31 +81,6 @@ export function useDeleteRecipe() {
 }
 
 /**
- * Toggle favorite status of a recipe
- */
-export async function toggleRecipeFavorite(id: string): Promise<RecipeDto> {
-  const response = await apiClient.post<RecipeDto>(
-    `/api/v1/recipes/${id}/toggle-favorite`
-  )
-  return response.data
-}
-
-/**
- * Hook for toggling recipe favorite status
- */
-export function useToggleRecipeFavorite() {
-  const queryClient = useQueryClient()
-
-  return useMutation({
-    mutationFn: toggleRecipeFavorite,
-    onSuccess: (_, id) => {
-      queryClient.invalidateQueries({ queryKey: RecipeKeys.lists() })
-      queryClient.invalidateQueries({ queryKey: RecipeKeys.detail(id) })
-    },
-  })
-}
-
-/**
  * Upload an image for a recipe
  */
 export async function uploadRecipeImage(

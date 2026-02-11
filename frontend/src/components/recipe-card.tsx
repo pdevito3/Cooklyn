@@ -7,28 +7,25 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import type { RecipeSummaryDto } from "@/domain/recipes";
-import { cn } from "@/lib/utils";
 import {
   Delete01Icon,
   Edit01Icon,
-  FavouriteIcon,
   MoreVerticalIcon,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Link } from "@tanstack/react-router";
+import { RatingIcon } from "@/components/rating-icon";
 
 interface RecipeCardProps {
   recipe: RecipeSummaryDto;
   onEdit?: (id: string) => void;
   onDelete?: (id: string) => void;
-  onToggleFavorite?: (id: string) => void;
 }
 
 export function RecipeCard({
   recipe,
   onEdit,
   onDelete,
-  onToggleFavorite,
 }: RecipeCardProps) {
   const placeholderImage =
     'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300"%3E%3Crect fill="%23374151" width="400" height="300"/%3E%3Ctext fill="%239ca3af" font-family="system-ui" font-size="20" x="50%25" y="50%25" text-anchor="middle" dominant-baseline="middle"%3ENo Image%3C/text%3E%3C/svg%3E';
@@ -53,14 +50,10 @@ export function RecipeCard({
 
       {/* Top right actions */}
       <div className="absolute right-2 top-2 z-10 flex items-center gap-1">
-        {/* Favorite indicator */}
-        {recipe.isFavorite && (
+        {/* Rating indicator */}
+        {recipe.rating && recipe.rating !== "Not Rated" && (
           <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white/90 shadow-sm">
-            <HugeiconsIcon
-              icon={FavouriteIcon}
-              className="h-5 w-5 text-red-500"
-              strokeWidth={2}
-            />
+            <RatingIcon rating={recipe.rating} size="sm" />
           </span>
         )}
 
@@ -83,20 +76,6 @@ export function RecipeCard({
             }
           />
           <DropdownMenuContent align="end" className="w-auto">
-            {onToggleFavorite && (
-              <DropdownMenuItem onClick={() => onToggleFavorite(recipe.id)}>
-                <HugeiconsIcon
-                  icon={FavouriteIcon}
-                  className={cn(
-                    "mr-2 h-4 w-4",
-                    recipe.isFavorite && "text-red-500",
-                  )}
-                />
-                {recipe.isFavorite
-                  ? "Remove from favorites"
-                  : "Add to favorites"}
-              </DropdownMenuItem>
-            )}
             {onEdit && (
               <DropdownMenuItem onClick={() => onEdit(recipe.id)}>
                 <HugeiconsIcon icon={Edit01Icon} className="mr-2 h-4 w-4" />
@@ -131,13 +110,6 @@ export function RecipeCard({
         {recipe.description && (
           <p className="mt-1 line-clamp-1 text-sm text-white/80">
             {recipe.description}
-          </p>
-        )}
-
-        {/* Rating */}
-        {recipe.rating && recipe.rating !== "Not Rated" && (
-          <p className="mt-2 text-xs font-medium text-white/70">
-            {recipe.rating}
           </p>
         )}
       </div>

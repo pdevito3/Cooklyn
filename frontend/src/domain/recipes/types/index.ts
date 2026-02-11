@@ -56,7 +56,6 @@ export interface RecipeDto {
   imageS3Key: string | null
   rating: string
   source: string | null
-  isFavorite: boolean
   servings: number | null
   steps: string | null
   notes: string | null
@@ -74,7 +73,6 @@ export interface RecipeSummaryDto {
   description: string | null
   imageUrl: string | null
   rating: string
-  isFavorite: boolean
   servings: number | null
   tags: string[]
   flags: string[]
@@ -108,7 +106,6 @@ export interface RecipeForCreationDto {
   imageS3Key: string | null
   rating: string | null
   source: string | null
-  isFavorite: boolean
   servings: number | null
   steps: string | null
   notes: string | null
@@ -126,7 +123,6 @@ export interface RecipeForUpdateDto {
   imageS3Key: string | null
   rating: string | null
   source: string | null
-  isFavorite: boolean
   servings: number | null
   steps: string | null
   notes: string | null

@@ -95,20 +95,6 @@ public sealed class RecipesController(IMediator mediator) : ControllerBase
     }
 
     /// <summary>
-    /// Toggles the favorite status of a Recipe.
-    /// </summary>
-    [Authorize]
-    [HttpPost("{id}/toggle-favorite", Name = "ToggleRecipeFavorite")]
-    [ProducesResponseType(typeof(RecipeDto), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<RecipeDto>> ToggleFavorite(string id)
-    {
-        var command = new ToggleRecipeFavorite.Command(id);
-        var result = await mediator.Send(command);
-        return Ok(result);
-    }
-
-    /// <summary>
     /// Updates the rating of a Recipe.
     /// </summary>
     [Authorize]

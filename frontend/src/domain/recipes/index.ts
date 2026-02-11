@@ -17,8 +17,6 @@ export {
   updateRecipe,
   useDeleteRecipe,
   deleteRecipe,
-  useToggleRecipeFavorite,
-  toggleRecipeFavorite,
   useUploadRecipeImage,
   uploadRecipeImage,
   useDeleteRecipeImage,

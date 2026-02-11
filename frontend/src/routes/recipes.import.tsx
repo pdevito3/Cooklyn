@@ -52,7 +52,6 @@ function ImportRecipePage() {
         imageS3Key: null,
         rating: values.rating,
         source: values.source,
-        isFavorite: values.isFavorite,
         servings: values.servings,
         steps: values.steps,
         notes: values.notes,
@@ -81,7 +80,6 @@ function ImportRecipePage() {
         source: preview.source ?? null,
         servings: preview.servings ?? null,
         steps: preview.steps ?? null,
-        isFavorite: false,
         flags: [],
         ingredients: preview.ingredients,
       }

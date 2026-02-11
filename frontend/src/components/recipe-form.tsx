@@ -3,12 +3,11 @@ import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { HugeiconsIcon } from '@hugeicons/react'
-import { FavouriteIcon, ImageUploadIcon, Delete02Icon } from '@hugeicons/core-free-icons'
+import { ImageUploadIcon, Delete02Icon } from '@hugeicons/core-free-icons'
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
-import { Checkbox } from '@/components/ui/checkbox'
 import { Label } from '@/components/ui/label'
 import { MultiSelect, type MultiSelectOption } from '@/components/ui/multi-select'
 import {
@@ -30,7 +29,7 @@ import {
   type RecipeDto,
   type IngredientForCreationDto,
 } from '@/domain/recipes'
-import { cn } from '@/lib/utils'
+import { RatingIcon } from '@/components/rating-icon'
 
 const ingredientSchema = z.object({
   rawText: z.string(),
@@ -48,7 +47,6 @@ const recipeFormSchema = z.object({
   description: z.string().max(2000, 'Description is too long').nullable(),
   rating: z.string().nullable(),
   source: z.string().max(500, 'Source is too long').nullable(),
-  isFavorite: z.boolean(),
   servings: z.number().int().min(1).max(999).nullable(),
   steps: z.string().nullable(),
   notes: z.string().nullable(),
@@ -108,7 +106,6 @@ export function RecipeForm({
         description: existingRecipe.description,
         rating: existingRecipe.rating === 'Not Rated' ? null : existingRecipe.rating,
         source: existingRecipe.source,
-        isFavorite: existingRecipe.isFavorite,
         servings: existingRecipe.servings,
         steps: existingRecipe.steps,
         notes: existingRecipe.notes,
@@ -129,7 +126,6 @@ export function RecipeForm({
         description: defaultValues?.description ?? null,
         rating: defaultValues?.rating ?? null,
         source: defaultValues?.source ?? null,
-        isFavorite: defaultValues?.isFavorite ?? false,
         servings: defaultValues?.servings ?? null,
         steps: defaultValues?.steps ?? null,
         notes: defaultValues?.notes ?? null,
@@ -141,14 +137,11 @@ export function RecipeForm({
     register,
     control,
     handleSubmit,
-    watch,
     formState: { errors },
   } = useForm<RecipeFormValues>({
     resolver: zodResolver(recipeFormSchema),
     defaultValues: initialValues,
   })
-
-  const isFavorite = watch('isFavorite')
 
   const actionButtons = (
     <>
@@ -387,55 +380,39 @@ export function RecipeForm({
           <CardTitle>Rating and Tags</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div className="flex flex-col gap-2">
-              <Label>Rating</Label>
-              <Controller
-                control={control}
-                name="rating"
-                render={({ field }) => (
-                  <Select
-                    value={field.value ?? undefined}
-                    onValueChange={(value) => field.onChange(value || null)}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select rating" />
-                      <SelectIcon />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {ratingOptions.map((option) => (
-                        <SelectItem key={option.value} value={option.value}>
-                          <SelectItemIndicator />
-                          <SelectItemText>{option.label}</SelectItemText>
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                )}
-              />
-              {errors.rating && (
-                <p className="text-sm font-medium text-destructive">{errors.rating.message}</p>
+          <div className="flex flex-col gap-2">
+            <Label>Rating</Label>
+            <Controller
+              control={control}
+              name="rating"
+              render={({ field }) => (
+                <Select
+                  value={field.value ?? undefined}
+                  onValueChange={(value) => field.onChange(value || null)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select rating" />
+                    <SelectIcon />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {ratingOptions.map((option) => (
+                      <SelectItem key={option.value} value={option.value}>
+                        <SelectItemIndicator />
+                        <SelectItemText>
+                          <span className="flex items-center gap-2">
+                            <RatingIcon rating={option.value} size="sm" />
+                            {option.label}
+                          </span>
+                        </SelectItemText>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               )}
-            </div>
-
-            <div className="flex flex-col justify-end gap-2">
-              <Controller
-                control={control}
-                name="isFavorite"
-                render={({ field }) => (
-                  <Checkbox
-                    isSelected={field.value}
-                    onChange={field.onChange}
-                  >
-                    <HugeiconsIcon
-                      icon={FavouriteIcon}
-                      className={cn('h-4 w-4', isFavorite && 'text-red-500')}
-                    />
-                    Mark as favorite
-                  </Checkbox>
-                )}
-              />
-            </div>
+            />
+            {errors.rating && (
+              <p className="text-sm font-medium text-destructive">{errors.rating.message}</p>
+            )}
           </div>
 
           <div className="flex flex-col gap-2">
