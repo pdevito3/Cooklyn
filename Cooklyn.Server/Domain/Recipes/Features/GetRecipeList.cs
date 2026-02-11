@@ -31,7 +31,8 @@ public static class GetRecipeList
             if (!string.IsNullOrWhiteSpace(request.Parameters.SortOrder))
                 query = query.ApplyQueryKitSort(request.Parameters.SortOrder, queryKitConfig);
             else
-                query = query.OrderByDescending(r => r.CreatedOn);
+                query = query.OrderByDescending(r => r.CreatedOn)
+                    .ThenByDescending(r => r.Id);
 
             // Get paginated recipes
             var pagedRecipes = await PagedList<Recipe>.CreateAsync(
