@@ -17,6 +17,7 @@ interface IngredientEditorProps {
 
 export function IngredientEditor({ value, onChange }: IngredientEditorProps) {
   const [mode, setMode] = useState<'text' | 'structured'>('text')
+  const [textTab, setTextTab] = useState<'write' | 'preview'>('write')
   const [rawText, setRawText] = useState(() =>
     value.length > 0 ? ingredientsToText(value) : ''
   )
@@ -102,19 +103,48 @@ export function IngredientEditor({ value, onChange }: IngredientEditorProps) {
       </div>
 
       {mode === 'text' ? (
-        <div className="space-y-3">
-          <Textarea
-            placeholder={`Enter ingredients, one per line...\nUse "GroupName:" to create groups.\n\nExamples:\nBiscuit:\n2 cups flour\n1 1/2 tsp salt\nGravy:\n2 T butter\n3 large eggs`}
-            className="min-h-[200px] font-mono text-sm"
-            value={rawText}
-            onChange={(e) => handleTextChange(e.target.value)}
-          />
-          {value.length > 0 && (
-            <div className="space-y-1">
-              <p className="text-xs font-medium text-muted-foreground">
-                Parsed preview ({value.length} ingredient{value.length !== 1 ? 's' : ''})
-              </p>
-              <div className="rounded-md border bg-muted/30 p-2">
+        <div>
+          <div className="flex border-b">
+            <button
+              type="button"
+              className={cn(
+                'px-3 py-1.5 text-sm font-medium transition-colors',
+                textTab === 'write'
+                  ? 'border-b-2 border-primary text-foreground'
+                  : 'text-muted-foreground hover:text-foreground'
+              )}
+              onClick={() => setTextTab('write')}
+            >
+              Write
+            </button>
+            <button
+              type="button"
+              className={cn(
+                'px-3 py-1.5 text-sm font-medium transition-colors',
+                textTab === 'preview'
+                  ? 'border-b-2 border-primary text-foreground'
+                  : 'text-muted-foreground hover:text-foreground'
+              )}
+              onClick={() => setTextTab('preview')}
+            >
+              Preview
+              {value.length > 0 && (
+                <span className="ml-1.5 text-xs text-muted-foreground">
+                  ({value.length})
+                </span>
+              )}
+            </button>
+          </div>
+          <div className="pt-3">
+            {textTab === 'write' ? (
+              <Textarea
+                placeholder={`Enter ingredients, one per line...\nUse "GroupName:" to create groups.\n\nExamples:\nBiscuit:\n2 cups flour\n1 1/2 tsp salt\nGravy:\n2 T butter\n3 large eggs`}
+                className="min-h-[200px] font-mono text-sm"
+                value={rawText}
+                onChange={(e) => handleTextChange(e.target.value)}
+              />
+            ) : value.length > 0 ? (
+              <div className="rounded-md border bg-muted/30 p-3">
                 {(() => {
                   let lastGroup: string | null = null
                   return value.map((ingredient, i) => {
@@ -155,8 +185,12 @@ export function IngredientEditor({ value, onChange }: IngredientEditorProps) {
                   })
                 })()}
               </div>
-            </div>
-          )}
+            ) : (
+              <p className="py-8 text-center text-sm text-muted-foreground">
+                Nothing to preview yet. Switch to Write and add some ingredients.
+              </p>
+            )}
+          </div>
         </div>
       ) : (
         <div className="space-y-2">
