@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react'
-import { ArrowUp02Icon, ArrowDown02Icon, Delete02Icon } from '@hugeicons/core-free-icons'
+import { ArrowUp02Icon, ArrowDown02Icon, Delete02Icon, InformationCircleIcon } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
+import { Dialog as DialogPrimitive } from '@base-ui/react/dialog'
 
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
@@ -88,10 +89,95 @@ export function IngredientEditor({ value, onChange }: IngredientEditorProps) {
     [value, onChange]
   )
 
+  const [helpOpen, setHelpOpen] = useState(false)
+
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
-        <Label>Ingredients</Label>
+        <div className="flex items-center gap-2">
+          <Label>Ingredients</Label>
+          <DialogPrimitive.Root open={helpOpen} onOpenChange={setHelpOpen}>
+            <DialogPrimitive.Trigger
+              className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
+            >
+              <HugeiconsIcon icon={InformationCircleIcon} className="h-3.5 w-3.5" />
+              Formatting help
+            </DialogPrimitive.Trigger>
+            <DialogPrimitive.Portal>
+              <DialogPrimitive.Backdrop className="fixed inset-0 z-50 bg-black/50 data-[open]:animate-in data-[closed]:animate-out data-[closed]:fade-out-0 data-[open]:fade-in-0 duration-200" />
+              <DialogPrimitive.Popup className="bg-background fixed left-1/2 top-1/2 z-50 w-[calc(100%-2rem)] max-w-lg -translate-x-1/2 -translate-y-1/2 rounded-lg border p-6 shadow-lg data-[open]:animate-in data-[closed]:animate-out data-[closed]:fade-out-0 data-[open]:fade-in-0 data-[closed]:zoom-out-95 data-[open]:zoom-in-95 duration-200 max-h-[85vh] overflow-y-auto">
+                <DialogPrimitive.Title className="text-lg font-semibold">
+                  Ingredient Formatting Guide
+                </DialogPrimitive.Title>
+                <DialogPrimitive.Description className="mt-1 text-sm text-muted-foreground">
+                  Tips for entering ingredients in text mode.
+                </DialogPrimitive.Description>
+                <div className="mt-4 space-y-4 text-sm">
+                  <div>
+                    <h4 className="font-medium">Basic format</h4>
+                    <p className="mt-1 text-muted-foreground">
+                      Enter one ingredient per line as: amount unit name
+                    </p>
+                    <pre className="mt-1.5 rounded-md bg-muted/50 p-2 font-mono text-xs">
+{`2 cups flour
+1 tsp salt
+3 large eggs`}
+                    </pre>
+                  </div>
+                  <div>
+                    <h4 className="font-medium">Fractions</h4>
+                    <p className="mt-1 text-muted-foreground">
+                      Use slashes for fractions, including mixed numbers.
+                    </p>
+                    <pre className="mt-1.5 rounded-md bg-muted/50 p-2 font-mono text-xs">
+{`1/2 cup sugar
+1 1/2 tsp baking powder
+3/4 lb ground beef`}
+                    </pre>
+                  </div>
+                  <div>
+                    <h4 className="font-medium">Groups</h4>
+                    <p className="mt-1 text-muted-foreground">
+                      End a line with a colon to create a group header. All ingredients after it belong to that group.
+                    </p>
+                    <pre className="mt-1.5 rounded-md bg-muted/50 p-2 font-mono text-xs">
+{`Biscuit:
+2 cups flour
+1 T butter
+
+Gravy:
+2 T butter
+3 cups milk`}
+                    </pre>
+                  </div>
+                  <div>
+                    <h4 className="font-medium">Unit shortcuts</h4>
+                    <p className="mt-1 text-muted-foreground">
+                      Common abbreviations are recognized automatically.
+                    </p>
+                    <div className="mt-1.5 grid grid-cols-2 gap-x-4 gap-y-0.5 text-xs text-muted-foreground">
+                      <span><code className="font-mono">tsp</code> = Teaspoon</span>
+                      <span><code className="font-mono">tbsp</code> = Tablespoon</span>
+                      <span><code className="font-mono">c</code> = Cup</span>
+                      <span><code className="font-mono">oz</code> = Ounce</span>
+                      <span><code className="font-mono">lb</code> = Pound</span>
+                      <span><code className="font-mono">g</code> = Gram</span>
+                      <span><code className="font-mono">kg</code> = Kilogram</span>
+                      <span><code className="font-mono">ml</code> = Milliliter</span>
+                      <span><code className="font-mono">T</code> = Tablespoon</span>
+                      <span><code className="font-mono">t</code> = Teaspoon</span>
+                    </div>
+                  </div>
+                </div>
+                <div className="mt-5 flex justify-end">
+                  <DialogPrimitive.Close
+                    render={<Button variant="outline" size="sm">Close</Button>}
+                  />
+                </div>
+              </DialogPrimitive.Popup>
+            </DialogPrimitive.Portal>
+          </DialogPrimitive.Root>
+        </div>
         <Button
           type="button"
           variant="ghost"
