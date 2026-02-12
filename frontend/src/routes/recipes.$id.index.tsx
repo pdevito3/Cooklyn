@@ -9,6 +9,10 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 
+import { RatingIcon } from "@/components/rating-icon";
+import { ScaleInput, formatScaledAmount } from "@/components/scale-input";
+import { SourceImagePicker } from "@/components/source-image-picker";
+import { StepViewer } from "@/components/step-viewer";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -21,18 +25,10 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Kbd } from "@/components/ui/kbd";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Kbd } from "@/components/ui/kbd";
 import { Skeleton } from "@/components/ui/skeleton";
-import { SourceImagePicker } from "@/components/source-image-picker";
-import { ScaleInput, formatScaledAmount } from "@/components/scale-input";
-import { StepViewer } from "@/components/step-viewer";
-import {
-  useDeleteRecipe,
-  useRecipe,
-  formatUnit,
-} from "@/domain/recipes";
-import { RatingIcon } from "@/components/rating-icon";
+import { formatUnit, useDeleteRecipe, useRecipe } from "@/domain/recipes";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/recipes/$id/")({
@@ -61,8 +57,12 @@ function RecipeDetailPage() {
     setDeleteDialogOpen(true);
   };
 
-  useHotkeys('e', () => { if (recipe) handleEdit() })
-  useHotkeys('delete', () => { if (recipe) handleDelete() })
+  useHotkeys("e", () => {
+    if (recipe) handleEdit();
+  });
+  useHotkeys("delete", () => {
+    if (recipe) handleDelete();
+  });
 
   const confirmDelete = () => {
     deleteRecipe.mutate(id, {
@@ -151,12 +151,12 @@ function RecipeDetailPage() {
         </div>
         <div className="flex gap-2">
           <Button variant="outline" onClick={handleEdit}>
-            <HugeiconsIcon icon={Edit01Icon} className="w-4 h-4 mr-2" />
+            <HugeiconsIcon icon={Edit01Icon} className="w-4 h-4" />
             Edit
             <Kbd>E</Kbd>
           </Button>
           <Button variant="destructive" onClick={handleDelete}>
-            <HugeiconsIcon icon={Delete01Icon} className="w-4 h-4 mr-2" />
+            <HugeiconsIcon icon={Delete01Icon} className="w-4 h-4" />
             Delete
             <Kbd>⌫</Kbd>
           </Button>
@@ -170,6 +170,12 @@ function RecipeDetailPage() {
           alt={recipe.title}
           className="aspect-square w-full object-cover"
         />
+        {/* Rating overlay */}
+        {recipe.rating && recipe.rating !== "Not Rated" && (
+          <span className="absolute right-2 top-2 flex h-8 w-8 items-center justify-center rounded-full bg-white/90 shadow-sm">
+            <RatingIcon rating={recipe.rating} size="sm" />
+          </span>
+        )}
         {recipe.source?.startsWith("http") && (
           <Button
             variant="secondary"
@@ -185,12 +191,6 @@ function RecipeDetailPage() {
 
       {/* Meta Info */}
       <div className="flex flex-wrap gap-4">
-        {recipe.rating && recipe.rating !== "Not Rated" && (
-          <Badge variant="secondary" className="flex items-center gap-1.5">
-            <RatingIcon rating={recipe.rating} size="sm" />
-            {recipe.rating}
-          </Badge>
-        )}
         {recipe.servings && (
           <Badge variant="outline">Servings: {recipe.servings}</Badge>
         )}
@@ -222,26 +222,29 @@ function RecipeDetailPage() {
       {recipe.ingredients && recipe.ingredients.length > 0 && (
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0">
-            <CardTitle>
-              Ingredients ({recipe.ingredients.length})
-            </CardTitle>
+            <CardTitle>Ingredients ({recipe.ingredients.length})</CardTitle>
             <ScaleInput value={scale} onChange={setScale} />
           </CardHeader>
           <CardContent>
             {(() => {
-              const sorted = [...recipe.ingredients].sort((a, b) => a.sortOrder - b.sortOrder);
+              const sorted = [...recipe.ingredients].sort(
+                (a, b) => a.sortOrder - b.sortOrder,
+              );
               let lastGroup: string | null | undefined = undefined;
 
               return (
                 <div className="space-y-1">
                   {sorted.map((ingredient) => {
-                    const showGroupHeader = ingredient.groupName !== lastGroup && ingredient.groupName !== null;
+                    const showGroupHeader =
+                      ingredient.groupName !== lastGroup &&
+                      ingredient.groupName !== null;
                     const isFirstGroup = lastGroup === undefined;
                     lastGroup = ingredient.groupName;
 
-                    const scaledAmount = ingredient.amount != null
-                      ? formatScaledAmount(ingredient.amount * scale)
-                      : null;
+                    const scaledAmount =
+                      ingredient.amount != null
+                        ? formatScaledAmount(ingredient.amount * scale)
+                        : null;
 
                     return (
                       <div key={ingredient.id}>
@@ -249,7 +252,7 @@ function RecipeDetailPage() {
                           <h4
                             className={cn(
                               "border-b pb-1 text-sm font-semibold uppercase tracking-wide text-foreground/70",
-                              isFirstGroup ? "mt-0 mb-2" : "mt-4 mb-2"
+                              isFirstGroup ? "mt-0 mb-2" : "mt-4 mb-2",
                             )}
                           >
                             {ingredient.groupName}
@@ -257,7 +260,12 @@ function RecipeDetailPage() {
                         )}
                         <li className="flex gap-1 list-none">
                           {scaledAmount != null ? (
-                            <span className={cn("font-medium", scale !== 1 && "text-primary")}>
+                            <span
+                              className={cn(
+                                "font-medium",
+                                scale !== 1 && "text-primary",
+                              )}
+                            >
                               {scaledAmount}
                             </span>
                           ) : ingredient.amountText ? (
@@ -267,7 +275,12 @@ function RecipeDetailPage() {
                           ) : null}
                           {ingredient.unit && (
                             <span className="text-muted-foreground">
-                              {formatUnit(ingredient.unit, ingredient.amount != null ? ingredient.amount * scale : null)}
+                              {formatUnit(
+                                ingredient.unit,
+                                ingredient.amount != null
+                                  ? ingredient.amount * scale
+                                  : null,
+                              )}
                             </span>
                           )}
                           <span>{ingredient.name ?? ingredient.rawText}</span>

@@ -1,37 +1,40 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
-import { useForm, Controller } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { z } from 'zod'
-import { HugeiconsIcon } from '@hugeicons/react'
-import { ImageUploadIcon, Delete02Icon } from '@hugeicons/core-free-icons'
-import { useHotkeys } from 'react-hotkeys-hook'
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Delete02Icon, ImageUploadIcon } from "@hugeicons/core-free-icons";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { useHotkeys } from "react-hotkeys-hook";
+import { z } from "zod";
 
-import { Button } from '@/components/ui/button'
-import { Kbd } from '@/components/ui/kbd'
-import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
-import { Label } from '@/components/ui/label'
-import { MultiSelect, type MultiSelectOption } from '@/components/ui/multi-select'
+import { ImageCropDialog } from "@/components/image-crop-dialog";
+import { IngredientEditor } from "@/components/ingredient-editor";
+import { RatingIcon } from "@/components/rating-icon";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Kbd } from "@/components/ui/kbd";
+import { Label } from "@/components/ui/label";
+import {
+  MultiSelect,
+  type MultiSelectOption,
+} from "@/components/ui/multi-select";
 import {
   Select,
   SelectContent,
+  SelectIcon,
   SelectItem,
   SelectItemIndicator,
   SelectItemText,
   SelectTrigger,
   SelectValue,
-  SelectIcon,
-} from '@/components/ui/select'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { IngredientEditor } from '@/components/ingredient-editor'
-import { ImageCropDialog } from '@/components/image-crop-dialog'
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import {
-  RECIPE_RATINGS,
   RECIPE_FLAGS,
-  type RecipeDto,
+  RECIPE_RATINGS,
   type IngredientForCreationDto,
-} from '@/domain/recipes'
-import { RatingIcon } from '@/components/rating-icon'
+  type RecipeDto,
+} from "@/domain/recipes";
 
 const ingredientSchema = z.object({
   rawText: z.string(),
@@ -42,42 +45,42 @@ const ingredientSchema = z.object({
   customUnit: z.string().nullable(),
   groupName: z.string().nullable(),
   sortOrder: z.number(),
-})
+});
 
 const recipeFormSchema = z.object({
-  title: z.string().min(1, 'Title is required').max(200, 'Title is too long'),
-  description: z.string().max(2000, 'Description is too long').nullable(),
+  title: z.string().min(1, "Title is required").max(200, "Title is too long"),
+  description: z.string().max(2000, "Description is too long").nullable(),
   rating: z.string().nullable(),
-  source: z.string().max(500, 'Source is too long').nullable(),
+  source: z.string().max(500, "Source is too long").nullable(),
   servings: z.number().int().min(1).max(999).nullable(),
   steps: z.string().nullable(),
   notes: z.string().nullable(),
   flags: z.array(z.object({ value: z.string(), label: z.string() })),
   ingredients: z.array(ingredientSchema),
-})
+});
 
-export type RecipeFormValues = z.infer<typeof recipeFormSchema>
+export type RecipeFormValues = z.infer<typeof recipeFormSchema>;
 
 interface RecipeFormProps {
-  defaultValues?: Partial<RecipeFormValues>
-  existingRecipe?: RecipeDto
-  onSubmit: (values: RecipeFormValues) => void
-  onCancel?: () => void
-  isSubmitting?: boolean
-  submitLabel?: string
-  imageFile?: File | null
-  onImageFileChange?: (file: File | null) => void
+  defaultValues?: Partial<RecipeFormValues>;
+  existingRecipe?: RecipeDto;
+  onSubmit: (values: RecipeFormValues) => void;
+  onCancel?: () => void;
+  isSubmitting?: boolean;
+  submitLabel?: string;
+  imageFile?: File | null;
+  onImageFileChange?: (file: File | null) => void;
 }
 
 const flagOptions: MultiSelectOption[] = RECIPE_FLAGS.map((flag) => ({
   value: flag,
   label: flag,
-}))
+}));
 
 const ratingOptions = RECIPE_RATINGS.map((rating) => ({
   value: rating,
   label: rating,
-}))
+}));
 
 export function RecipeForm({
   defaultValues,
@@ -85,28 +88,29 @@ export function RecipeForm({
   onSubmit,
   onCancel,
   isSubmitting = false,
-  submitLabel = 'Save Recipe',
+  submitLabel = "Save Recipe",
   imageFile,
   onImageFileChange,
 }: RecipeFormProps) {
-  const imageInputRef = useRef<HTMLInputElement>(null)
-  const [cropDialogOpen, setCropDialogOpen] = useState(false)
-  const [rawImageUrl, setRawImageUrl] = useState<string | null>(null)
+  const imageInputRef = useRef<HTMLInputElement>(null);
+  const [cropDialogOpen, setCropDialogOpen] = useState(false);
+  const [rawImageUrl, setRawImageUrl] = useState<string | null>(null);
   const imagePreviewUrl = useMemo(
     () => (imageFile ? URL.createObjectURL(imageFile) : null),
-    [imageFile]
-  )
+    [imageFile],
+  );
   useEffect(() => {
     return () => {
-      if (imagePreviewUrl) URL.revokeObjectURL(imagePreviewUrl)
-    }
-  }, [imagePreviewUrl])
+      if (imagePreviewUrl) URL.revokeObjectURL(imagePreviewUrl);
+    };
+  }, [imagePreviewUrl]);
   // Transform existing recipe to form values
   const initialValues: RecipeFormValues = existingRecipe
     ? {
         title: existingRecipe.title,
         description: existingRecipe.description,
-        rating: existingRecipe.rating === 'Not Rated' ? null : existingRecipe.rating,
+        rating:
+          existingRecipe.rating === "Not Rated" ? null : existingRecipe.rating,
         source: existingRecipe.source,
         servings: existingRecipe.servings,
         steps: existingRecipe.steps,
@@ -124,7 +128,7 @@ export function RecipeForm({
         })),
       }
     : {
-        title: defaultValues?.title ?? '',
+        title: defaultValues?.title ?? "",
         description: defaultValues?.description ?? null,
         rating: defaultValues?.rating ?? null,
         source: defaultValues?.source ?? null,
@@ -133,7 +137,7 @@ export function RecipeForm({
         notes: defaultValues?.notes ?? null,
         flags: defaultValues?.flags ?? [],
         ingredients: defaultValues?.ingredients ?? [],
-      }
+      };
 
   const {
     register,
@@ -143,31 +147,38 @@ export function RecipeForm({
   } = useForm<RecipeFormValues>({
     resolver: zodResolver(recipeFormSchema),
     defaultValues: initialValues,
-  })
+  });
 
-  useHotkeys('mod+enter', () => {
-    if (!isSubmitting) handleSubmit(onSubmit)()
-  }, { enableOnFormTags: ['INPUT', 'TEXTAREA', 'SELECT'], preventDefault: true })
+  useHotkeys(
+    "mod+enter",
+    () => {
+      if (!isSubmitting) handleSubmit(onSubmit)();
+    },
+    { enableOnFormTags: ["INPUT", "TEXTAREA", "SELECT"], preventDefault: true },
+  );
 
   const actionButtons = (
     <>
       {onCancel && (
-        <Button type="button" variant="outline" onClick={onCancel} disabled={isSubmitting}>
+        <Button
+          type="button"
+          variant="outline"
+          onClick={onCancel}
+          disabled={isSubmitting}
+        >
           Cancel
         </Button>
       )}
       <Button type="submit" disabled={isSubmitting}>
-        {isSubmitting ? 'Saving...' : submitLabel}
+        {isSubmitting ? "Saving..." : submitLabel}
         {!isSubmitting && <Kbd>⌘↵</Kbd>}
       </Button>
     </>
-  )
+  );
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="@container space-y-6">
-      <div className="flex justify-end gap-4">
-        {actionButtons}
-      </div>
+      <div className="flex justify-end gap-4">{actionButtons}</div>
 
       {/* Basic Information */}
       <Card>
@@ -179,12 +190,15 @@ export function RecipeForm({
             <Label htmlFor="title">Title *</Label>
             <Input
               id="title"
+              autoFocus
               placeholder="Enter recipe title"
-              {...register('title')}
+              {...register("title")}
               aria-invalid={!!errors.title}
             />
             {errors.title && (
-              <p className="text-sm font-medium text-destructive">{errors.title.message}</p>
+              <p className="text-sm font-medium text-destructive">
+                {errors.title.message}
+              </p>
             )}
           </div>
 
@@ -193,11 +207,13 @@ export function RecipeForm({
             <Textarea
               id="description"
               placeholder="Brief description of the recipe"
-              {...register('description')}
+              {...register("description")}
               aria-invalid={!!errors.description}
             />
             {errors.description && (
-              <p className="text-sm font-medium text-destructive">{errors.description.message}</p>
+              <p className="text-sm font-medium text-destructive">
+                {errors.description.message}
+              </p>
             )}
           </div>
 
@@ -218,7 +234,10 @@ export function RecipeForm({
                   onClick={() => imageInputRef.current?.click()}
                 >
                   <div className="text-center text-muted-foreground">
-                    <HugeiconsIcon icon={ImageUploadIcon} className="mx-auto size-8" />
+                    <HugeiconsIcon
+                      icon={ImageUploadIcon}
+                      className="mx-auto size-8"
+                    />
                     <p className="mt-2 text-sm">Click to add an image</p>
                   </div>
                 </div>
@@ -229,13 +248,13 @@ export function RecipeForm({
                 accept="image/*"
                 className="hidden"
                 onChange={(e) => {
-                  const file = e.target.files?.[0]
+                  const file = e.target.files?.[0];
                   if (file) {
-                    const url = URL.createObjectURL(file)
-                    setRawImageUrl(url)
-                    setCropDialogOpen(true)
+                    const url = URL.createObjectURL(file);
+                    setRawImageUrl(url);
+                    setCropDialogOpen(true);
                   }
-                  e.target.value = ''
+                  e.target.value = "";
                 }}
               />
               {imageFile && (
@@ -246,7 +265,10 @@ export function RecipeForm({
                     size="sm"
                     onClick={() => imageInputRef.current?.click()}
                   >
-                    <HugeiconsIcon icon={ImageUploadIcon} className="mr-2 size-4" />
+                    <HugeiconsIcon
+                      icon={ImageUploadIcon}
+                      className="mr-2 size-4"
+                    />
                     Replace
                   </Button>
                   <Button
@@ -255,7 +277,10 @@ export function RecipeForm({
                     size="sm"
                     onClick={() => onImageFileChange(null)}
                   >
-                    <HugeiconsIcon icon={Delete02Icon} className="mr-2 size-4" />
+                    <HugeiconsIcon
+                      icon={Delete02Icon}
+                      className="mr-2 size-4"
+                    />
                     Remove
                   </Button>
                 </div>
@@ -265,16 +290,16 @@ export function RecipeForm({
                   imageSrc={rawImageUrl}
                   open={cropDialogOpen}
                   onOpenChange={(open) => {
-                    setCropDialogOpen(open)
+                    setCropDialogOpen(open);
                     if (!open) {
-                      URL.revokeObjectURL(rawImageUrl)
-                      setRawImageUrl(null)
+                      URL.revokeObjectURL(rawImageUrl);
+                      setRawImageUrl(null);
                     }
                   }}
                   onCropComplete={(croppedFile) => {
-                    onImageFileChange(croppedFile)
-                    if (rawImageUrl) URL.revokeObjectURL(rawImageUrl)
-                    setRawImageUrl(null)
+                    onImageFileChange(croppedFile);
+                    if (rawImageUrl) URL.revokeObjectURL(rawImageUrl);
+                    setRawImageUrl(null);
                   }}
                 />
               )}
@@ -294,17 +319,19 @@ export function RecipeForm({
                     placeholder="Number of servings"
                     min={1}
                     max={999}
-                    value={field.value ?? ''}
+                    value={field.value ?? ""}
                     onChange={(e) => {
-                      const val = e.target.value
-                      field.onChange(val === '' ? null : parseInt(val, 10))
+                      const val = e.target.value;
+                      field.onChange(val === "" ? null : parseInt(val, 10));
                     }}
                     aria-invalid={!!errors.servings}
                   />
                 )}
               />
               {errors.servings && (
-                <p className="text-sm font-medium text-destructive">{errors.servings.message}</p>
+                <p className="text-sm font-medium text-destructive">
+                  {errors.servings.message}
+                </p>
               )}
             </div>
 
@@ -313,70 +340,15 @@ export function RecipeForm({
               <Input
                 id="source"
                 placeholder="Recipe source or URL"
-                {...register('source')}
+                {...register("source")}
                 aria-invalid={!!errors.source}
               />
               {errors.source && (
-                <p className="text-sm font-medium text-destructive">{errors.source.message}</p>
+                <p className="text-sm font-medium text-destructive">
+                  {errors.source.message}
+                </p>
               )}
             </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Ingredients */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Ingredients</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Controller
-            control={control}
-            name="ingredients"
-            render={({ field }) => (
-              <IngredientEditor
-                value={field.value as IngredientForCreationDto[]}
-                onChange={field.onChange}
-              />
-            )}
-          />
-        </CardContent>
-      </Card>
-
-      {/* Recipe Details */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Recipe Details</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="steps">Instructions</Label>
-            <Textarea
-              id="steps"
-              placeholder="Enter step-by-step instructions..."
-              className="min-h-[200px]"
-              {...register('steps')}
-              aria-invalid={!!errors.steps}
-            />
-            <p className="text-sm text-muted-foreground">
-              Enter each step on a new line or number them (1. First step, 2. Second step, etc.)
-            </p>
-            {errors.steps && (
-              <p className="text-sm font-medium text-destructive">{errors.steps.message}</p>
-            )}
-          </div>
-
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="notes">Notes</Label>
-            <Textarea
-              id="notes"
-              placeholder="Additional notes, tips, or variations..."
-              {...register('notes')}
-              aria-invalid={!!errors.notes}
-            />
-            {errors.notes && (
-              <p className="text-sm font-medium text-destructive">{errors.notes.message}</p>
-            )}
           </div>
         </CardContent>
       </Card>
@@ -418,7 +390,9 @@ export function RecipeForm({
               )}
             />
             {errors.rating && (
-              <p className="text-sm font-medium text-destructive">{errors.rating.message}</p>
+              <p className="text-sm font-medium text-destructive">
+                {errors.rating.message}
+              </p>
             )}
           </div>
 
@@ -441,15 +415,77 @@ export function RecipeForm({
               Select any applicable dietary flags (Vegan, Gluten-Free, etc.)
             </p>
             {errors.flags && (
-              <p className="text-sm font-medium text-destructive">{errors.flags.message}</p>
+              <p className="text-sm font-medium text-destructive">
+                {errors.flags.message}
+              </p>
             )}
           </div>
         </CardContent>
       </Card>
 
-      <div className="flex justify-end gap-4 @sm:hidden">
-        {actionButtons}
-      </div>
+      {/* Ingredients */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Ingredients</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Controller
+            control={control}
+            name="ingredients"
+            render={({ field }) => (
+              <IngredientEditor
+                value={field.value as IngredientForCreationDto[]}
+                onChange={field.onChange}
+              />
+            )}
+          />
+        </CardContent>
+      </Card>
+
+      {/* Recipe Details */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Recipe Details</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="steps">Instructions</Label>
+            <Textarea
+              id="steps"
+              placeholder="Enter step-by-step instructions..."
+              className="min-h-[200px]"
+              {...register("steps")}
+              aria-invalid={!!errors.steps}
+            />
+            <p className="text-sm text-muted-foreground">
+              Enter each step on a new line or number them (1. First step, 2.
+              Second step, etc.)
+            </p>
+            {errors.steps && (
+              <p className="text-sm font-medium text-destructive">
+                {errors.steps.message}
+              </p>
+            )}
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="notes">Notes</Label>
+            <Textarea
+              id="notes"
+              placeholder="Additional notes, tips, or variations..."
+              {...register("notes")}
+              aria-invalid={!!errors.notes}
+            />
+            {errors.notes && (
+              <p className="text-sm font-medium text-destructive">
+                {errors.notes.message}
+              </p>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+
+      <div className="flex justify-end gap-4 @sm:hidden">{actionButtons}</div>
     </form>
-  )
+  );
 }
