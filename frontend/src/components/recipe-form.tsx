@@ -339,6 +339,7 @@ export function RecipeForm({
               <Label htmlFor="source">Source</Label>
               <Input
                 id="source"
+                disabled={!!existingRecipe}
                 placeholder="Recipe source or URL"
                 {...register("source")}
                 aria-invalid={!!errors.source}
