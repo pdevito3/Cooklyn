@@ -1,5 +1,6 @@
 import { useRef, useState, useEffect, useMemo, useCallback } from 'react'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { useHotkeys } from 'react-hotkeys-hook'
 import { Add01Icon, RotateClockwiseIcon, Search01Icon, Loading03Icon } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
 import { useQueryClient } from '@tanstack/react-query'
@@ -9,6 +10,7 @@ import { useInfiniteRecipes, RecipeKeys, useDeleteRecipe } from '@/domain/recipe
 import { RecipeCard } from '@/components/recipe-card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { Kbd } from '@/components/ui/kbd'
 import { Skeleton } from '@/components/ui/skeleton'
 import {
   AlertDialog,
@@ -77,6 +79,7 @@ function RecipesIndexPage() {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [recipeToDelete, setRecipeToDelete] = useState<string | null>(null)
   const listRef = useRef<HTMLDivElement>(null)
+  const searchInputRef = useRef<HTMLInputElement>(null)
 
   const columns = useColumns()
   const debouncedSearch = useDebouncedValue(searchQuery, 300)
@@ -131,6 +134,9 @@ function RecipesIndexPage() {
     navigate({ to: '/recipes/new' })
   }
 
+  useHotkeys('mod+f', () => { searchInputRef.current?.focus() }, { preventDefault: true })
+  useHotkeys('c', () => { handleCreateRecipe() })
+
   const handleEditRecipe = useCallback((id: string) => {
     navigate({ to: '/recipes/$id/edit', params: { id } })
   }, [navigate])
@@ -166,6 +172,7 @@ function RecipesIndexPage() {
         <Button onClick={handleCreateRecipe}>
           <HugeiconsIcon icon={Add01Icon} className="mr-2 h-4 w-4" />
           New Recipe
+          <Kbd>C</Kbd>
         </Button>
       </div>
 
@@ -177,6 +184,7 @@ function RecipesIndexPage() {
             className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"
           />
           <Input
+            ref={searchInputRef}
             placeholder="Search recipes..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}

@@ -4,8 +4,10 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { HugeiconsIcon } from '@hugeicons/react'
 import { ImageUploadIcon, Delete02Icon } from '@hugeicons/core-free-icons'
+import { useHotkeys } from 'react-hotkeys-hook'
 
 import { Button } from '@/components/ui/button'
+import { Kbd } from '@/components/ui/kbd'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
@@ -143,6 +145,10 @@ export function RecipeForm({
     defaultValues: initialValues,
   })
 
+  useHotkeys('mod+enter', () => {
+    if (!isSubmitting) handleSubmit(onSubmit)()
+  }, { enableOnFormTags: ['INPUT', 'TEXTAREA', 'SELECT'], preventDefault: true })
+
   const actionButtons = (
     <>
       {onCancel && (
@@ -152,6 +158,7 @@ export function RecipeForm({
       )}
       <Button type="submit" disabled={isSubmitting}>
         {isSubmitting ? 'Saving...' : submitLabel}
+        {!isSubmitting && <Kbd>⌘↵</Kbd>}
       </Button>
     </>
   )

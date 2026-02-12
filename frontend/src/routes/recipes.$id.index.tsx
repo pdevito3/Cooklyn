@@ -7,6 +7,7 @@ import {
 import { HugeiconsIcon } from "@hugeicons/react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
+import { useHotkeys } from "react-hotkeys-hook";
 
 import {
   AlertDialog,
@@ -20,6 +21,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Kbd } from "@/components/ui/kbd";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { SourceImagePicker } from "@/components/source-image-picker";
@@ -58,6 +60,9 @@ function RecipeDetailPage() {
   const handleDelete = () => {
     setDeleteDialogOpen(true);
   };
+
+  useHotkeys('e', () => { if (recipe) handleEdit() })
+  useHotkeys('delete', () => { if (recipe) handleDelete() })
 
   const confirmDelete = () => {
     deleteRecipe.mutate(id, {
@@ -148,10 +153,12 @@ function RecipeDetailPage() {
           <Button variant="outline" onClick={handleEdit}>
             <HugeiconsIcon icon={Edit01Icon} className="w-4 h-4 mr-2" />
             Edit
+            <Kbd>E</Kbd>
           </Button>
           <Button variant="destructive" onClick={handleDelete}>
             <HugeiconsIcon icon={Delete01Icon} className="w-4 h-4 mr-2" />
             Delete
+            <Kbd>⌫</Kbd>
           </Button>
         </div>
       </div>

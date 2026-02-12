@@ -1,4 +1,5 @@
-import { Link, useRouterState } from "@tanstack/react-router"
+import { Link, useNavigate, useRouterState } from "@tanstack/react-router"
+import { useEffect, useRef } from "react"
 import {
   Home01Icon,
   InformationCircleIcon,
@@ -31,22 +32,26 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar"
 import { ThemeToggle } from "@/components/theme-toggle"
+import { Kbd } from "@/components/ui/kbd"
 
 const navItems = [
   {
     title: "Home",
     url: "/",
     icon: Home01Icon,
+    hotkey: "H",
   },
   {
     title: "Recipes",
     url: "/recipes",
     icon: RestaurantIcon,
+    hotkey: "R",
   },
   {
     title: "About",
     url: "/about",
     icon: InformationCircleIcon,
+    hotkey: "A",
   },
 ]
 
@@ -54,10 +59,12 @@ const importItems = [
   {
     title: "From URL",
     url: "/recipes/import",
+    hotkey: "I",
   },
   {
     title: "From Copy Me That",
     url: "/recipes/import-cmt",
+    hotkey: "M",
   },
 ]
 
@@ -72,9 +79,42 @@ const demoItems = [
   },
 ]
 
+const gHotkeys: Record<string, string> = {}
+for (const item of navItems) gHotkeys[item.hotkey.toLowerCase()] = item.url
+for (const item of importItems) gHotkeys[item.hotkey.toLowerCase()] = item.url
+
 export function AppSidebar() {
   const routerState = useRouterState()
   const currentPath = routerState.location.pathname
+  const navigate = useNavigate()
+  const gPressedRef = useRef(false)
+
+  useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      const target = e.target as HTMLElement
+      if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.tagName === 'SELECT' || target.isContentEditable) {
+        return
+      }
+
+      if (e.key === 'g' && !e.metaKey && !e.ctrlKey && !e.altKey) {
+        gPressedRef.current = true
+        setTimeout(() => { gPressedRef.current = false }, 1000)
+        return
+      }
+
+      if (gPressedRef.current) {
+        gPressedRef.current = false
+        const url = gHotkeys[e.key]
+        if (url) {
+          e.preventDefault()
+          navigate({ to: url })
+        }
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [navigate])
 
   // Check if any import item is active
   const isImportActive = importItems.some((item) => currentPath === item.url || currentPath.startsWith(item.url + "/"))
@@ -114,6 +154,7 @@ export function AppSidebar() {
                     >
                       <HugeiconsIcon icon={item.icon} />
                       <span>{item.title}</span>
+                      <Kbd>G {item.hotkey}</Kbd>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 )
@@ -141,6 +182,7 @@ export function AppSidebar() {
                               isActive={isActive}
                             >
                               <span>{item.title}</span>
+                              <Kbd>G {item.hotkey}</Kbd>
                             </SidebarMenuSubButton>
                           </SidebarMenuSubItem>
                         )
