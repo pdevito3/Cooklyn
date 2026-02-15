@@ -59,11 +59,13 @@ function parseAuthClaims(claims: BffClaim[]): Omit<AuthState, 'isLoading'> {
     undefined
   )
   const logoutUrl = findClaim('bff:logout_url')(claims)
+  const sub = findClaim('sub')(claims)
 
   return {
     isLoggedIn: true,
     username: username ?? null,
     logoutUrl: logoutUrl ?? '/bff/logout',
+    sub: sub ?? null,
   }
 }
 
@@ -84,6 +86,7 @@ export function useAuth(): AuthState {
       isLoading: true,
       username: null,
       logoutUrl: null,
+      sub: null,
     }
   }
 
@@ -93,6 +96,7 @@ export function useAuth(): AuthState {
       isLoading: false,
       username: null,
       logoutUrl: null,
+      sub: null,
     }
   }
 

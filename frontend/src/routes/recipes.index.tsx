@@ -22,6 +22,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
+import { AddRecipeToShoppingListDialog } from '@/components/add-recipe-to-shopping-list-dialog'
 
 const PAGE_SIZE = 24
 
@@ -78,6 +79,8 @@ function RecipesIndexPage() {
   const [searchQuery, setSearchQuery] = useState('')
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [recipeToDelete, setRecipeToDelete] = useState<string | null>(null)
+  const [addToListDialogOpen, setAddToListDialogOpen] = useState(false)
+  const [recipeForList, setRecipeForList] = useState<string | null>(null)
   const listRef = useRef<HTMLDivElement>(null)
   const searchInputRef = useRef<HTMLInputElement>(null)
 
@@ -144,6 +147,11 @@ function RecipesIndexPage() {
   const handleDeleteRecipe = useCallback((id: string) => {
     setRecipeToDelete(id)
     setDeleteDialogOpen(true)
+  }, [])
+
+  const handleAddToShoppingList = useCallback((id: string) => {
+    setRecipeForList(id)
+    setAddToListDialogOpen(true)
   }, [])
 
   const confirmDelete = () => {
@@ -273,6 +281,7 @@ function RecipesIndexPage() {
                         recipe={recipe}
                         onEdit={handleEditRecipe}
                         onDelete={handleDeleteRecipe}
+                        onAddToShoppingList={handleAddToShoppingList}
                       />
                     ))}
                   </div>
@@ -328,6 +337,15 @@ function RecipesIndexPage() {
             Showing {allRecipes.length} of {totalCount} recipes
           </p>
         </div>
+      )}
+
+      {/* Add to Shopping List Dialog */}
+      {recipeForList && (
+        <AddRecipeToShoppingListDialog
+          open={addToListDialogOpen}
+          onOpenChange={setAddToListDialogOpen}
+          recipeId={recipeForList}
+        />
       )}
 
       {/* Delete Confirmation Dialog */}

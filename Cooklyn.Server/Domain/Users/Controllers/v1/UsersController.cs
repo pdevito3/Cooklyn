@@ -15,6 +15,33 @@ using Resources.Extensions;
 public sealed class UsersController(IMediator mediator) : ControllerBase
 {
     /// <summary>
+    /// Gets the current user's default store ID. Returns null if no user or no default store.
+    /// </summary>
+    [Authorize]
+    [HttpGet("me/default-store", Name = "GetMyDefaultStore")]
+    [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+    public async Task<ActionResult<string?>> GetMyDefaultStore()
+    {
+        var query = new GetMyDefaultStore.Query();
+        var result = await mediator.Send(query);
+        return Ok(result);
+    }
+
+    /// <summary>
+    /// Updates the current user's default store.
+    /// </summary>
+    [Authorize]
+    [HttpPut("me/default-store", Name = "UpdateMyDefaultStore")]
+    [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+    public async Task<ActionResult<string?>> UpdateMyDefaultStore(
+        [FromBody] UpdateUserDefaultStoreDto dto)
+    {
+        var command = new UpdateMyDefaultStore.Command(dto.StoreId);
+        var result = await mediator.Send(command);
+        return Ok(result);
+    }
+
+    /// <summary>
     /// Gets a single User by ID.
     /// </summary>
     [Authorize]
@@ -159,6 +186,22 @@ public sealed class UsersController(IMediator mediator) : ControllerBase
         string permission)
     {
         var command = new RemoveUserPermission.Command(id, permission);
+        var result = await mediator.Send(command);
+        return Ok(result);
+    }
+
+    /// <summary>
+    /// Updates a User's default store.
+    /// </summary>
+    [Authorize]
+    [HttpPut("{id}/default-store", Name = "UpdateUserDefaultStore")]
+    [ProducesResponseType(typeof(UserDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<UserDto>> UpdateUserDefaultStore(
+        string id,
+        [FromBody] UpdateUserDefaultStoreDto dto)
+    {
+        var command = new UpdateUserDefaultStore.Command(id, dto.StoreId);
         var result = await mediator.Send(command);
         return Ok(result);
     }
