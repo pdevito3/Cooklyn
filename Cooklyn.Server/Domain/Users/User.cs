@@ -13,6 +13,7 @@ public class User : BaseEntity, ITenantable
     public EmailAddress Email { get; private set; } = default!;
     public string Username { get; private set; } = default!;
     public UserRole Role { get; private set; } = default!;
+    public string? DefaultStoreId { get; private set; }
 
     private readonly List<UserPermission> _userPermissions = [];
     public IReadOnlyCollection<UserPermission> UserPermissions => _userPermissions.AsReadOnly();
@@ -119,6 +120,13 @@ public class User : BaseEntity, ITenantable
 
     public bool HasPermission(Permission permission)
         => _userPermissions.Any(x => x.Permission == permission);
+
+    public User UpdateDefaultStore(string? storeId)
+    {
+        DefaultStoreId = storeId;
+        QueueDomainEvent(new UserUpdated(Id));
+        return this;
+    }
 
     private static void ValidateUser(User user)
     {

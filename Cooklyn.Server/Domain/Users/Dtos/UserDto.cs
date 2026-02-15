@@ -11,5 +11,6 @@ public sealed record UserDto
     public string Email { get; init; } = default!;
     public string Username { get; init; } = default!;
     public string Role { get; init; } = default!;
+    public string? DefaultStoreId { get; init; }
     public IReadOnlyList<string> Permissions { get; init; } = [];
 }

@@ -15,4 +15,5 @@ export interface AuthState {
   isLoading: boolean
   username: string | null
   logoutUrl: string | null
+  sub: string | null
 }

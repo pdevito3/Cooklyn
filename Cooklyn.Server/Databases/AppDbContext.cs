@@ -1,7 +1,11 @@
 namespace Cooklyn.Server.Databases;
 
 using Domain;
+using Domain.ItemCollections;
 using Domain.Recipes;
+using Domain.ShoppingLists;
+using Domain.StoreSections;
+using Domain.Stores;
 using Domain.Tags;
 using Domain.Tenants;
 using Domain.Users;
@@ -27,6 +31,18 @@ public class AppDbContext(
     public DbSet<RecipeFlagEntry> RecipeFlagEntries => Set<RecipeFlagEntry>();
     public DbSet<Ingredient> Ingredients => Set<Ingredient>();
     public DbSet<NutritionInfo> NutritionInfos => Set<NutritionInfo>();
+
+    public DbSet<StoreSection> StoreSections => Set<StoreSection>();
+    public DbSet<Store> Stores => Set<Store>();
+    public DbSet<StoreAisle> StoreAisles => Set<StoreAisle>();
+
+    public DbSet<ShoppingList> ShoppingLists => Set<ShoppingList>();
+    public DbSet<ShoppingListItem> ShoppingListItems => Set<ShoppingListItem>();
+    public DbSet<ShoppingListItemRecipeSource> ShoppingListItemRecipeSources => Set<ShoppingListItemRecipeSource>();
+
+    public DbSet<ItemCollection> ItemCollections => Set<ItemCollection>();
+    public DbSet<ItemCollectionItem> ItemCollectionItems => Set<ItemCollectionItem>();
+    public DbSet<StoreDefaultCollection> StoreDefaultCollections => Set<StoreDefaultCollection>();
     #endregion
 
     /// <summary>

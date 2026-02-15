@@ -23,6 +23,130 @@ namespace Cooklyn.Server.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("Cooklyn.Server.Domain.ItemCollections.ItemCollection", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("text")
+                        .HasColumnName("id");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text")
+                        .HasColumnName("created_by");
+
+                    b.Property<DateTimeOffset>("CreatedOn")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_on");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("text")
+                        .HasColumnName("last_modified_by");
+
+                    b.Property<DateTimeOffset?>("LastModifiedOn")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("last_modified_on");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("name");
+
+                    b.Property<string>("TenantId")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("tenant_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_item_collections");
+
+                    b.HasIndex("TenantId")
+                        .HasDatabaseName("ix_item_collections_tenant_id");
+
+                    b.HasIndex("TenantId", "Name")
+                        .IsUnique()
+                        .HasDatabaseName("ix_item_collections_tenant_id_name")
+                        .HasFilter("is_deleted = false");
+
+                    b.ToTable("item_collections", (string)null);
+                });
+
+            modelBuilder.Entity("Cooklyn.Server.Domain.ItemCollections.ItemCollectionItem", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("text")
+                        .HasColumnName("id");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text")
+                        .HasColumnName("created_by");
+
+                    b.Property<DateTimeOffset>("CreatedOn")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_on");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
+
+                    b.Property<string>("ItemCollectionId")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("item_collection_id");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("text")
+                        .HasColumnName("last_modified_by");
+
+                    b.Property<DateTimeOffset?>("LastModifiedOn")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("last_modified_on");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)")
+                        .HasColumnName("name");
+
+                    b.Property<decimal?>("Quantity")
+                        .HasPrecision(10, 4)
+                        .HasColumnType("numeric(10,4)")
+                        .HasColumnName("quantity");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("integer")
+                        .HasColumnName("sort_order");
+
+                    b.Property<string>("StoreSectionId")
+                        .HasColumnType("text")
+                        .HasColumnName("store_section_id");
+
+                    b.ComplexProperty(typeof(Dictionary<string, object>), "Unit", "Cooklyn.Server.Domain.ItemCollections.ItemCollectionItem.Unit#IngredientUnit", b1 =>
+                        {
+                            b1.IsRequired();
+
+                            b1.Property<string>("Value")
+                                .IsRequired()
+                                .HasMaxLength(50)
+                                .HasColumnType("character varying(50)")
+                                .HasColumnName("unit");
+                        });
+
+                    b.HasKey("Id")
+                        .HasName("pk_item_collection_items");
+
+                    b.HasIndex("ItemCollectionId")
+                        .HasDatabaseName("ix_item_collection_items_item_collection_id");
+
+                    b.HasIndex("StoreSectionId")
+                        .HasDatabaseName("ix_item_collection_items_store_section_id");
+
+                    b.ToTable("item_collection_items", (string)null);
+                });
+
             modelBuilder.Entity("Cooklyn.Server.Domain.Recipes.Ingredient", b =>
                 {
                     b.Property<string>("Id")
@@ -428,6 +552,442 @@ namespace Cooklyn.Server.Migrations
                     b.ToTable("recipe_tags", (string)null);
                 });
 
+            modelBuilder.Entity("Cooklyn.Server.Domain.ShoppingLists.ShoppingList", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("text")
+                        .HasColumnName("id");
+
+                    b.Property<DateTimeOffset?>("CompletedOn")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("completed_on");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text")
+                        .HasColumnName("created_by");
+
+                    b.Property<DateTimeOffset>("CreatedOn")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_on");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("text")
+                        .HasColumnName("last_modified_by");
+
+                    b.Property<DateTimeOffset?>("LastModifiedOn")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("last_modified_on");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("name");
+
+                    b.Property<string>("StoreId")
+                        .HasColumnType("text")
+                        .HasColumnName("store_id");
+
+                    b.Property<string>("TenantId")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("tenant_id");
+
+                    b.ComplexProperty(typeof(Dictionary<string, object>), "Status", "Cooklyn.Server.Domain.ShoppingLists.ShoppingList.Status#ShoppingListStatus", b1 =>
+                        {
+                            b1.IsRequired();
+
+                            b1.Property<string>("Value")
+                                .IsRequired()
+                                .HasMaxLength(50)
+                                .HasColumnType("character varying(50)")
+                                .HasColumnName("status");
+                        });
+
+                    b.HasKey("Id")
+                        .HasName("pk_shopping_lists");
+
+                    b.HasIndex("StoreId")
+                        .HasDatabaseName("ix_shopping_lists_store_id");
+
+                    b.HasIndex("TenantId")
+                        .HasDatabaseName("ix_shopping_lists_tenant_id");
+
+                    b.ToTable("shopping_lists", (string)null);
+                });
+
+            modelBuilder.Entity("Cooklyn.Server.Domain.ShoppingLists.ShoppingListItem", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("text")
+                        .HasColumnName("id");
+
+                    b.Property<DateTimeOffset?>("CheckedOn")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("checked_on");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text")
+                        .HasColumnName("created_by");
+
+                    b.Property<DateTimeOffset>("CreatedOn")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_on");
+
+                    b.Property<bool>("IsChecked")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_checked");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("text")
+                        .HasColumnName("last_modified_by");
+
+                    b.Property<DateTimeOffset?>("LastModifiedOn")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("last_modified_on");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)")
+                        .HasColumnName("name");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("notes");
+
+                    b.Property<decimal?>("Quantity")
+                        .HasPrecision(10, 4)
+                        .HasColumnType("numeric(10,4)")
+                        .HasColumnName("quantity");
+
+                    b.Property<string>("ShoppingListId")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("shopping_list_id");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("integer")
+                        .HasColumnName("sort_order");
+
+                    b.Property<string>("StoreSectionId")
+                        .HasColumnType("text")
+                        .HasColumnName("store_section_id");
+
+                    b.ComplexProperty(typeof(Dictionary<string, object>), "Unit", "Cooklyn.Server.Domain.ShoppingLists.ShoppingListItem.Unit#IngredientUnit", b1 =>
+                        {
+                            b1.IsRequired();
+
+                            b1.Property<string>("Value")
+                                .IsRequired()
+                                .HasMaxLength(50)
+                                .HasColumnType("character varying(50)")
+                                .HasColumnName("unit");
+                        });
+
+                    b.HasKey("Id")
+                        .HasName("pk_shopping_list_items");
+
+                    b.HasIndex("ShoppingListId")
+                        .HasDatabaseName("ix_shopping_list_items_shopping_list_id");
+
+                    b.HasIndex("StoreSectionId")
+                        .HasDatabaseName("ix_shopping_list_items_store_section_id");
+
+                    b.ToTable("shopping_list_items", (string)null);
+                });
+
+            modelBuilder.Entity("Cooklyn.Server.Domain.ShoppingLists.ShoppingListItemRecipeSource", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("text")
+                        .HasColumnName("id");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text")
+                        .HasColumnName("created_by");
+
+                    b.Property<DateTimeOffset>("CreatedOn")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_on");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("text")
+                        .HasColumnName("last_modified_by");
+
+                    b.Property<DateTimeOffset?>("LastModifiedOn")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("last_modified_on");
+
+                    b.Property<decimal?>("OriginalQuantity")
+                        .HasPrecision(10, 4)
+                        .HasColumnType("numeric(10,4)")
+                        .HasColumnName("original_quantity");
+
+                    b.Property<string>("OriginalUnit")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("original_unit");
+
+                    b.Property<string>("RecipeId")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("recipe_id");
+
+                    b.Property<string>("ShoppingListItemId")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("shopping_list_item_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_shopping_list_item_recipe_sources");
+
+                    b.HasIndex("RecipeId")
+                        .HasDatabaseName("ix_shopping_list_item_recipe_sources_recipe_id");
+
+                    b.HasIndex("ShoppingListItemId")
+                        .HasDatabaseName("ix_shopping_list_item_recipe_sources_shopping_list_item_id");
+
+                    b.HasIndex("ShoppingListItemId", "RecipeId")
+                        .IsUnique()
+                        .HasDatabaseName("ix_shopping_list_item_recipe_sources_shopping_list_item_id_rec");
+
+                    b.ToTable("shopping_list_item_recipe_sources", (string)null);
+                });
+
+            modelBuilder.Entity("Cooklyn.Server.Domain.StoreSections.StoreSection", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("text")
+                        .HasColumnName("id");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text")
+                        .HasColumnName("created_by");
+
+                    b.Property<DateTimeOffset>("CreatedOn")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_on");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("text")
+                        .HasColumnName("last_modified_by");
+
+                    b.Property<DateTimeOffset?>("LastModifiedOn")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("last_modified_on");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("name");
+
+                    b.Property<string>("TenantId")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("tenant_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_store_sections");
+
+                    b.HasIndex("TenantId")
+                        .HasDatabaseName("ix_store_sections_tenant_id");
+
+                    b.HasIndex("TenantId", "Name")
+                        .IsUnique()
+                        .HasDatabaseName("ix_store_sections_tenant_id_name")
+                        .HasFilter("is_deleted = false");
+
+                    b.ToTable("store_sections", (string)null);
+                });
+
+            modelBuilder.Entity("Cooklyn.Server.Domain.Stores.Store", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("text")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Address")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("address");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text")
+                        .HasColumnName("created_by");
+
+                    b.Property<DateTimeOffset>("CreatedOn")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_on");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("text")
+                        .HasColumnName("last_modified_by");
+
+                    b.Property<DateTimeOffset?>("LastModifiedOn")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("last_modified_on");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("name");
+
+                    b.Property<string>("TenantId")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("tenant_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_stores");
+
+                    b.HasIndex("TenantId")
+                        .HasDatabaseName("ix_stores_tenant_id");
+
+                    b.HasIndex("TenantId", "Name")
+                        .IsUnique()
+                        .HasDatabaseName("ix_stores_tenant_id_name")
+                        .HasFilter("is_deleted = false");
+
+                    b.ToTable("stores", (string)null);
+                });
+
+            modelBuilder.Entity("Cooklyn.Server.Domain.Stores.StoreAisle", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("text")
+                        .HasColumnName("id");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text")
+                        .HasColumnName("created_by");
+
+                    b.Property<DateTimeOffset>("CreatedOn")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_on");
+
+                    b.Property<string>("CustomName")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("custom_name");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("text")
+                        .HasColumnName("last_modified_by");
+
+                    b.Property<DateTimeOffset?>("LastModifiedOn")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("last_modified_on");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("integer")
+                        .HasColumnName("sort_order");
+
+                    b.Property<string>("StoreId")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("store_id");
+
+                    b.Property<string>("StoreSectionId")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("store_section_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_store_aisles");
+
+                    b.HasIndex("StoreId")
+                        .HasDatabaseName("ix_store_aisles_store_id");
+
+                    b.HasIndex("StoreSectionId")
+                        .HasDatabaseName("ix_store_aisles_store_section_id");
+
+                    b.HasIndex("StoreId", "StoreSectionId")
+                        .IsUnique()
+                        .HasDatabaseName("ix_store_aisles_store_id_store_section_id");
+
+                    b.ToTable("store_aisles", (string)null);
+                });
+
+            modelBuilder.Entity("Cooklyn.Server.Domain.Stores.StoreDefaultCollection", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("text")
+                        .HasColumnName("id");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text")
+                        .HasColumnName("created_by");
+
+                    b.Property<DateTimeOffset>("CreatedOn")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_on");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
+
+                    b.Property<string>("ItemCollectionId")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("item_collection_id");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("text")
+                        .HasColumnName("last_modified_by");
+
+                    b.Property<DateTimeOffset?>("LastModifiedOn")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("last_modified_on");
+
+                    b.Property<string>("StoreId")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("store_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_store_default_collections");
+
+                    b.HasIndex("ItemCollectionId")
+                        .HasDatabaseName("ix_store_default_collections_item_collection_id");
+
+                    b.HasIndex("StoreId")
+                        .HasDatabaseName("ix_store_default_collections_store_id");
+
+                    b.HasIndex("StoreId", "ItemCollectionId")
+                        .IsUnique()
+                        .HasDatabaseName("ix_store_default_collections_store_id_item_collection_id");
+
+                    b.ToTable("store_default_collections", (string)null);
+                });
+
             modelBuilder.Entity("Cooklyn.Server.Domain.Tags.Tag", b =>
                 {
                     b.Property<string>("Id")
@@ -534,6 +1094,10 @@ namespace Cooklyn.Server.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_on");
 
+                    b.Property<string>("DefaultStoreId")
+                        .HasColumnType("text")
+                        .HasColumnName("default_store_id");
+
                     b.Property<string>("FirstName")
                         .IsRequired()
                         .HasMaxLength(200)
@@ -600,6 +1164,9 @@ namespace Cooklyn.Server.Migrations
                     b.HasKey("Id")
                         .HasName("pk_users");
 
+                    b.HasIndex("DefaultStoreId")
+                        .HasDatabaseName("ix_users_default_store_id");
+
                     b.HasIndex("Identifier")
                         .IsUnique()
                         .HasDatabaseName("ix_users_identifier");
@@ -664,6 +1231,32 @@ namespace Cooklyn.Server.Migrations
                     b.ToTable("user_permissions", (string)null);
                 });
 
+            modelBuilder.Entity("Cooklyn.Server.Domain.ItemCollections.ItemCollection", b =>
+                {
+                    b.HasOne("Cooklyn.Server.Domain.Tenants.Tenant", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_item_collections_tenants_tenant_id");
+                });
+
+            modelBuilder.Entity("Cooklyn.Server.Domain.ItemCollections.ItemCollectionItem", b =>
+                {
+                    b.HasOne("Cooklyn.Server.Domain.ItemCollections.ItemCollection", null)
+                        .WithMany("Items")
+                        .HasForeignKey("ItemCollectionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_item_collection_items_item_collections_item_collection_id");
+
+                    b.HasOne("Cooklyn.Server.Domain.StoreSections.StoreSection", null)
+                        .WithMany()
+                        .HasForeignKey("StoreSectionId")
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .HasConstraintName("fk_item_collection_items_store_sections_store_section_id");
+                });
+
             modelBuilder.Entity("Cooklyn.Server.Domain.Recipes.Ingredient", b =>
                 {
                     b.HasOne("Cooklyn.Server.Domain.Recipes.Recipe", null)
@@ -725,6 +1318,111 @@ namespace Cooklyn.Server.Migrations
                     b.Navigation("Tag");
                 });
 
+            modelBuilder.Entity("Cooklyn.Server.Domain.ShoppingLists.ShoppingList", b =>
+                {
+                    b.HasOne("Cooklyn.Server.Domain.Stores.Store", null)
+                        .WithMany()
+                        .HasForeignKey("StoreId")
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .HasConstraintName("fk_shopping_lists_stores_store_id");
+
+                    b.HasOne("Cooklyn.Server.Domain.Tenants.Tenant", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_shopping_lists_tenants_tenant_id");
+                });
+
+            modelBuilder.Entity("Cooklyn.Server.Domain.ShoppingLists.ShoppingListItem", b =>
+                {
+                    b.HasOne("Cooklyn.Server.Domain.ShoppingLists.ShoppingList", null)
+                        .WithMany("Items")
+                        .HasForeignKey("ShoppingListId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_shopping_list_items_shopping_lists_shopping_list_id");
+
+                    b.HasOne("Cooklyn.Server.Domain.StoreSections.StoreSection", null)
+                        .WithMany()
+                        .HasForeignKey("StoreSectionId")
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .HasConstraintName("fk_shopping_list_items_store_sections_store_section_id");
+                });
+
+            modelBuilder.Entity("Cooklyn.Server.Domain.ShoppingLists.ShoppingListItemRecipeSource", b =>
+                {
+                    b.HasOne("Cooklyn.Server.Domain.Recipes.Recipe", null)
+                        .WithMany()
+                        .HasForeignKey("RecipeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_shopping_list_item_recipe_sources_recipes_recipe_id");
+
+                    b.HasOne("Cooklyn.Server.Domain.ShoppingLists.ShoppingListItem", null)
+                        .WithMany("RecipeSources")
+                        .HasForeignKey("ShoppingListItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_shopping_list_item_recipe_sources_shopping_list_items_shopp");
+                });
+
+            modelBuilder.Entity("Cooklyn.Server.Domain.StoreSections.StoreSection", b =>
+                {
+                    b.HasOne("Cooklyn.Server.Domain.Tenants.Tenant", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_store_sections_tenants_tenant_id");
+                });
+
+            modelBuilder.Entity("Cooklyn.Server.Domain.Stores.Store", b =>
+                {
+                    b.HasOne("Cooklyn.Server.Domain.Tenants.Tenant", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_stores_tenants_tenant_id");
+                });
+
+            modelBuilder.Entity("Cooklyn.Server.Domain.Stores.StoreAisle", b =>
+                {
+                    b.HasOne("Cooklyn.Server.Domain.Stores.Store", null)
+                        .WithMany("StoreAisles")
+                        .HasForeignKey("StoreId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_store_aisles_stores_store_id");
+
+                    b.HasOne("Cooklyn.Server.Domain.StoreSections.StoreSection", null)
+                        .WithMany()
+                        .HasForeignKey("StoreSectionId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_store_aisles_store_sections_store_section_id");
+                });
+
+            modelBuilder.Entity("Cooklyn.Server.Domain.Stores.StoreDefaultCollection", b =>
+                {
+                    b.HasOne("Cooklyn.Server.Domain.ItemCollections.ItemCollection", "ItemCollection")
+                        .WithMany()
+                        .HasForeignKey("ItemCollectionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_store_default_collections_item_collections_item_collection_");
+
+                    b.HasOne("Cooklyn.Server.Domain.Stores.Store", null)
+                        .WithMany("StoreDefaultCollections")
+                        .HasForeignKey("StoreId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_store_default_collections_stores_store_id");
+
+                    b.Navigation("ItemCollection");
+                });
+
             modelBuilder.Entity("Cooklyn.Server.Domain.Tags.Tag", b =>
                 {
                     b.HasOne("Cooklyn.Server.Domain.Tenants.Tenant", null)
@@ -737,6 +1435,12 @@ namespace Cooklyn.Server.Migrations
 
             modelBuilder.Entity("Cooklyn.Server.Domain.Users.User", b =>
                 {
+                    b.HasOne("Cooklyn.Server.Domain.Stores.Store", null)
+                        .WithMany()
+                        .HasForeignKey("DefaultStoreId")
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .HasConstraintName("fk_users_stores_default_store_id");
+
                     b.HasOne("Cooklyn.Server.Domain.Tenants.Tenant", null)
                         .WithMany()
                         .HasForeignKey("TenantId")
@@ -755,6 +1459,11 @@ namespace Cooklyn.Server.Migrations
                         .HasConstraintName("fk_user_permissions_users_user_id");
                 });
 
+            modelBuilder.Entity("Cooklyn.Server.Domain.ItemCollections.ItemCollection", b =>
+                {
+                    b.Navigation("Items");
+                });
+
             modelBuilder.Entity("Cooklyn.Server.Domain.Recipes.Recipe", b =>
                 {
                     b.Navigation("Flags");
@@ -764,6 +1473,23 @@ namespace Cooklyn.Server.Migrations
                     b.Navigation("NutritionInfo");
 
                     b.Navigation("RecipeTags");
+                });
+
+            modelBuilder.Entity("Cooklyn.Server.Domain.ShoppingLists.ShoppingList", b =>
+                {
+                    b.Navigation("Items");
+                });
+
+            modelBuilder.Entity("Cooklyn.Server.Domain.ShoppingLists.ShoppingListItem", b =>
+                {
+                    b.Navigation("RecipeSources");
+                });
+
+            modelBuilder.Entity("Cooklyn.Server.Domain.Stores.Store", b =>
+                {
+                    b.Navigation("StoreAisles");
+
+                    b.Navigation("StoreDefaultCollections");
                 });
 
             modelBuilder.Entity("Cooklyn.Server.Domain.Users.User", b =>

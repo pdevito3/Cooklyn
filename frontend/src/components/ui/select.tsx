@@ -123,7 +123,7 @@ function SelectPopup({
       className={cn(
         "bg-popover text-popover-foreground ring-foreground/10",
         "group/select-popup origin-[var(--transform-origin)] rounded-lg shadow-md ring-1",
-        "max-h-[var(--available-height)] overflow-hidden",
+        "min-w-[var(--anchor-width)] max-h-[var(--available-height)] overflow-hidden",
         "data-open:animate-in data-closed:animate-out",
         "data-closed:fade-out-0 data-open:fade-in-0",
         "data-closed:zoom-out-95 data-open:zoom-in-95",

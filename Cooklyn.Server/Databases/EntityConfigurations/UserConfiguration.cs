@@ -1,5 +1,6 @@
 namespace Cooklyn.Server.Databases.EntityConfigurations;
 
+using Domain.Stores;
 using Domain.Tenants;
 using Domain.Users;
 using Microsoft.EntityFrameworkCore;
@@ -50,6 +51,11 @@ public sealed class UserConfiguration : IEntityTypeConfiguration<User>
                 .HasMaxLength(50)
                 .IsRequired();
         });
+
+        builder.HasOne<Store>()
+            .WithMany()
+            .HasForeignKey(e => e.DefaultStoreId)
+            .OnDelete(DeleteBehavior.SetNull);
 
         builder.HasMany(e => e.UserPermissions)
             .WithOne()
