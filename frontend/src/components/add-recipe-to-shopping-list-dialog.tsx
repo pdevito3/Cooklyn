@@ -107,7 +107,15 @@ export function AddRecipeToShoppingListDialog({
               onValueChange={setSelectedListId}
             >
               <SelectTrigger>
-                <SelectValue placeholder="Select a shopping list" />
+                <SelectValue placeholder="Select a shopping list">
+                  {(value: unknown) => {
+                    if (value === null || value === undefined) {
+                      return <span className="text-muted-foreground">Select a shopping list</span>
+                    }
+                    const list = activeLists.find((l) => l.id === value)
+                    return list?.name ?? String(value)
+                  }}
+                </SelectValue>
               </SelectTrigger>
               <SelectContent>
                 {activeLists.map((list) => (

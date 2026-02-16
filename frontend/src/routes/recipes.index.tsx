@@ -30,36 +30,22 @@ export const Route = createFileRoute('/recipes/')({
   component: RecipesIndexPage,
 })
 
-function useColumns() {
-  const [columns, setColumns] = useState(() => {
-    if (typeof window === 'undefined') return 1
-    if (window.innerWidth >= 1280) return 4
-    if (window.innerWidth >= 1024) return 3
-    if (window.innerWidth >= 640) return 2
-    return 1
-  })
+const CARD_MAX_WIDTH = 400 // ~25rem
+
+function useColumns(containerRef: React.RefObject<HTMLElement | null>) {
+  const [columns, setColumns] = useState(1)
 
   useEffect(() => {
-    const xl = window.matchMedia('(min-width: 1280px)')
-    const lg = window.matchMedia('(min-width: 1024px)')
-    const sm = window.matchMedia('(min-width: 640px)')
+    const el = containerRef.current
+    if (!el) return
 
-    function update() {
-      if (xl.matches) setColumns(4)
-      else if (lg.matches) setColumns(3)
-      else if (sm.matches) setColumns(2)
-      else setColumns(1)
-    }
-
-    xl.addEventListener('change', update)
-    lg.addEventListener('change', update)
-    sm.addEventListener('change', update)
-    return () => {
-      xl.removeEventListener('change', update)
-      lg.removeEventListener('change', update)
-      sm.removeEventListener('change', update)
-    }
-  }, [])
+    const observer = new ResizeObserver(([entry]) => {
+      const width = entry.contentRect.width
+      setColumns(Math.max(1, Math.floor(width / CARD_MAX_WIDTH)))
+    })
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [containerRef])
 
   return columns
 }
@@ -84,7 +70,7 @@ function RecipesIndexPage() {
   const listRef = useRef<HTMLDivElement>(null)
   const searchInputRef = useRef<HTMLInputElement>(null)
 
-  const columns = useColumns()
+  const columns = useColumns(listRef)
   const debouncedSearch = useDebouncedValue(searchQuery, 300)
 
   const filters = debouncedSearch

@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from 'react'
+import { useState, useMemo, useCallback, useRef, useEffect } from 'react'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import {
   ArrowLeft02Icon,
@@ -20,7 +20,7 @@ import {
   useDeleteShoppingList,
   useCompleteShoppingList,
   useReopenShoppingList,
-  useAddShoppingListItem,
+  useAddMultipleShoppingListItems,
   useDeleteShoppingListItem,
   useUpdateShoppingListItem,
 } from '@/domain/shopping-lists'
@@ -28,10 +28,11 @@ import type { ShoppingListItemDto } from '@/domain/shopping-lists'
 import type { StoreSectionDto } from '@/domain/store-sections'
 import { useStores } from '@/domain/stores'
 import { useStoreSections } from '@/domain/store-sections'
+import { parseText } from '@/domain/recipes/utils/ingredient-parser'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Checkbox } from '@/components/ui/checkbox'
-import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import {
@@ -63,14 +64,6 @@ import {
   ComboboxItem,
   ComboboxItemIndicator,
 } from '@/components/ui/combobox'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectItemText,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
 import { AddFromRecipeDialog } from '@/components/add-from-recipe-dialog'
 import { AddFromCollectionDialog } from '@/components/add-from-collection-dialog'
 
@@ -96,13 +89,13 @@ function ShoppingListDetailPage() {
   const deleteListMutation = useDeleteShoppingList()
   const completeList = useCompleteShoppingList()
   const reopenList = useReopenShoppingList()
-  const addItem = useAddShoppingListItem()
+  const addItems = useAddMultipleShoppingListItems()
   const deleteItem = useDeleteShoppingListItem()
   const updateItem = useUpdateShoppingListItem()
 
+  const textareaRef = useRef<HTMLTextAreaElement>(null)
   const [deleteOpen, setDeleteOpen] = useState(false)
-  const [quickAddName, setQuickAddName] = useState('')
-  const [quickAddSectionId, setQuickAddSectionId] = useState<string | null>(null)
+  const [quickAddText, setQuickAddText] = useState('')
   const [checkedOpen, setCheckedOpen] = useState(true)
   const [addFromRecipeOpen, setAddFromRecipeOpen] = useState(false)
   const [addFromCollectionOpen, setAddFromCollectionOpen] = useState(false)
@@ -164,15 +157,27 @@ function ShoppingListDetailPage() {
     }
   }, [list, store, sectionItems, sections])
 
+  useEffect(() => {
+    if (!isLoading && list && list.status !== 'Completed') {
+      textareaRef.current?.focus()
+    }
+  }, [isLoading, list])
+
   const handleQuickAdd = () => {
-    const name = quickAddName.trim()
-    if (!name) return
-    addItem.mutate(
-      {
-        shoppingListId: id,
-        dto: { name, quantity: null, unit: null, storeSectionId: quickAddSectionId, notes: null },
-      },
-      { onSuccess: () => setQuickAddName('') }
+    const text = quickAddText.trim()
+    if (!text) return
+    const parsed = parseText(text)
+    const items = parsed.map((ingredient) => ({
+      name: ingredient.name ?? ingredient.rawText,
+      quantity: ingredient.amount ?? null,
+      unit: ingredient.unit ?? null,
+      storeSectionId: null,
+      notes: null,
+    }))
+    if (items.length === 0) return
+    addItems.mutate(
+      { shoppingListId: id, items },
+      { onSuccess: () => setQuickAddText('') }
     )
   }
 
@@ -274,46 +279,35 @@ function ShoppingListDetailPage() {
 
       {/* Quick Add */}
       {!isCompleted && (
-        <div className="flex gap-2">
-          <Input
-            placeholder="Add an item..."
-            value={quickAddName}
-            onChange={(e) => setQuickAddName(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && handleQuickAdd()}
-          />
-          {store && store.storeAisles.length > 0 && (
-            <Select
-              value={quickAddSectionId ?? ''}
-              onValueChange={(value) => setQuickAddSectionId(value || null)}
-            >
-              <SelectTrigger className="w-40">
-                <SelectValue placeholder="Section" />
-              </SelectTrigger>
-              <SelectContent>
-                {[...store.storeAisles]
-                  .sort((a, b) => a.sortOrder - b.sortOrder)
-                  .map((aisle) => {
-                    const section = sections.find((s) => s.id === aisle.storeSectionId)
-                    return (
-                      <SelectItem key={aisle.id} value={aisle.storeSectionId}>
-                        <SelectItemText>{aisle.customName ?? section?.name ?? 'Unknown'}</SelectItemText>
-                      </SelectItem>
-                    )
-                  })}
-              </SelectContent>
-            </Select>
-          )}
-          <Button onClick={handleQuickAdd} disabled={!quickAddName.trim() || addItem.isPending}>
-            <HugeiconsIcon icon={Add01Icon} className="h-4 w-4" />
-          </Button>
-          <Button variant="outline" onClick={() => setAddFromRecipeOpen(true)}>
-            <HugeiconsIcon icon={RestaurantIcon} className="mr-2 h-4 w-4" />
-            Recipe
-          </Button>
-          <Button variant="outline" onClick={() => setAddFromCollectionOpen(true)}>
-            <HugeiconsIcon icon={Layers01Icon} className="mr-2 h-4 w-4" />
-            Collection
-          </Button>
+        <div className="space-y-2">
+          <div className="flex gap-2">
+            <Textarea
+              ref={textareaRef}
+              placeholder={"Add items, one per line...\ne.g. 1 bag flour, 2 Tbsp salt"}
+              value={quickAddText}
+              onChange={(e) => setQuickAddText(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && !e.shiftKey && !quickAddText.includes('\n')) {
+                  e.preventDefault()
+                  handleQuickAdd()
+                }
+              }}
+              className="min-h-10"
+            />
+            <Button onClick={handleQuickAdd} disabled={!quickAddText.trim() || addItems.isPending} className="self-end">
+              <HugeiconsIcon icon={Add01Icon} className="h-4 w-4" />
+            </Button>
+          </div>
+          <div className="flex gap-2">
+            <Button variant="outline" size="sm" onClick={() => setAddFromRecipeOpen(true)}>
+              <HugeiconsIcon icon={RestaurantIcon} className="mr-2 h-4 w-4" />
+              Recipe
+            </Button>
+            <Button variant="outline" size="sm" onClick={() => setAddFromCollectionOpen(true)}>
+              <HugeiconsIcon icon={Layers01Icon} className="mr-2 h-4 w-4" />
+              Collection
+            </Button>
+          </div>
         </div>
       )}
 
@@ -340,12 +334,12 @@ function ShoppingListDetailPage() {
                     >
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2">
-                          <span className="font-medium">{item.name}</span>
                           {formatQuantity(item) && (
                             <span className="text-sm text-muted-foreground">
                               {formatQuantity(item)}
                             </span>
                           )}
+                          <span className="font-medium">{item.name}</span>
                         </div>
                         {item.notes && (
                           <p className="text-xs text-muted-foreground">{item.notes}</p>
@@ -356,7 +350,7 @@ function ShoppingListDetailPage() {
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="opacity-0 group-hover:opacity-100 h-7 w-7"
+                        className="md:opacity-0 md:group-hover:opacity-100 h-7 w-7"
                         onClick={(e) => openCategorize(e, item)}
                       >
                         <HugeiconsIcon icon={Tag01Icon} className="h-3.5 w-3.5" />
@@ -416,12 +410,12 @@ function ShoppingListDetailPage() {
                       className="flex-1 min-w-0"
                     >
                       <div className="flex-1 min-w-0">
-                        <span className="text-muted-foreground line-through">{item.name}</span>
                         {formatQuantity(item) && (
-                          <span className="text-sm text-muted-foreground ml-2">
+                          <span className="text-sm text-muted-foreground line-through mr-2">
                             {formatQuantity(item)}
                           </span>
                         )}
+                        <span className="text-muted-foreground line-through">{item.name}</span>
                       </div>
                     </Checkbox>
                     {!isCompleted && (
