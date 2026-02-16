@@ -4,7 +4,6 @@ import { useHotkeys } from 'react-hotkeys-hook'
 import { Add01Icon, RotateClockwiseIcon, Search01Icon, Loading03Icon } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
 import { useQueryClient } from '@tanstack/react-query'
-import { useWindowVirtualizer } from '@tanstack/react-virtual'
 
 import { useInfiniteRecipes } from '@/domain/recipes/apis/get-recipes'
 import { RecipeKeys } from '@/domain/recipes/apis/recipe.keys'
@@ -32,26 +31,6 @@ export const Route = createFileRoute('/recipes/')({
   component: RecipesIndexPage,
 })
 
-const CARD_MAX_WIDTH = 400 // ~25rem
-
-function useColumns(containerRef: React.RefObject<HTMLElement | null>) {
-  const [columns, setColumns] = useState(1)
-
-  useEffect(() => {
-    const el = containerRef.current
-    if (!el) return
-
-    const observer = new ResizeObserver(([entry]) => {
-      const width = entry.contentRect.width
-      setColumns(Math.max(1, Math.floor(width / CARD_MAX_WIDTH)))
-    })
-    observer.observe(el)
-    return () => observer.disconnect()
-  }, [containerRef])
-
-  return columns
-}
-
 function useDebouncedValue<T>(value: T, delay: number): T {
   const [debounced, setDebounced] = useState(value)
   useEffect(() => {
@@ -69,10 +48,9 @@ function RecipesIndexPage() {
   const [recipeToDelete, setRecipeToDelete] = useState<string | null>(null)
   const [addToListDialogOpen, setAddToListDialogOpen] = useState(false)
   const [recipeForList, setRecipeForList] = useState<string | null>(null)
-  const listRef = useRef<HTMLDivElement>(null)
   const searchInputRef = useRef<HTMLInputElement>(null)
+  const sentinelRef = useRef<HTMLDivElement>(null)
 
-  const columns = useColumns(listRef)
   const debouncedSearch = useDebouncedValue(searchQuery, 300)
 
   const filters = debouncedSearch
@@ -97,25 +75,23 @@ function RecipesIndexPage() {
   )
 
   const totalCount = data?.pages[0]?.pagination.totalCount ?? 0
-  const rowCount = Math.ceil(allRecipes.length / columns)
 
-  const virtualizer = useWindowVirtualizer({
-    count: rowCount,
-    estimateSize: () => 260,
-    overscan: 3,
-    scrollMargin: listRef.current?.offsetTop ?? 0,
-  })
-
-  // Infinite scroll: fetch next page when the last virtual row is visible
+  // Infinite scroll via IntersectionObserver on sentinel element
   useEffect(() => {
-    const items = virtualizer.getVirtualItems()
-    const lastItem = items[items.length - 1]
-    if (!lastItem) return
+    const el = sentinelRef.current
+    if (!el) return
 
-    if (lastItem.index >= rowCount - 1 && hasNextPage && !isFetchingNextPage) {
-      fetchNextPage()
-    }
-  }, [virtualizer.getVirtualItems(), hasNextPage, isFetchingNextPage, fetchNextPage, rowCount])
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && hasNextPage && !isFetchingNextPage) {
+          fetchNextPage()
+        }
+      },
+      { rootMargin: '300px' }
+    )
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage])
 
   const handleRefresh = () => {
     queryClient.invalidateQueries({ queryKey: RecipeKeys.all })
@@ -152,8 +128,6 @@ function RecipesIndexPage() {
       })
     }
   }
-
-  const virtualItems = virtualizer.getVirtualItems()
 
   return (
     <div className="space-y-6">
@@ -213,70 +187,40 @@ function RecipesIndexPage() {
 
       {/* Loading State */}
       {isLoading && (
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {[...Array(8)].map((_, i) => (
-            <div key={i} className="space-y-3">
-              <Skeleton className="aspect-video w-full rounded-lg" />
-              <Skeleton className="h-6 w-3/4" />
-              <Skeleton className="h-4 w-full" />
-              <div className="flex gap-2">
-                <Skeleton className="h-5 w-16" />
-                <Skeleton className="h-5 w-16" />
+        <div>
+          <div className="grid grid-cols-[repeat(auto-fit,_minmax(250px,_1fr))] gap-6">
+            {[...Array(8)].map((_, i) => (
+              <div key={i} className="space-y-3">
+                <Skeleton className="aspect-video w-full rounded-lg" />
+                <Skeleton className="h-6 w-3/4" />
+                <Skeleton className="h-4 w-full" />
+                <div className="flex gap-2">
+                  <Skeleton className="h-5 w-16" />
+                  <Skeleton className="h-5 w-16" />
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       )}
 
-      {/* Virtualized Recipe Grid */}
+      {/* Recipe Grid */}
       {!isLoading && allRecipes.length > 0 && (
-        <div ref={listRef}>
-          <div
-            style={{
-              height: `${virtualizer.getTotalSize()}px`,
-              width: '100%',
-              position: 'relative',
-            }}
-          >
-            {virtualItems.map((virtualRow) => {
-              const startIdx = virtualRow.index * columns
-              const rowRecipes = allRecipes.slice(startIdx, startIdx + columns)
-
-              return (
-                <div
-                  key={virtualRow.key}
-                  data-index={virtualRow.index}
-                  ref={virtualizer.measureElement}
-                  style={{
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    width: '100%',
-                    transform: `translateY(${virtualRow.start - (virtualizer.options.scrollMargin ?? 0)}px)`,
-                  }}
-                >
-                  <div
-                    className="pb-6"
-                    style={{
-                      display: 'grid',
-                      gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))`,
-                      gap: '1.5rem',
-                    }}
-                  >
-                    {rowRecipes.map((recipe) => (
-                      <RecipeCard
-                        key={recipe.id}
-                        recipe={recipe}
-                        onEdit={handleEditRecipe}
-                        onDelete={handleDeleteRecipe}
-                        onAddToShoppingList={handleAddToShoppingList}
-                      />
-                    ))}
-                  </div>
-                </div>
-              )
-            })}
+        <div>
+          <div className="grid grid-cols-[repeat(auto-fit,minmax(18rem,1fr))] gap-6">
+            {allRecipes.map((recipe) => (
+              <RecipeCard
+                key={recipe.id}
+                recipe={recipe}
+                onEdit={handleEditRecipe}
+                onDelete={handleDeleteRecipe}
+                onAddToShoppingList={handleAddToShoppingList}
+              />
+            ))}
           </div>
+
+          {/* Infinite scroll sentinel */}
+          <div ref={sentinelRef} className="h-1" />
 
           {/* Loading more indicator */}
           {isFetchingNextPage && (
