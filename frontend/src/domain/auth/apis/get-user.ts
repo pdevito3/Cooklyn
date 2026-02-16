@@ -1,14 +1,14 @@
 import { useQuery } from '@tanstack/react-query'
-import { apiClient } from '@/lib/api-client'
+import { fetchWithoutToast } from '@/lib/api-client'
 import type { AuthState, BffClaim } from '../types'
 import { AuthKeys } from './auth.keys'
 
 /**
- * Fetch user claims from BFF
+ * Fetch user claims from BFF.
+ * Suppresses error toasts since a 401 is expected when not logged in.
  */
 export async function getUser(): Promise<BffClaim[]> {
-  const response = await apiClient.get<BffClaim[]>('/bff/user')
-  return response.data
+  return fetchWithoutToast<BffClaim[]>('/bff/user')
 }
 
 /**
@@ -53,7 +53,7 @@ const usernameFinders: ClaimFinder[] = [
  * Parse BFF claims into a usable auth state.
  * Handles claims from any OIDC provider (FusionAuth, Duende, etc.)
  */
-function parseAuthClaims(claims: BffClaim[]): Omit<AuthState, 'isLoading'> {
+export function parseAuthClaims(claims: BffClaim[]): Omit<AuthState, 'isLoading'> {
   const username = usernameFinders.reduce<string | undefined>(
     (found, finder) => found ?? finder(claims),
     undefined

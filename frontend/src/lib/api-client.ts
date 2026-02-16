@@ -92,6 +92,12 @@ apiClient.interceptors.response.use(
       return Promise.reject(error)
     }
 
+    // Session expired — redirect to IdP login
+    if (error.response?.status === 401) {
+      window.location.href = `/bff/login?returnUrl=${encodeURIComponent(window.location.pathname)}`
+      return new Promise(() => {})
+    }
+
     // Convert to appropriate error type
     const processedError = handleErrorResponse(error)
 

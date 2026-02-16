@@ -46,7 +46,7 @@
       "clientAuthenticatorType": "client-secret",
       "secret": "super-secret-client-secret-change-in-production",
       "redirectUris": [
-        "http://localhost:5234/signin-oidc"
+        "http://localhost:5234/*"
       ],
       "webOrigins": [
         "http://localhost:5234"

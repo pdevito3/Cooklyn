@@ -1,5 +1,10 @@
-import { createRootRoute, Outlet, useRouterState } from '@tanstack/react-router'
+import {
+  createRootRouteWithContext,
+  Outlet,
+  useRouterState,
+} from '@tanstack/react-router'
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
+import type { QueryClient } from '@tanstack/react-query'
 import {
   SidebarInset,
   SidebarProvider,
@@ -13,8 +18,27 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
 } from '@/components/ui/breadcrumb'
+import { getUser } from '@/domain/auth/apis/get-user'
+import { AuthKeys } from '@/domain/auth/apis/auth.keys'
 
-export const Route = createRootRoute({
+export interface RouterContext {
+  queryClient: QueryClient
+}
+
+export const Route = createRootRouteWithContext<RouterContext>()({
+  beforeLoad: async ({ context, location }) => {
+    try {
+      await context.queryClient.ensureQueryData({
+        queryKey: AuthKeys.user(),
+        queryFn: getUser,
+        staleTime: 5 * 60 * 1000,
+      })
+    } catch {
+      window.location.href = `/bff/login?returnUrl=${encodeURIComponent(location.href)}`
+      // Halt the router while the browser navigates to the IdP
+      await new Promise(() => {})
+    }
+  },
   component: RootComponent,
 })
 

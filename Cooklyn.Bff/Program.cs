@@ -102,7 +102,13 @@ try
 
     if (!string.IsNullOrEmpty(frontendUrl))
     {
-        app.MapGet("/", () => Results.Redirect(frontendUrl));
+        // In development, redirect unmatched routes to Vite dev server (preserving path for client-side routing)
+        app.MapFallback(context =>
+        {
+            var redirectUrl = $"{frontendUrl.TrimEnd('/')}{context.Request.Path}{context.Request.QueryString}";
+            context.Response.Redirect(redirectUrl);
+            return Task.CompletedTask;
+        });
     }
     else
     {
