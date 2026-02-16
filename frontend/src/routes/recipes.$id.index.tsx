@@ -3,12 +3,14 @@ import {
   Delete01Icon,
   Edit01Icon,
   Image02Icon,
+  Restaurant01Icon,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 
+import { CookingView } from "@/components/cooking-view";
 import { RatingIcon } from "@/components/rating-icon";
 import { ScaleInput, formatScaledAmount } from "@/components/scale-input";
 import { SourceImagePicker } from "@/components/source-image-picker";
@@ -42,6 +44,7 @@ function RecipeDetailPage() {
   const navigate = useNavigate();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [imagePickerOpen, setImagePickerOpen] = useState(false);
+  const [cookingViewOpen, setCookingViewOpen] = useState(false);
   const [scale, setScale] = useState(1);
 
   const { data: recipe, isLoading, error } = useRecipe(id);
@@ -64,6 +67,9 @@ function RecipeDetailPage() {
   });
   useHotkeys("delete", () => {
     if (recipe) handleDelete();
+  });
+  useHotkeys("c", () => {
+    if (recipe?.steps && !cookingViewOpen) setCookingViewOpen(true);
   });
 
   const confirmDelete = () => {
@@ -152,6 +158,13 @@ function RecipeDetailPage() {
           </div>
         </div>
         <div className="flex gap-2">
+          {recipe.steps && (
+            <Button variant="outline" onClick={() => setCookingViewOpen(true)}>
+              <HugeiconsIcon icon={Restaurant01Icon} className="w-4 h-4" />
+              Cook
+              <Kbd>C</Kbd>
+            </Button>
+          )}
           <Button variant="outline" onClick={handleEdit}>
             <HugeiconsIcon icon={Edit01Icon} className="w-4 h-4" />
             Edit
@@ -393,6 +406,16 @@ function RecipeDetailPage() {
           source={recipe.source}
           open={imagePickerOpen}
           onOpenChange={setImagePickerOpen}
+        />
+      )}
+
+      {/* Cooking View */}
+      {cookingViewOpen && recipe.steps && (
+        <CookingView
+          title={recipe.title}
+          steps={recipe.steps}
+          ingredients={recipe.ingredients}
+          onClose={() => setCookingViewOpen(false)}
         />
       )}
     </div>

@@ -5,14 +5,14 @@ interface StepViewerProps {
   steps: string
 }
 
-function parseSteps(text: string): string[] {
+export function parseSteps(text: string): string[] {
   return text
     .split(/\n\n+/)
     .map((s) => s.trim())
     .filter(Boolean)
 }
 
-function stripLeadingNumber(text: string): string {
+export function stripLeadingNumber(text: string): string {
   return text.replace(/^\d+\.\s*/, '')
 }
 
