@@ -3,7 +3,7 @@ namespace Cooklyn.Server.Domain.ShoppingLists;
 using Ardalis.SmartEnum;
 using Exceptions;
 
-public class ShoppingListStatus : ValueObject
+public partial class ShoppingListStatus : ValueObject
 {
     private ShoppingListStatusEnum _status = null!;
 

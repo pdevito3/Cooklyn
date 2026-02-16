@@ -3,7 +3,7 @@ namespace Cooklyn.Server.Domain.Recipes;
 using Ardalis.SmartEnum;
 using Exceptions;
 
-public class Rating : ValueObject
+public partial class Rating : ValueObject
 {
     private RatingEnum _rating = null!;
 

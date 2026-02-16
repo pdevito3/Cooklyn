@@ -3,7 +3,7 @@ namespace Cooklyn.Server.Domain.ItemCategoryMappings;
 using Ardalis.SmartEnum;
 using Exceptions;
 
-public class MappingSource : ValueObject
+public partial class MappingSource : ValueObject
 {
     private MappingSourceEnum _source = null!;
 

@@ -3,7 +3,7 @@ namespace Cooklyn.Server.Domain.Recipes;
 using Ardalis.SmartEnum;
 using Exceptions;
 
-public class RecipeFlag : ValueObject
+public partial class RecipeFlag : ValueObject
 {
     private RecipeFlagEnum _flag = null!;
 

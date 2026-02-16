@@ -2,7 +2,7 @@ namespace Cooklyn.Server.Domain.Recipes;
 
 using Ardalis.SmartEnum;
 
-public class IngredientUnit : ValueObject
+public partial class IngredientUnit : ValueObject
 {
     private IngredientUnitEnum? _unit;
 
