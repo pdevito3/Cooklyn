@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useCallback } from 'react'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import {
   ArrowLeft02Icon,
@@ -9,6 +9,7 @@ import {
   ArrowUp01Icon,
   RestaurantIcon,
   Layers01Icon,
+  Tag01Icon,
 } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
 
@@ -21,8 +22,10 @@ import {
   useReopenShoppingList,
   useAddShoppingListItem,
   useDeleteShoppingListItem,
+  useUpdateShoppingListItem,
 } from '@/domain/shopping-lists'
 import type { ShoppingListItemDto } from '@/domain/shopping-lists'
+import type { StoreSectionDto } from '@/domain/store-sections'
 import { useStores } from '@/domain/stores'
 import { useStoreSections } from '@/domain/store-sections'
 import { Button } from '@/components/ui/button'
@@ -46,6 +49,20 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
+import {
+  Combobox,
+  ComboboxInput,
+  ComboboxContent,
+  ComboboxItem,
+  ComboboxItemIndicator,
+} from '@/components/ui/combobox'
 import {
   Select,
   SelectContent,
@@ -81,6 +98,7 @@ function ShoppingListDetailPage() {
   const reopenList = useReopenShoppingList()
   const addItem = useAddShoppingListItem()
   const deleteItem = useDeleteShoppingListItem()
+  const updateItem = useUpdateShoppingListItem()
 
   const [deleteOpen, setDeleteOpen] = useState(false)
   const [quickAddName, setQuickAddName] = useState('')
@@ -88,6 +106,8 @@ function ShoppingListDetailPage() {
   const [checkedOpen, setCheckedOpen] = useState(true)
   const [addFromRecipeOpen, setAddFromRecipeOpen] = useState(false)
   const [addFromCollectionOpen, setAddFromCollectionOpen] = useState(false)
+  const [categorizeItem, setCategorizeItem] = useState<ShoppingListItemDto | null>(null)
+  const [categorizeSection, setCategorizeSection] = useState<StoreSectionDto | null>(null)
 
   const stores = storesData?.items ?? []
   const sectionItems = sectionsData?.items
@@ -172,6 +192,35 @@ function ShoppingListDetailPage() {
 
   const handleDeleteItem = (itemId: string) => {
     deleteItem.mutate({ shoppingListId: id, itemId })
+  }
+
+  const openCategorize = useCallback((e: React.MouseEvent, item: ShoppingListItemDto) => {
+    e.stopPropagation()
+    const currentSection = item.storeSectionId
+      ? sections.find((s) => s.id === item.storeSectionId) ?? null
+      : null
+    setCategorizeSection(currentSection)
+    setCategorizeItem(item)
+  }, [sections])
+
+  const handleCategorizeSubmit = () => {
+    if (!categorizeItem) return
+    updateItem.mutate(
+      {
+        shoppingListId: id,
+        itemId: categorizeItem.id,
+        dto: {
+          name: categorizeItem.name,
+          quantity: categorizeItem.quantity,
+          unit: categorizeItem.unit,
+          storeSectionId: categorizeSection?.id ?? null,
+          notes: categorizeItem.notes,
+        },
+      },
+      {
+        onSuccess: () => setCategorizeItem(null),
+      }
+    )
   }
 
   if (isLoading) {
@@ -308,9 +357,9 @@ function ShoppingListDetailPage() {
                         variant="ghost"
                         size="icon"
                         className="opacity-0 group-hover:opacity-100 h-7 w-7"
-                        onClick={() => handleDeleteItem(item.id)}
+                        onClick={(e) => openCategorize(e, item)}
                       >
-                        <HugeiconsIcon icon={Delete02Icon} className="h-3.5 w-3.5" />
+                        <HugeiconsIcon icon={Tag01Icon} className="h-3.5 w-3.5" />
                       </Button>
                     )}
                   </div>
@@ -413,6 +462,43 @@ function ShoppingListDetailPage() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Categorize Item Dialog */}
+      <Dialog open={categorizeItem !== null} onOpenChange={(open) => !open && setCategorizeItem(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Categorize "{categorizeItem?.name}"</DialogTitle>
+          </DialogHeader>
+          <form onSubmit={(e) => { e.preventDefault(); handleCategorizeSubmit() }}>
+            <div className="space-y-2">
+              <Combobox
+                items={sections}
+                value={categorizeSection}
+                onValueChange={(section: StoreSectionDto | null) => setCategorizeSection(section)}
+                itemToStringLabel={(section) => section?.name ?? ''}
+              >
+                <ComboboxInput placeholder="Search sections..." className="w-full" autoFocus />
+                <ComboboxContent emptyMessage="No sections found.">
+                  {(section: StoreSectionDto) => (
+                    <ComboboxItem key={section.id} value={section}>
+                      <span className="flex-1">{section.name}</span>
+                      <ComboboxItemIndicator />
+                    </ComboboxItem>
+                  )}
+                </ComboboxContent>
+              </Combobox>
+            </div>
+            <DialogFooter className="mt-4">
+              <Button type="button" variant="outline" onClick={() => setCategorizeItem(null)}>
+                Cancel
+              </Button>
+              <Button type="submit" disabled={updateItem.isPending}>
+                {updateItem.isPending ? 'Saving...' : 'Save'}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
 
       {/* Add from Recipe Dialog */}
       <AddFromRecipeDialog
