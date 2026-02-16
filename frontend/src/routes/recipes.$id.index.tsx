@@ -28,7 +28,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Kbd } from "@/components/ui/kbd";
 import { Skeleton } from "@/components/ui/skeleton";
-import { formatUnit, useDeleteRecipe, useRecipe } from "@/domain/recipes";
+import { formatUnit } from "@/domain/recipes/types";
+import { useDeleteRecipe } from "@/domain/recipes/apis/recipe-mutations";
+import { useRecipe } from "@/domain/recipes/apis/get-recipe";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/recipes/$id/")({

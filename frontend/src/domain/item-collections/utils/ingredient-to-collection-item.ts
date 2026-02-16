@@ -1,4 +1,4 @@
-import type { IngredientForCreationDto } from '@/domain/recipes'
+import type { IngredientForCreationDto } from '@/domain/recipes/types'
 import type { ItemCollectionItemForCreationDto } from '../types'
 
 export function ingredientsToCollectionItems(

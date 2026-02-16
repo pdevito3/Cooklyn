@@ -23,12 +23,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  usePreviewCmtImport,
-  useImportCmtRecipes,
-  type CmtImportPreviewDto,
-  type CmtImportResultDto,
-} from "@/domain/recipes";
+import { usePreviewCmtImport, useImportCmtRecipes } from "@/domain/recipes/apis/recipe-mutations";
+import type { CmtImportPreviewDto, CmtImportResultDto } from "@/domain/recipes/types";
 
 export const Route = createFileRoute("/recipes/import-cmt")({
   component: ImportCmtPage,

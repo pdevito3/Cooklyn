@@ -3,7 +3,7 @@ import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { ArrowLeft02Icon, InternetIcon } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
 
-import { useCreateRecipe, uploadRecipeImage } from '@/domain/recipes'
+import { useCreateRecipe, uploadRecipeImage } from '@/domain/recipes/apis/recipe-mutations'
 import { RecipeForm, type RecipeFormValues } from '@/components/recipe-form'
 import { Button } from '@/components/ui/button'
 

@@ -5,13 +5,10 @@ import { Add01Icon, ShoppingCart01Icon } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
 import { format } from 'date-fns'
 
-import {
-  useShoppingLists,
-  useCreateShoppingList,
-  useDeleteShoppingList,
-} from '@/domain/shopping-lists'
-import { useStores } from '@/domain/stores'
-import { useMyDefaultStore } from '@/domain/users'
+import { useShoppingLists } from '@/domain/shopping-lists/apis/get-shopping-lists'
+import { useCreateShoppingList, useDeleteShoppingList } from '@/domain/shopping-lists/apis/shopping-list-mutations'
+import { useStores } from '@/domain/stores/apis/get-stores'
+import { useMyDefaultStore } from '@/domain/users/apis/get-my-default-store'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -40,7 +37,7 @@ import {
   ComboboxItem,
   ComboboxItemIndicator,
 } from '@/components/ui/combobox'
-import type { StoreDto } from '@/domain/stores'
+import type { StoreDto } from '@/domain/stores/types'
 import { Input } from '@/components/ui/input'
 import { Kbd } from '@/components/ui/kbd'
 import { Label } from '@/components/ui/label'

@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react'
 
-import { useRecipe } from '@/domain/recipes'
-import type { IngredientDto } from '@/domain/recipes'
-import { useShoppingLists, useAddItemsFromRecipe } from '@/domain/shopping-lists'
+import { useRecipe } from '@/domain/recipes/apis/get-recipe'
+import type { IngredientDto } from '@/domain/recipes/types'
+import { useShoppingLists } from '@/domain/shopping-lists/apis/get-shopping-lists'
+import { useAddItemsFromRecipe } from '@/domain/shopping-lists/apis/shopping-list-mutations'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import {

@@ -34,7 +34,7 @@ import {
   RECIPE_RATINGS,
   type IngredientForCreationDto,
   type RecipeDto,
-} from "@/domain/recipes";
+} from "@/domain/recipes/types";
 
 const ingredientSchema = z.object({
   rawText: z.string(),

@@ -2,11 +2,8 @@ import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { ArrowLeft02Icon } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
 
-import {
-  useRecipe,
-  useUpdateRecipe,
-  useUpdateRecipeIngredients,
-} from '@/domain/recipes'
+import { useRecipe } from '@/domain/recipes/apis/get-recipe'
+import { useUpdateRecipe, useUpdateRecipeIngredients } from '@/domain/recipes/apis/recipe-mutations'
 import { RecipeForm, type RecipeFormValues } from '@/components/recipe-form'
 import { RecipeImageSection } from '@/components/recipe-image-section'
 import { Button } from '@/components/ui/button'

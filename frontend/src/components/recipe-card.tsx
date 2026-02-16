@@ -6,7 +6,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import type { RecipeSummaryDto } from "@/domain/recipes";
+import type { RecipeSummaryDto } from "@/domain/recipes/types";
 import {
   Delete01Icon,
   Edit01Icon,

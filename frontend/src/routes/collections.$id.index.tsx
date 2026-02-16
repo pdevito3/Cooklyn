@@ -33,17 +33,17 @@ import { Input } from "@/components/ui/input";
 import { Kbd } from "@/components/ui/kbd";
 import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
-import type { ItemCollectionItemForCreationDto } from "@/domain/item-collections";
+import type { ItemCollectionItemForCreationDto } from "@/domain/item-collections/types";
+import { useItemCollection } from "@/domain/item-collections/apis/get-item-collection";
 import {
   useDeleteItemCollection,
-  useItemCollection,
   useUpdateItemCollection,
   useUpdateItemCollectionItems,
-} from "@/domain/item-collections";
+} from "@/domain/item-collections/apis/item-collection-mutations";
 import { ingredientsToCollectionItems } from "@/domain/item-collections/utils/ingredient-to-collection-item";
-import type { IngredientForCreationDto } from "@/domain/recipes";
-import { useStoreSections } from "@/domain/store-sections";
-import type { StoreSectionDto } from "@/domain/store-sections";
+import type { IngredientForCreationDto } from "@/domain/recipes/types";
+import { useStoreSections } from "@/domain/store-sections/apis/get-store-sections";
+import type { StoreSectionDto } from "@/domain/store-sections/types";
 
 export const Route = createFileRoute("/collections/$id/")({
   component: CollectionDetailPage,

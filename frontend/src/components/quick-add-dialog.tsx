@@ -1,13 +1,10 @@
 import { useState, useEffect, useRef } from 'react'
 import { format } from 'date-fns'
 
-import {
-  useShoppingLists,
-  useCreateShoppingList,
-  useAddMultipleShoppingListItems,
-} from '@/domain/shopping-lists'
-import type { ShoppingListItemForCreationDto } from '@/domain/shopping-lists'
-import { useMyDefaultStore } from '@/domain/users'
+import { useShoppingLists } from '@/domain/shopping-lists/apis/get-shopping-lists'
+import { useCreateShoppingList, useAddMultipleShoppingListItems } from '@/domain/shopping-lists/apis/shopping-list-mutations'
+import type { ShoppingListItemForCreationDto } from '@/domain/shopping-lists/types'
+import { useMyDefaultStore } from '@/domain/users/apis/get-my-default-store'
 import { parseText } from '@/domain/recipes/utils/ingredient-parser'
 import { Button } from '@/components/ui/button'
 import { Kbd } from '@/components/ui/kbd'

@@ -4,11 +4,8 @@ import { useHotkeys } from 'react-hotkeys-hook'
 import { Add01Icon, Layers01Icon } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
 
-import {
-  useItemCollections,
-  useCreateItemCollection,
-  useDeleteItemCollection,
-} from '@/domain/item-collections'
+import { useItemCollections } from '@/domain/item-collections/apis/get-item-collections'
+import { useCreateItemCollection, useDeleteItemCollection } from '@/domain/item-collections/apis/item-collection-mutations'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
