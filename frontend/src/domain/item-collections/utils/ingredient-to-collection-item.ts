@@ -9,7 +9,6 @@ export function ingredientsToCollectionItems(
     name: ingredient.name ?? ingredient.rawText,
     quantity: ingredient.amount ?? null,
     unit: ingredient.unit ?? null,
-    storeSectionId: null,
     sortOrder: startSortOrder + index,
   }))
 }

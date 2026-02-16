@@ -1,12 +1,7 @@
-import {
-  Add01Icon,
-  ArrowLeft02Icon,
-  Delete02Icon,
-  TextIcon,
-} from '@hugeicons/core-free-icons'
+import { ArrowLeft02Icon } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useHotkeys } from 'react-hotkeys-hook'
 
 import { IngredientEditor } from '@/components/ingredient-editor'
@@ -22,28 +17,19 @@ import {
 } from '@/components/ui/alert-dialog'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import {
-  Combobox,
-  ComboboxInput,
-  ComboboxContent,
-  ComboboxItem,
-  ComboboxItemIndicator,
-} from '@/components/ui/combobox'
 import { Input } from '@/components/ui/input'
 import { Kbd } from '@/components/ui/kbd'
 import { Label } from '@/components/ui/label'
 import { Skeleton } from '@/components/ui/skeleton'
-import type { ItemCollectionItemForCreationDto } from '@/domain/item-collections/types'
 import { useItemCollection } from '@/domain/item-collections/apis/get-item-collection'
 import {
   useDeleteItemCollection,
   useUpdateItemCollection,
   useUpdateItemCollectionItems,
 } from '@/domain/item-collections/apis/item-collection-mutations'
+import { collectionItemsToIngredients } from '@/domain/item-collections/utils/collection-item-to-ingredient'
 import { ingredientsToCollectionItems } from '@/domain/item-collections/utils/ingredient-to-collection-item'
 import type { IngredientForCreationDto } from '@/domain/recipes/types'
-import { useStoreSections } from '@/domain/store-sections/apis/get-store-sections'
-import type { StoreSectionDto } from '@/domain/store-sections/types'
 
 export const Route = createFileRoute('/collections/$id/')({
   component: CollectionDetailPage,
@@ -53,7 +39,6 @@ function CollectionDetailPage() {
   const { id } = Route.useParams()
   const navigate = useNavigate()
   const { data: collection, isLoading } = useItemCollection(id)
-  const { data: sectionsData } = useStoreSections({ pageSize: 100 })
   const updateCollection = useUpdateItemCollection()
   const deleteCollectionMutation = useDeleteItemCollection()
   const updateItems = useUpdateItemCollectionItems()
@@ -61,15 +46,8 @@ function CollectionDetailPage() {
   const [deleteOpen, setDeleteOpen] = useState(false)
   const [editName, setEditName] = useState('')
   const [isEditingName, setIsEditingName] = useState(false)
-  const [items, setItems] = useState<ItemCollectionItemForCreationDto[]>([])
+  const [ingredients, setIngredients] = useState<IngredientForCreationDto[]>([])
   const [itemsSynced, setItemsSynced] = useState(false)
-  const [showTextInput, setShowTextInput] = useState(false)
-  const [textIngredients, setTextIngredients] = useState<
-    IngredientForCreationDto[]
-  >([])
-
-  const sections = sectionsData?.items ?? []
-  const lastItemNameRef = useRef<HTMLInputElement>(null)
 
   useHotkeys('e', () => {
     if (collection && !isEditingName) startEditingName()
@@ -81,15 +59,7 @@ function CollectionDetailPage() {
   // Sync items from collection data when it loads
   useEffect(() => {
     if (collection && !itemsSynced) {
-      setItems(
-        collection.items.map((item) => ({
-          name: item.name,
-          quantity: item.quantity,
-          unit: item.unit,
-          storeSectionId: item.storeSectionId,
-          sortOrder: item.sortOrder,
-        })),
-      )
+      setIngredients(collectionItemsToIngredients(collection.items))
       setItemsSynced(true)
     }
   }, [collection, itemsSynced])
@@ -107,37 +77,8 @@ function CollectionDetailPage() {
     )
   }
 
-  const addItem = () => {
-    setItems((prev) => [
-      ...prev,
-      {
-        name: '',
-        quantity: null,
-        unit: null,
-        storeSectionId: null,
-        sortOrder: prev.length,
-      },
-    ])
-    setTimeout(() => lastItemNameRef.current?.focus(), 0)
-  }
-
-  const removeItem = (index: number) => {
-    setItems((prev) =>
-      prev
-        .filter((_, i) => i !== index)
-        .map((item, i) => ({ ...item, sortOrder: i })),
-    )
-  }
-
-  const addTextItems = () => {
-    if (textIngredients.length === 0) return
-    const newItems = ingredientsToCollectionItems(textIngredients, items.length)
-    setItems((prev) => [...prev, ...newItems])
-    setShowTextInput(false)
-    setTextIngredients([])
-  }
-
   const saveItems = () => {
+    const items = ingredientsToCollectionItems(ingredients)
     updateItems.mutate({ id, items })
   }
 
@@ -218,143 +159,16 @@ function CollectionDetailPage() {
       )}
 
       <Card>
-        <CardHeader className="flex flex-row items-center justify-between">
+        <CardHeader>
           <CardTitle>Items</CardTitle>
         </CardHeader>
-        <CardContent>
-          <div className="space-y-3">
-            {items.map((item, index) => (
-              <div key={index} className="flex items-center gap-3">
-                <Input
-                  ref={index === items.length - 1 ? lastItemNameRef : undefined}
-                  className="flex-1"
-                  placeholder="Item name"
-                  value={item.name}
-                  onChange={(e) => {
-                    setItems((prev) =>
-                      prev.map((it, i) =>
-                        i === index ? { ...it, name: e.target.value } : it,
-                      ),
-                    )
-                  }}
-                />
-                <Input
-                  className="w-20"
-                  placeholder="Qty"
-                  type="number"
-                  value={item.quantity ?? ''}
-                  onChange={(e) => {
-                    const val = e.target.value ? Number(e.target.value) : null
-                    setItems((prev) =>
-                      prev.map((it, i) =>
-                        i === index ? { ...it, quantity: val } : it,
-                      ),
-                    )
-                  }}
-                />
-                <Input
-                  className="w-24"
-                  placeholder="Unit"
-                  value={item.unit ?? ''}
-                  onChange={(e) => {
-                    setItems((prev) =>
-                      prev.map((it, i) =>
-                        i === index
-                          ? { ...it, unit: e.target.value || null }
-                          : it,
-                      ),
-                    )
-                  }}
-                />
-                <Combobox
-                  items={sections}
-                  value={
-                    sections.find((s) => s.id === item.storeSectionId) ?? null
-                  }
-                  onValueChange={(section: StoreSectionDto | null) => {
-                    setItems((prev) =>
-                      prev.map((it, i) =>
-                        i === index
-                          ? { ...it, storeSectionId: section?.id ?? null }
-                          : it,
-                      ),
-                    )
-                  }}
-                  itemToStringLabel={(section) => section?.name ?? ''}
-                >
-                  <ComboboxInput placeholder="Section" className="w-40" />
-                  <ComboboxContent emptyMessage="No sections found.">
-                    {(section: StoreSectionDto) => (
-                      <ComboboxItem key={section.id} value={section}>
-                        <span className="flex-1">{section.name}</span>
-                        <ComboboxItemIndicator />
-                      </ComboboxItem>
-                    )}
-                  </ComboboxContent>
-                </Combobox>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => removeItem(index)}
-                >
-                  <HugeiconsIcon icon={Delete02Icon} className="h-4 w-4" />
-                </Button>
-              </div>
-            ))}
-
-            {showTextInput && (
-              <div className="space-y-3 rounded-md border p-4">
-                <p className="text-sm text-muted-foreground">
-                  Enter items one per line (e.g. "2 cups flour", "1 lb chicken
-                  breast")
-                </p>
-                <IngredientEditor
-                  value={textIngredients}
-                  onChange={setTextIngredients}
-                />
-                <div className="flex gap-2">
-                  <Button
-                    onClick={addTextItems}
-                    disabled={textIngredients.length === 0}
-                  >
-                    Add {textIngredients.length} Item
-                    {textIngredients.length !== 1 ? 's' : ''}
-                  </Button>
-                  <Button
-                    variant="outline"
-                    onClick={() => {
-                      setShowTextInput(false)
-                      setTextIngredients([])
-                    }}
-                  >
-                    Cancel
-                  </Button>
-                </div>
-              </div>
-            )}
-
-            <div className="flex gap-2">
-              <Button variant="outline" onClick={addItem}>
-                <HugeiconsIcon icon={Add01Icon} className="mr-2 h-4 w-4" />
-                Add Item
-              </Button>
-              {!showTextInput && (
-                <Button
-                  variant="outline"
-                  onClick={() => {
-                    setTextIngredients([])
-                    setShowTextInput(true)
-                  }}
-                >
-                  <HugeiconsIcon icon={TextIcon} className="mr-2 h-4 w-4" />
-                  Add via Text
-                </Button>
-              )}
-              <Button onClick={saveItems} disabled={updateItems.isPending}>
-                {updateItems.isPending ? 'Saving...' : 'Save'}
-              </Button>
-            </div>
-          </div>
+        <CardContent className="space-y-4">
+          {itemsSynced && (
+            <IngredientEditor value={ingredients} onChange={setIngredients} />
+          )}
+          <Button onClick={saveItems} disabled={updateItems.isPending}>
+            {updateItems.isPending ? 'Saving...' : 'Save'}
+          </Button>
         </CardContent>
       </Card>
 

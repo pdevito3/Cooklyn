@@ -4,7 +4,6 @@ export interface ItemCollectionItemDto {
   name: string
   quantity: number | null
   unit: string | null
-  storeSectionId: string | null
   sortOrder: number
 }
 
@@ -27,7 +26,6 @@ export interface ItemCollectionItemForCreationDto {
   name: string
   quantity: number | null
   unit: string | null
-  storeSectionId: string | null
   sortOrder: number
 }
 
