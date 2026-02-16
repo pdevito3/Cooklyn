@@ -105,7 +105,14 @@ export function AddFromRecipeDialog({
               onValueChange={handleRecipeSelect}
             >
               <SelectTrigger>
-                <SelectValue placeholder="Select a recipe" />
+                <SelectValue placeholder="Select a recipe">
+                  {(value: unknown) => {
+                    if (value === null || value === undefined) {
+                      return <span className="text-muted-foreground">Select a recipe</span>
+                    }
+                    return recipes.find((r) => r.id === value)?.title ?? String(value)
+                  }}
+                </SelectValue>
               </SelectTrigger>
               <SelectContent>
                 {recipes.map((recipe) => (

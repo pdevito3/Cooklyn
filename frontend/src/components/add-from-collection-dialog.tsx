@@ -80,7 +80,14 @@ export function AddFromCollectionDialog({
             onValueChange={setSelectedCollectionId}
           >
             <SelectTrigger>
-              <SelectValue placeholder="Select a collection" />
+              <SelectValue placeholder="Select a collection">
+                {(value: unknown) => {
+                  if (value === null || value === undefined) {
+                    return <span className="text-muted-foreground">Select a collection</span>
+                  }
+                  return collections.find((c) => c.id === value)?.name ?? String(value)
+                }}
+              </SelectValue>
             </SelectTrigger>
             <SelectContent>
               {collections.map((collection) => (

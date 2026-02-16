@@ -98,7 +98,14 @@ function ShoppingListEditPage() {
               onValueChange={(value) => setStoreId(value || null)}
             >
               <SelectTrigger>
-                <SelectValue placeholder="No store" />
+                <SelectValue placeholder="No store">
+                  {(value: unknown) => {
+                    if (value === null || value === undefined) {
+                      return <span className="text-muted-foreground">No store</span>
+                    }
+                    return stores.find((s) => s.id === value)?.name ?? String(value)
+                  }}
+                </SelectValue>
               </SelectTrigger>
               <SelectContent>
                 {stores.map((store) => (
