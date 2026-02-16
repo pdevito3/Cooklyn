@@ -1,8 +1,8 @@
 import { useState } from 'react'
 
 import { ScaleInput, formatScaledAmount } from '@/components/scale-input'
-import { formatUnit } from '@/domain/recipes'
-import type { IngredientDto } from '@/domain/recipes'
+import { formatUnit } from '@/domain/recipes/types'
+import type { IngredientDto } from '@/domain/recipes/types'
 import { cn } from '@/lib/utils'
 
 interface CookingIngredientsPanelProps {

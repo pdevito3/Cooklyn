@@ -9,14 +9,9 @@ import { CookingStepDisplay } from '@/components/cooking-step-display'
 import { parseSteps, stripLeadingNumber } from '@/components/step-viewer'
 import { Button } from '@/components/ui/button'
 import { Kbd } from '@/components/ui/kbd'
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-} from '@/components/ui/sheet'
-import type { IngredientDto } from '@/domain/recipes'
+import type { IngredientDto } from '@/domain/recipes/types'
 import { useIsMobile } from '@/hooks/use-mobile'
+import { useSwipePanel } from '@/hooks/use-swipe-panel'
 
 interface CookingViewProps {
   title: string
@@ -33,10 +28,14 @@ export function CookingView({
 }: CookingViewProps) {
   const isMobile = useIsMobile()
   const [currentStep, setCurrentStep] = useState(0)
-  const [ingredientsOpen, setIngredientsOpen] = useState(!isMobile)
+  const [desktopIngredientsOpen, setDesktopIngredientsOpen] = useState(!isMobile)
 
   const parsed = parseSteps(steps).map(stripLeadingNumber)
   const hasIngredients = ingredients.length > 0
+
+  const swipePanel = useSwipePanel({
+    enabled: isMobile && hasIngredients,
+  })
 
   // Body scroll lock
   useEffect(() => {
@@ -51,15 +50,34 @@ export function CookingView({
   useHotkeys(
     'i',
     () => {
-      if (hasIngredients) setIngredientsOpen((o) => !o)
+      if (!hasIngredients) return
+      if (isMobile) {
+        swipePanel.toggle()
+      } else {
+        setDesktopIngredientsOpen((o) => !o)
+      }
     },
-    [hasIngredients],
+    [hasIngredients, isMobile],
   )
+
+  const handleIngredientsToggle = () => {
+    if (isMobile) {
+      swipePanel.toggle()
+    } else {
+      setDesktopIngredientsOpen((o) => !o)
+    }
+  }
 
   if (parsed.length === 0) return null
 
   return (
-    <div className="fixed inset-0 z-50 flex flex-col bg-background">
+    <div
+      className="fixed inset-0 z-50 flex flex-col bg-background"
+      onPointerDown={swipePanel.handlers.onPointerDown}
+      onPointerMove={swipePanel.handlers.onPointerMove}
+      onPointerUp={swipePanel.handlers.onPointerUp}
+      style={{ touchAction: 'pan-y' }}
+    >
       {/* Progress bar */}
       <CookingProgressBar currentStep={currentStep} totalSteps={parsed.length} />
 
@@ -71,7 +89,7 @@ export function CookingView({
             <Button
               variant="outline"
               size="sm"
-              onClick={() => setIngredientsOpen((o) => !o)}
+              onClick={handleIngredientsToggle}
             >
               Ingredients
               <Kbd>I</Kbd>
@@ -93,23 +111,37 @@ export function CookingView({
         />
 
         {/* Desktop inline ingredients panel */}
-        {!isMobile && hasIngredients && ingredientsOpen && (
+        {!isMobile && hasIngredients && desktopIngredientsOpen && (
           <div className="w-80 border-l">
             <CookingIngredientsPanel ingredients={ingredients} />
           </div>
         )}
       </div>
 
-      {/* Mobile ingredients sheet */}
+      {/* Mobile gesture-driven ingredients panel */}
       {isMobile && hasIngredients && (
-        <Sheet open={ingredientsOpen} onOpenChange={setIngredientsOpen}>
-          <SheetContent side="right" className="w-[85%] sm:max-w-[85%] p-0">
-            <SheetHeader className="sr-only">
-              <SheetTitle>Ingredients</SheetTitle>
-            </SheetHeader>
-            <CookingIngredientsPanel ingredients={ingredients} />
-          </SheetContent>
-        </Sheet>
+        <>
+          {/* Backdrop */}
+          <div
+            ref={swipePanel.refs.backdropRef}
+            className="fixed inset-0 z-50 bg-black"
+            style={swipePanel.backdropStyle}
+          />
+          {/* Sliding panel with handle */}
+          <div
+            ref={swipePanel.refs.panelRef}
+            className="fixed inset-y-0 right-0 z-50 flex border-l bg-background"
+            style={swipePanel.panelStyle}
+          >
+            {/* Grab handle — sits to the left of the panel content */}
+            <div className="flex w-6 shrink-0 items-center justify-center">
+              <div className="h-8 w-1 rounded-full bg-muted-foreground/40" />
+            </div>
+            <div className="flex-1 overflow-hidden">
+              <CookingIngredientsPanel ingredients={ingredients} />
+            </div>
+          </div>
+        </>
       )}
     </div>
   )
