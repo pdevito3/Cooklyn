@@ -1,6 +1,7 @@
 namespace Cooklyn.Server.Databases;
 
 using Domain;
+using Domain.ItemCategoryMappings;
 using Domain.ItemCollections;
 using Domain.Recipes;
 using Domain.ShoppingLists;
@@ -43,6 +44,8 @@ public class AppDbContext(
     public DbSet<ItemCollection> ItemCollections => Set<ItemCollection>();
     public DbSet<ItemCollectionItem> ItemCollectionItems => Set<ItemCollectionItem>();
     public DbSet<StoreDefaultCollection> StoreDefaultCollections => Set<StoreDefaultCollection>();
+
+    public DbSet<ItemCategoryMapping> ItemCategoryMappings => Set<ItemCategoryMapping>();
     #endregion
 
     /// <summary>

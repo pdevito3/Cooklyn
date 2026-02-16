@@ -6,12 +6,17 @@ using Mappings;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Recipes;
+using Services;
 
 public static class AddItemsFromRecipe
 {
     public sealed record Command(string ShoppingListId, AddItemsFromRecipeDto Dto) : IRequest<ShoppingListDto>;
 
-    public sealed class Handler(AppDbContext dbContext) : IRequestHandler<Command, ShoppingListDto>
+    public sealed class Handler(
+        AppDbContext dbContext,
+        IItemCategoryResolver itemCategoryResolver,
+        ITenantIdProvider tenantIdProvider,
+        ICurrentUserService currentUserService) : IRequestHandler<Command, ShoppingListDto>
     {
         public async Task<ShoppingListDto> Handle(Command request, CancellationToken cancellationToken)
         {
@@ -35,6 +40,11 @@ public static class AddItemsFromRecipe
             var maxSortOrder = shoppingList.Items.Any()
                 ? shoppingList.Items.Max(i => i.SortOrder)
                 : -1;
+
+            // Resolve tenant once before the loop
+            var tenantId = currentUserService.UserIdentifier != null
+                ? await tenantIdProvider.GetTenantIdAsync(currentUserService.UserIdentifier, cancellationToken)
+                : null;
 
             foreach (var ingredient in ingredients)
             {
@@ -65,6 +75,11 @@ public static class AddItemsFromRecipe
                 }
                 else
                 {
+                    // Resolve store section for new item
+                    string? resolvedSectionId = tenantId != null
+                        ? await itemCategoryResolver.ResolveAsync(ingredientName, tenantId, cancellationToken)
+                        : null;
+
                     // Add as new item
                     maxSortOrder++;
                     var newItem = ShoppingListItem.Create(new Models.ShoppingListItemForCreation
@@ -73,6 +88,7 @@ public static class AddItemsFromRecipe
                         Name = ingredientName,
                         Quantity = ingredient.Amount,
                         Unit = ingredient.Unit.Value,
+                        StoreSectionId = resolvedSectionId,
                         SortOrder = maxSortOrder
                     });
                     shoppingList.AddItem(newItem);
