@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { useHotkeys } from 'react-hotkeys-hook'
 import { ArrowLeft02Icon } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
 
@@ -9,6 +10,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Kbd } from '@/components/ui/kbd'
 import { Skeleton } from '@/components/ui/skeleton'
 import {
   Select,
@@ -43,6 +45,7 @@ function ShoppingListEditPage() {
   }, [list])
 
   const handleSave = () => {
+    if (!name.trim() || updateList.isPending) return
     updateList.mutate(
       { id, dto: { name, storeId } },
       {
@@ -50,6 +53,8 @@ function ShoppingListEditPage() {
       }
     )
   }
+
+  useHotkeys('mod+enter', () => { handleSave() }, { enableOnFormTags: ['INPUT', 'TEXTAREA', 'SELECT'], preventDefault: true })
 
   if (isLoading) {
     return (
@@ -119,6 +124,7 @@ function ShoppingListEditPage() {
           <div className="flex gap-2">
             <Button onClick={handleSave} disabled={!name.trim() || updateList.isPending}>
               {updateList.isPending ? 'Saving...' : 'Save'}
+              {!updateList.isPending && <Kbd>⌘↵</Kbd>}
             </Button>
             <Button
               variant="outline"

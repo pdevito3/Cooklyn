@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { useHotkeys } from 'react-hotkeys-hook'
 import { Add01Icon, Store01Icon } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
 
@@ -27,6 +28,7 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
+import { Kbd } from '@/components/ui/kbd'
 import { Label } from '@/components/ui/label'
 
 export const Route = createFileRoute('/stores/')({
@@ -43,6 +45,8 @@ function StoresIndexPage() {
   const [deleteId, setDeleteId] = useState<string | null>(null)
   const [newName, setNewName] = useState('')
   const [newAddress, setNewAddress] = useState('')
+
+  useHotkeys('c', () => { setCreateOpen(true) })
 
   const handleCreate = () => {
     createStore.mutate(
@@ -76,6 +80,7 @@ function StoresIndexPage() {
         <Button onClick={() => setCreateOpen(true)}>
           <HugeiconsIcon icon={Add01Icon} className="mr-2 h-4 w-4" />
           New Store
+          <Kbd>C</Kbd>
         </Button>
       </div>
 

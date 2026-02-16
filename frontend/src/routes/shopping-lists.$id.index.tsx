@@ -1,5 +1,6 @@
 import { useState, useMemo, useCallback, useRef, useEffect } from 'react'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { useHotkeys } from 'react-hotkeys-hook'
 import {
   ArrowLeft02Icon,
   Delete02Icon,
@@ -64,6 +65,7 @@ import {
   ComboboxItem,
   ComboboxItemIndicator,
 } from '@/components/ui/combobox'
+import { Kbd } from '@/components/ui/kbd'
 import { AddFromRecipeDialog } from '@/components/add-from-recipe-dialog'
 import { AddFromCollectionDialog } from '@/components/add-from-collection-dialog'
 
@@ -162,6 +164,13 @@ function ShoppingListDetailPage() {
       textareaRef.current?.focus()
     }
   }, [isLoading, list])
+
+  useHotkeys('e', () => {
+    if (list) navigate({ to: '/shopping-lists/$id/edit', params: { id } })
+  })
+  useHotkeys('delete', () => {
+    if (list) setDeleteOpen(true)
+  })
 
   const handleQuickAdd = () => {
     const text = quickAddText.trim()
@@ -270,9 +279,11 @@ function ShoppingListDetailPage() {
           )}
           <Button variant="outline" onClick={() => navigate({ to: '/shopping-lists/$id/edit', params: { id } })}>
             Edit
+            <Kbd>E</Kbd>
           </Button>
           <Button variant="destructive" onClick={() => setDeleteOpen(true)}>
             Delete
+            <Kbd>⌫</Kbd>
           </Button>
         </div>
       </div>

@@ -7,6 +7,7 @@ import {
 import { HugeiconsIcon } from "@hugeicons/react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
+import { useHotkeys } from "react-hotkeys-hook";
 
 import { IngredientEditor } from "@/components/ingredient-editor";
 import {
@@ -29,6 +30,7 @@ import {
   ComboboxItemIndicator,
 } from "@/components/ui/combobox";
 import { Input } from "@/components/ui/input";
+import { Kbd } from "@/components/ui/kbd";
 import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { ItemCollectionItemForCreationDto } from "@/domain/item-collections";
@@ -68,6 +70,13 @@ function CollectionDetailPage() {
 
   const sections = sectionsData?.items ?? [];
   const lastItemNameRef = useRef<HTMLInputElement>(null);
+
+  useHotkeys("e", () => {
+    if (collection && !isEditingName) startEditingName();
+  });
+  useHotkeys("delete", () => {
+    if (collection && !isEditingName) setDeleteOpen(true);
+  });
 
   // Sync items from collection data when it loads
   useEffect(() => {
@@ -175,9 +184,11 @@ function CollectionDetailPage() {
         </div>
         <Button variant="outline" onClick={startEditingName}>
           Edit
+          <Kbd>E</Kbd>
         </Button>
         <Button variant="destructive" onClick={() => setDeleteOpen(true)}>
           Delete
+          <Kbd>⌫</Kbd>
         </Button>
       </div>
 

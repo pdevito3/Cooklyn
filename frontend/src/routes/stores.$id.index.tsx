@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { useHotkeys } from 'react-hotkeys-hook'
 import { ArrowLeft02Icon, Delete02Icon, DragDropIcon } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
 import {
@@ -28,6 +29,7 @@ import type { StoreSectionDto } from '@/domain/store-sections'
 import { useMyDefaultStore, useUpdateMyDefaultStore } from '@/domain/users'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { Kbd } from '@/components/ui/kbd'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -153,6 +155,13 @@ function StoreDetailPage() {
       coordinateGetter: sortableKeyboardCoordinates,
     })
   )
+
+  useHotkeys('e', () => {
+    if (store && !isEditing && !aislesEditing) startEditing()
+  })
+  useHotkeys('delete', () => {
+    if (store && !isEditing && !aislesEditing) setDeleteOpen(true)
+  })
 
   const startEditing = () => {
     if (!store) return
@@ -310,8 +319,14 @@ function StoreDetailPage() {
             Set as Default
           </Button>
         )}
-        <Button variant="outline" onClick={startEditing}>Edit</Button>
-        <Button variant="destructive" onClick={() => setDeleteOpen(true)}>Delete</Button>
+        <Button variant="outline" onClick={startEditing}>
+          Edit
+          <Kbd>E</Kbd>
+        </Button>
+        <Button variant="destructive" onClick={() => setDeleteOpen(true)}>
+          Delete
+          <Kbd>⌫</Kbd>
+        </Button>
       </div>
 
       {isEditing && (

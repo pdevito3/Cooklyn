@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { useHotkeys } from 'react-hotkeys-hook'
 import { Add01Icon, Layers01Icon } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
 
@@ -29,6 +30,7 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
+import { Kbd } from '@/components/ui/kbd'
 import { Label } from '@/components/ui/label'
 
 export const Route = createFileRoute('/collections/')({
@@ -43,6 +45,8 @@ function CollectionsIndexPage() {
   const [createOpen, setCreateOpen] = useState(false)
   const [deleteId, setDeleteId] = useState<string | null>(null)
   const [newName, setNewName] = useState('')
+
+  useHotkeys('c', () => { setCreateOpen(true) })
 
   const handleCreate = () => {
     createCollection.mutate(
@@ -75,6 +79,7 @@ function CollectionsIndexPage() {
         <Button onClick={() => setCreateOpen(true)}>
           <HugeiconsIcon icon={Add01Icon} className="mr-2 h-4 w-4" />
           New Collection
+          <Kbd>C</Kbd>
         </Button>
       </div>
 

@@ -10,6 +10,7 @@ import type { ShoppingListItemForCreationDto } from '@/domain/shopping-lists'
 import { useMyDefaultStore } from '@/domain/users'
 import { parseText } from '@/domain/recipes/utils/ingredient-parser'
 import { Button } from '@/components/ui/button'
+import { Kbd } from '@/components/ui/kbd'
 import { Textarea } from '@/components/ui/textarea'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -202,6 +203,7 @@ export function QuickAddDialog({ open, onOpenChange }: QuickAddDialogProps) {
             disabled={!canSubmit}
           >
             {isSubmitting ? 'Adding...' : 'Add Items'}
+            {!isSubmitting && <Kbd>⌘↵</Kbd>}
           </Button>
         </ResponsiveDialogFooter>
       </ResponsiveDialogContent>

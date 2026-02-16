@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { useHotkeys } from 'react-hotkeys-hook'
 import { Add01Icon, ShoppingCart01Icon } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
 import { format } from 'date-fns'
@@ -41,6 +42,7 @@ import {
 } from '@/components/ui/combobox'
 import type { StoreDto } from '@/domain/stores'
 import { Input } from '@/components/ui/input'
+import { Kbd } from '@/components/ui/kbd'
 import { Label } from '@/components/ui/label'
 
 export const Route = createFileRoute('/shopping-lists/')({
@@ -60,6 +62,14 @@ function ShoppingListsIndexPage() {
   const [newStoreId, setNewStoreId] = useState<string | null>(null)
 
   const stores = storesData?.items ?? []
+
+  const openCreateDialog = () => {
+    setNewName(`Groceries - ${format(new Date(), 'MM/dd/yyyy')}`)
+    setNewStoreId(defaultStoreId ?? null)
+    setCreateOpen(true)
+  }
+
+  useHotkeys('c', () => { openCreateDialog() })
 
   const handleCreate = () => {
     createList.mutate(
@@ -93,13 +103,10 @@ function ShoppingListsIndexPage() {
           <h1 className="text-3xl font-bold tracking-tight">Shopping Lists</h1>
           <p className="text-muted-foreground">Manage your shopping lists</p>
         </div>
-        <Button onClick={() => {
-          setNewName(`Groceries - ${format(new Date(), 'MM/dd/yyyy')}`)
-          setNewStoreId(defaultStoreId ?? null)
-          setCreateOpen(true)
-        }}>
+        <Button onClick={openCreateDialog}>
           <HugeiconsIcon icon={Add01Icon} className="mr-2 h-4 w-4" />
           New List
+          <Kbd>C</Kbd>
         </Button>
       </div>
 
@@ -195,11 +202,7 @@ function ShoppingListsIndexPage() {
           {data.items.length === 0 && (
             <div className="flex flex-col items-center justify-center rounded-lg border border-dashed py-12">
               <p className="text-muted-foreground">No shopping lists yet</p>
-              <Button className="mt-4" onClick={() => {
-                setNewName(`Groceries - ${format(new Date(), 'MM/dd/yyyy')}`)
-                setNewStoreId(defaultStoreId ?? null)
-                setCreateOpen(true)
-              }}>
+              <Button className="mt-4" onClick={openCreateDialog}>
                 <HugeiconsIcon icon={Add01Icon} className="mr-2 h-4 w-4" />
                 Create your first list
               </Button>
