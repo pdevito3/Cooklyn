@@ -572,3 +572,4 @@ For detailed patterns, see `.claude/rules/backend/`:
   the ID back to a display name.      
 - Use hotkeys for common actions (e.g. Ctrl+K to open command palette, `C` for Create, `E` for edit, `Delete` for delete, etc.) or sidenav to speed up development and testing, including a kbd hint. in buttons and UI elements.
 - Forms should be able to be submitted with enter like a normal form when appropriate, but should always use Cmd+Enter
+- No barrel files
