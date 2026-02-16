@@ -6,7 +6,10 @@ import { HugeiconsIcon } from '@hugeicons/react'
 import { format } from 'date-fns'
 
 import { useShoppingLists } from '@/domain/shopping-lists/apis/get-shopping-lists'
-import { useCreateShoppingList, useDeleteShoppingList } from '@/domain/shopping-lists/apis/shopping-list-mutations'
+import {
+  useCreateShoppingList,
+  useDeleteShoppingList,
+} from '@/domain/shopping-lists/apis/shopping-list-mutations'
 import { useStores } from '@/domain/stores/apis/get-stores'
 import { useMyDefaultStore } from '@/domain/users/apis/get-my-default-store'
 import { Button } from '@/components/ui/button'
@@ -66,7 +69,9 @@ function ShoppingListsIndexPage() {
     setCreateOpen(true)
   }
 
-  useHotkeys('c', () => { openCreateDialog() })
+  useHotkeys('c', () => {
+    openCreateDialog()
+  })
 
   const handleCreate = () => {
     createList.mutate(
@@ -78,7 +83,7 @@ function ShoppingListsIndexPage() {
           setNewStoreId(null)
           navigate({ to: '/shopping-lists/$id', params: { id: list.id } })
         },
-      }
+      },
     )
   }
 
@@ -91,7 +96,8 @@ function ShoppingListsIndexPage() {
   }
 
   const activeLists = data?.items.filter((l) => l.status === 'Active') ?? []
-  const completedLists = data?.items.filter((l) => l.status === 'Completed') ?? []
+  const completedLists =
+    data?.items.filter((l) => l.status === 'Completed') ?? []
 
   return (
     <div className="space-y-6">
@@ -133,15 +139,25 @@ function ShoppingListsIndexPage() {
                     <Card
                       key={list.id}
                       className="cursor-pointer transition-shadow hover:shadow-md"
-                      onClick={() => navigate({ to: '/shopping-lists/$id', params: { id: list.id } })}
+                      onClick={() =>
+                        navigate({
+                          to: '/shopping-lists/$id',
+                          params: { id: list.id },
+                        })
+                      }
                     >
                       <CardHeader className="flex flex-row items-center gap-3 pb-2">
-                        <HugeiconsIcon icon={ShoppingCart01Icon} className="h-5 w-5 text-muted-foreground" />
+                        <HugeiconsIcon
+                          icon={ShoppingCart01Icon}
+                          className="h-5 w-5 text-muted-foreground"
+                        />
                         <CardTitle className="text-lg">{list.name}</CardTitle>
                       </CardHeader>
                       <CardContent>
                         {store && (
-                          <p className="text-sm text-muted-foreground">{store.name}</p>
+                          <p className="text-sm text-muted-foreground">
+                            {store.name}
+                          </p>
                         )}
                         <div className="mt-2 flex items-center gap-2">
                           <span className="text-sm text-muted-foreground">
@@ -151,7 +167,9 @@ function ShoppingListsIndexPage() {
                             <div className="flex-1 rounded-full bg-muted h-2">
                               <div
                                 className="rounded-full bg-primary h-2 transition-all"
-                                style={{ width: `${(list.checkedCount / list.itemCount) * 100}%` }}
+                                style={{
+                                  width: `${(list.checkedCount / list.itemCount) * 100}%`,
+                                }}
                               />
                             </div>
                           )}
@@ -166,7 +184,9 @@ function ShoppingListsIndexPage() {
 
           {completedLists.length > 0 && (
             <div className="space-y-3">
-              <h2 className="text-lg font-semibold text-muted-foreground">Completed</h2>
+              <h2 className="text-lg font-semibold text-muted-foreground">
+                Completed
+              </h2>
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {completedLists.map((list) => {
                   const store = stores.find((s) => s.id === list.storeId)
@@ -174,16 +194,26 @@ function ShoppingListsIndexPage() {
                     <Card
                       key={list.id}
                       className="cursor-pointer opacity-60 transition-shadow hover:shadow-md"
-                      onClick={() => navigate({ to: '/shopping-lists/$id', params: { id: list.id } })}
+                      onClick={() =>
+                        navigate({
+                          to: '/shopping-lists/$id',
+                          params: { id: list.id },
+                        })
+                      }
                     >
                       <CardHeader className="flex flex-row items-center gap-3 pb-2">
-                        <HugeiconsIcon icon={ShoppingCart01Icon} className="h-5 w-5 text-muted-foreground" />
+                        <HugeiconsIcon
+                          icon={ShoppingCart01Icon}
+                          className="h-5 w-5 text-muted-foreground"
+                        />
                         <CardTitle className="text-lg">{list.name}</CardTitle>
                         <Badge variant="secondary">Completed</Badge>
                       </CardHeader>
                       <CardContent>
                         {store && (
-                          <p className="text-sm text-muted-foreground">{store.name}</p>
+                          <p className="text-sm text-muted-foreground">
+                            {store.name}
+                          </p>
                         )}
                         <p className="text-sm text-muted-foreground mt-1">
                           {list.itemCount} item{list.itemCount !== 1 ? 's' : ''}
@@ -213,7 +243,12 @@ function ShoppingListsIndexPage() {
           <DialogHeader>
             <DialogTitle>New Shopping List</DialogTitle>
           </DialogHeader>
-          <form onSubmit={(e) => { e.preventDefault(); handleCreate() }}>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault()
+              handleCreate()
+            }}
+          >
             <div className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="list-name">Name</Label>
@@ -230,10 +265,15 @@ function ShoppingListsIndexPage() {
                 <Combobox
                   items={stores}
                   value={stores.find((s) => s.id === newStoreId) ?? null}
-                  onValueChange={(store: StoreDto | null) => setNewStoreId(store?.id ?? null)}
+                  onValueChange={(store: StoreDto | null) =>
+                    setNewStoreId(store?.id ?? null)
+                  }
                   itemToStringLabel={(store) => store?.name ?? ''}
                 >
-                  <ComboboxInput placeholder="Search stores..." className="w-full" />
+                  <ComboboxInput
+                    placeholder="Search stores..."
+                    className="w-full"
+                  />
                   <ComboboxContent emptyMessage="No stores found.">
                     {(store: StoreDto) => (
                       <ComboboxItem key={store.id} value={store}>
@@ -246,10 +286,17 @@ function ShoppingListsIndexPage() {
               </div>
             </div>
             <DialogFooter className="mt-4">
-              <Button type="button" variant="outline" onClick={() => setCreateOpen(false)}>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setCreateOpen(false)}
+              >
                 Cancel
               </Button>
-              <Button type="submit" disabled={!newName.trim() || createList.isPending}>
+              <Button
+                type="submit"
+                disabled={!newName.trim() || createList.isPending}
+              >
                 {createList.isPending ? 'Creating...' : 'Create'}
               </Button>
             </DialogFooter>
@@ -257,12 +304,16 @@ function ShoppingListsIndexPage() {
         </DialogContent>
       </Dialog>
 
-      <AlertDialog open={!!deleteId} onOpenChange={(open) => !open && setDeleteId(null)}>
+      <AlertDialog
+        open={!!deleteId}
+        onOpenChange={(open) => !open && setDeleteId(null)}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Delete Shopping List</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete this shopping list? This action cannot be undone.
+              Are you sure you want to delete this shopping list? This action
+              cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

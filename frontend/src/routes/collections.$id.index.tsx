@@ -3,13 +3,13 @@ import {
   ArrowLeft02Icon,
   Delete02Icon,
   TextIcon,
-} from "@hugeicons/core-free-icons";
-import { HugeiconsIcon } from "@hugeicons/react";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useEffect, useRef, useState } from "react";
-import { useHotkeys } from "react-hotkeys-hook";
+} from '@hugeicons/core-free-icons'
+import { HugeiconsIcon } from '@hugeicons/react'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { useEffect, useRef, useState } from 'react'
+import { useHotkeys } from 'react-hotkeys-hook'
 
-import { IngredientEditor } from "@/components/ingredient-editor";
+import { IngredientEditor } from '@/components/ingredient-editor'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -19,64 +19,64 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+} from '@/components/ui/alert-dialog'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
   Combobox,
   ComboboxInput,
   ComboboxContent,
   ComboboxItem,
   ComboboxItemIndicator,
-} from "@/components/ui/combobox";
-import { Input } from "@/components/ui/input";
-import { Kbd } from "@/components/ui/kbd";
-import { Label } from "@/components/ui/label";
-import { Skeleton } from "@/components/ui/skeleton";
-import type { ItemCollectionItemForCreationDto } from "@/domain/item-collections/types";
-import { useItemCollection } from "@/domain/item-collections/apis/get-item-collection";
+} from '@/components/ui/combobox'
+import { Input } from '@/components/ui/input'
+import { Kbd } from '@/components/ui/kbd'
+import { Label } from '@/components/ui/label'
+import { Skeleton } from '@/components/ui/skeleton'
+import type { ItemCollectionItemForCreationDto } from '@/domain/item-collections/types'
+import { useItemCollection } from '@/domain/item-collections/apis/get-item-collection'
 import {
   useDeleteItemCollection,
   useUpdateItemCollection,
   useUpdateItemCollectionItems,
-} from "@/domain/item-collections/apis/item-collection-mutations";
-import { ingredientsToCollectionItems } from "@/domain/item-collections/utils/ingredient-to-collection-item";
-import type { IngredientForCreationDto } from "@/domain/recipes/types";
-import { useStoreSections } from "@/domain/store-sections/apis/get-store-sections";
-import type { StoreSectionDto } from "@/domain/store-sections/types";
+} from '@/domain/item-collections/apis/item-collection-mutations'
+import { ingredientsToCollectionItems } from '@/domain/item-collections/utils/ingredient-to-collection-item'
+import type { IngredientForCreationDto } from '@/domain/recipes/types'
+import { useStoreSections } from '@/domain/store-sections/apis/get-store-sections'
+import type { StoreSectionDto } from '@/domain/store-sections/types'
 
-export const Route = createFileRoute("/collections/$id/")({
+export const Route = createFileRoute('/collections/$id/')({
   component: CollectionDetailPage,
-});
+})
 
 function CollectionDetailPage() {
-  const { id } = Route.useParams();
-  const navigate = useNavigate();
-  const { data: collection, isLoading } = useItemCollection(id);
-  const { data: sectionsData } = useStoreSections({ pageSize: 100 });
-  const updateCollection = useUpdateItemCollection();
-  const deleteCollectionMutation = useDeleteItemCollection();
-  const updateItems = useUpdateItemCollectionItems();
+  const { id } = Route.useParams()
+  const navigate = useNavigate()
+  const { data: collection, isLoading } = useItemCollection(id)
+  const { data: sectionsData } = useStoreSections({ pageSize: 100 })
+  const updateCollection = useUpdateItemCollection()
+  const deleteCollectionMutation = useDeleteItemCollection()
+  const updateItems = useUpdateItemCollectionItems()
 
-  const [deleteOpen, setDeleteOpen] = useState(false);
-  const [editName, setEditName] = useState("");
-  const [isEditingName, setIsEditingName] = useState(false);
-  const [items, setItems] = useState<ItemCollectionItemForCreationDto[]>([]);
-  const [itemsSynced, setItemsSynced] = useState(false);
-  const [showTextInput, setShowTextInput] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false)
+  const [editName, setEditName] = useState('')
+  const [isEditingName, setIsEditingName] = useState(false)
+  const [items, setItems] = useState<ItemCollectionItemForCreationDto[]>([])
+  const [itemsSynced, setItemsSynced] = useState(false)
+  const [showTextInput, setShowTextInput] = useState(false)
   const [textIngredients, setTextIngredients] = useState<
     IngredientForCreationDto[]
-  >([]);
+  >([])
 
-  const sections = sectionsData?.items ?? [];
-  const lastItemNameRef = useRef<HTMLInputElement>(null);
+  const sections = sectionsData?.items ?? []
+  const lastItemNameRef = useRef<HTMLInputElement>(null)
 
-  useHotkeys("e", () => {
-    if (collection && !isEditingName) startEditingName();
-  });
-  useHotkeys("delete", () => {
-    if (collection && !isEditingName) setDeleteOpen(true);
-  });
+  useHotkeys('e', () => {
+    if (collection && !isEditingName) startEditingName()
+  })
+  useHotkeys('delete', () => {
+    if (collection && !isEditingName) setDeleteOpen(true)
+  })
 
   // Sync items from collection data when it loads
   useEffect(() => {
@@ -89,66 +89,63 @@ function CollectionDetailPage() {
           storeSectionId: item.storeSectionId,
           sortOrder: item.sortOrder,
         })),
-      );
-      setItemsSynced(true);
+      )
+      setItemsSynced(true)
     }
-  }, [collection, itemsSynced]);
+  }, [collection, itemsSynced])
 
   const startEditingName = () => {
-    if (!collection) return;
-    setEditName(collection.name);
-    setIsEditingName(true);
-  };
+    if (!collection) return
+    setEditName(collection.name)
+    setIsEditingName(true)
+  }
 
   const saveNameEdit = () => {
     updateCollection.mutate(
       { id, dto: { name: editName } },
       { onSuccess: () => setIsEditingName(false) },
-    );
-  };
+    )
+  }
 
   const addItem = () => {
     setItems((prev) => [
       ...prev,
       {
-        name: "",
+        name: '',
         quantity: null,
         unit: null,
         storeSectionId: null,
         sortOrder: prev.length,
       },
-    ]);
-    setTimeout(() => lastItemNameRef.current?.focus(), 0);
-  };
+    ])
+    setTimeout(() => lastItemNameRef.current?.focus(), 0)
+  }
 
   const removeItem = (index: number) => {
     setItems((prev) =>
       prev
         .filter((_, i) => i !== index)
         .map((item, i) => ({ ...item, sortOrder: i })),
-    );
-  };
+    )
+  }
 
   const addTextItems = () => {
-    if (textIngredients.length === 0) return;
-    const newItems = ingredientsToCollectionItems(
-      textIngredients,
-      items.length,
-    );
-    setItems((prev) => [...prev, ...newItems]);
-    setShowTextInput(false);
-    setTextIngredients([]);
-  };
+    if (textIngredients.length === 0) return
+    const newItems = ingredientsToCollectionItems(textIngredients, items.length)
+    setItems((prev) => [...prev, ...newItems])
+    setShowTextInput(false)
+    setTextIngredients([])
+  }
 
   const saveItems = () => {
-    updateItems.mutate({ id, items });
-  };
+    updateItems.mutate({ id, items })
+  }
 
   const confirmDelete = () => {
     deleteCollectionMutation.mutate(id, {
-      onSuccess: () => navigate({ to: "/collections" }),
-    });
-  };
+      onSuccess: () => navigate({ to: '/collections' }),
+    })
+  }
 
   if (isLoading) {
     return (
@@ -156,11 +153,11 @@ function CollectionDetailPage() {
         <Skeleton className="h-8 w-48" />
         <Skeleton className="h-32 w-full" />
       </div>
-    );
+    )
   }
 
   if (!collection) {
-    return <p className="text-muted-foreground">Collection not found.</p>;
+    return <p className="text-muted-foreground">Collection not found.</p>
   }
 
   return (
@@ -169,7 +166,7 @@ function CollectionDetailPage() {
         <Button
           variant="ghost"
           size="icon"
-          onClick={() => navigate({ to: "/collections" })}
+          onClick={() => navigate({ to: '/collections' })}
         >
           <HugeiconsIcon icon={ArrowLeft02Icon} className="h-4 w-4" />
         </Button>
@@ -179,7 +176,7 @@ function CollectionDetailPage() {
           </h1>
           <p className="text-muted-foreground">
             {collection.items.length} item
-            {collection.items.length !== 1 ? "s" : ""}
+            {collection.items.length !== 1 ? 's' : ''}
           </p>
         </div>
         <Button variant="outline" onClick={startEditingName}>
@@ -212,10 +209,7 @@ function CollectionDetailPage() {
               >
                 Save
               </Button>
-              <Button
-                variant="outline"
-                onClick={() => setIsEditingName(false)}
-              >
+              <Button variant="outline" onClick={() => setIsEditingName(false)}>
                 Cancel
               </Button>
             </div>
@@ -232,9 +226,7 @@ function CollectionDetailPage() {
             {items.map((item, index) => (
               <div key={index} className="flex items-center gap-3">
                 <Input
-                  ref={
-                    index === items.length - 1 ? lastItemNameRef : undefined
-                  }
+                  ref={index === items.length - 1 ? lastItemNameRef : undefined}
                   className="flex-1"
                   placeholder="Item name"
                   value={item.name}
@@ -243,27 +235,27 @@ function CollectionDetailPage() {
                       prev.map((it, i) =>
                         i === index ? { ...it, name: e.target.value } : it,
                       ),
-                    );
+                    )
                   }}
                 />
                 <Input
                   className="w-20"
                   placeholder="Qty"
                   type="number"
-                  value={item.quantity ?? ""}
+                  value={item.quantity ?? ''}
                   onChange={(e) => {
-                    const val = e.target.value ? Number(e.target.value) : null;
+                    const val = e.target.value ? Number(e.target.value) : null
                     setItems((prev) =>
                       prev.map((it, i) =>
                         i === index ? { ...it, quantity: val } : it,
                       ),
-                    );
+                    )
                   }}
                 />
                 <Input
                   className="w-24"
                   placeholder="Unit"
-                  value={item.unit ?? ""}
+                  value={item.unit ?? ''}
                   onChange={(e) => {
                     setItems((prev) =>
                       prev.map((it, i) =>
@@ -271,7 +263,7 @@ function CollectionDetailPage() {
                           ? { ...it, unit: e.target.value || null }
                           : it,
                       ),
-                    );
+                    )
                   }}
                 />
                 <Combobox
@@ -286,9 +278,9 @@ function CollectionDetailPage() {
                           ? { ...it, storeSectionId: section?.id ?? null }
                           : it,
                       ),
-                    );
+                    )
                   }}
-                  itemToStringLabel={(section) => section?.name ?? ""}
+                  itemToStringLabel={(section) => section?.name ?? ''}
                 >
                   <ComboboxInput placeholder="Section" className="w-40" />
                   <ComboboxContent emptyMessage="No sections found.">
@@ -326,13 +318,13 @@ function CollectionDetailPage() {
                     disabled={textIngredients.length === 0}
                   >
                     Add {textIngredients.length} Item
-                    {textIngredients.length !== 1 ? "s" : ""}
+                    {textIngredients.length !== 1 ? 's' : ''}
                   </Button>
                   <Button
                     variant="outline"
                     onClick={() => {
-                      setShowTextInput(false);
-                      setTextIngredients([]);
+                      setShowTextInput(false)
+                      setTextIngredients([])
                     }}
                   >
                     Cancel
@@ -350,8 +342,8 @@ function CollectionDetailPage() {
                 <Button
                   variant="outline"
                   onClick={() => {
-                    setTextIngredients([]);
-                    setShowTextInput(true);
+                    setTextIngredients([])
+                    setShowTextInput(true)
                   }}
                 >
                   <HugeiconsIcon icon={TextIcon} className="mr-2 h-4 w-4" />
@@ -359,7 +351,7 @@ function CollectionDetailPage() {
                 </Button>
               )}
               <Button onClick={saveItems} disabled={updateItems.isPending}>
-                {updateItems.isPending ? "Saving..." : "Save"}
+                {updateItems.isPending ? 'Saving...' : 'Save'}
               </Button>
             </div>
           </div>
@@ -381,11 +373,11 @@ function CollectionDetailPage() {
               onClick={confirmDelete}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
-              {deleteCollectionMutation.isPending ? "Deleting..." : "Delete"}
+              {deleteCollectionMutation.isPending ? 'Deleting...' : 'Delete'}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
     </div>
-  );
+  )
 }

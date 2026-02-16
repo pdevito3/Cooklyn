@@ -1,4 +1,9 @@
-import type { Filter, FilterGroup, FilterState, LogicalOperator } from '../types'
+import type {
+  Filter,
+  FilterGroup,
+  FilterState,
+  LogicalOperator,
+} from '../types'
 import { isFilter, isFilterGroup } from '../types'
 import { LogicalOperators } from './operators'
 
@@ -18,7 +23,7 @@ export function addFilter(state: FilterState, filter: Filter): FilterState {
 export function addFilterToGroup(
   state: FilterState,
   groupId: string,
-  filter: Filter
+  filter: Filter,
 ): FilterState {
   return {
     ...state,
@@ -40,7 +45,7 @@ export function addFilterToGroup(
 function addFilterToGroupRecursive(
   group: FilterGroup,
   groupId: string,
-  filter: Filter
+  filter: Filter,
 ): FilterGroup {
   return {
     ...group,
@@ -62,7 +67,10 @@ function addFilterToGroupRecursive(
 /**
  * Remove a filter by ID
  */
-export function removeFilter(state: FilterState, filterId: string): FilterState {
+export function removeFilter(
+  state: FilterState,
+  filterId: string,
+): FilterState {
   return {
     ...state,
     filters: removeFilterRecursive(state.filters, filterId),
@@ -71,7 +79,7 @@ export function removeFilter(state: FilterState, filterId: string): FilterState 
 
 function removeFilterRecursive(
   filters: (Filter | FilterGroup)[],
-  filterId: string
+  filterId: string,
 ): (Filter | FilterGroup)[] {
   return filters
     .filter((item) => item.id !== filterId)
@@ -92,7 +100,7 @@ function removeFilterRecursive(
 export function updateFilter(
   state: FilterState,
   filterId: string,
-  updates: Partial<Filter>
+  updates: Partial<Filter>,
 ): FilterState {
   return {
     ...state,
@@ -103,7 +111,7 @@ export function updateFilter(
 function updateFilterRecursive(
   filters: (Filter | FilterGroup)[],
   filterId: string,
-  updates: Partial<Filter>
+  updates: Partial<Filter>,
 ): (Filter | FilterGroup)[] {
   return filters.map((item) => {
     if (isFilter(item) && item.id === filterId) {
@@ -125,7 +133,7 @@ function updateFilterRecursive(
 export function createGroup(
   state: FilterState,
   filterIds: string[],
-  logicalOperator: LogicalOperator = LogicalOperators.AND
+  logicalOperator: LogicalOperator = LogicalOperators.AND,
 ): FilterState {
   const filtersToGroup: (Filter | FilterGroup)[] = []
   const remainingFilters: (Filter | FilterGroup)[] = []
@@ -159,7 +167,10 @@ export function createGroup(
  * Ungroup a filter group (move filters to parent level)
  * Supports nested groups
  */
-export function ungroupFilters(state: FilterState, groupId: string): FilterState {
+export function ungroupFilters(
+  state: FilterState,
+  groupId: string,
+): FilterState {
   return {
     ...state,
     filters: ungroupFiltersRecursive(state.filters, groupId),
@@ -168,7 +179,7 @@ export function ungroupFilters(state: FilterState, groupId: string): FilterState
 
 function ungroupFiltersRecursive(
   filters: (Filter | FilterGroup)[],
-  groupId: string
+  groupId: string,
 ): (Filter | FilterGroup)[] {
   const newFilters: (Filter | FilterGroup)[] = []
 
@@ -197,15 +208,15 @@ function ungroupFiltersRecursive(
 export function createGroupFromSelected(
   state: FilterState,
   filterIds: string[],
-  logicalOperator: LogicalOperator = LogicalOperators.AND
+  logicalOperator: LogicalOperator = LogicalOperators.AND,
 ): FilterState {
   if (filterIds.length < 2) {
     return state
   }
 
   // Try to create group at root level first
-  const rootIds = state.filters.map(f => f.id)
-  const allAtRoot = filterIds.every(id => rootIds.includes(id))
+  const rootIds = state.filters.map((f) => f.id)
+  const allAtRoot = filterIds.every((id) => rootIds.includes(id))
 
   if (allAtRoot) {
     // All filters are at root level
@@ -236,17 +247,21 @@ export function createGroupFromSelected(
   // Filters are nested, recursively find and group them
   return {
     ...state,
-    filters: createGroupFromSelectedRecursive(state.filters, filterIds, logicalOperator),
+    filters: createGroupFromSelectedRecursive(
+      state.filters,
+      filterIds,
+      logicalOperator,
+    ),
   }
 }
 
 function createGroupFromSelectedRecursive(
   filters: (Filter | FilterGroup)[],
   filterIds: string[],
-  logicalOperator: LogicalOperator
+  logicalOperator: LogicalOperator,
 ): (Filter | FilterGroup)[] {
-  const currentIds = filters.map(f => f.id)
-  const allAtCurrentLevel = filterIds.every(id => currentIds.includes(id))
+  const currentIds = filters.map((f) => f.id)
+  const allAtCurrentLevel = filterIds.every((id) => currentIds.includes(id))
 
   if (allAtCurrentLevel) {
     // Group filters at this level
@@ -278,7 +293,11 @@ function createGroupFromSelectedRecursive(
     if (isFilterGroup(item)) {
       return {
         ...item,
-        filters: createGroupFromSelectedRecursive(item.filters, filterIds, logicalOperator),
+        filters: createGroupFromSelectedRecursive(
+          item.filters,
+          filterIds,
+          logicalOperator,
+        ),
       }
     }
     return item
@@ -291,14 +310,20 @@ function createGroupFromSelectedRecursive(
 export function toggleRootLogicalOperator(state: FilterState): FilterState {
   return {
     ...state,
-    rootLogicalOperator: state.rootLogicalOperator === LogicalOperators.AND ? LogicalOperators.OR : LogicalOperators.AND,
+    rootLogicalOperator:
+      state.rootLogicalOperator === LogicalOperators.AND
+        ? LogicalOperators.OR
+        : LogicalOperators.AND,
   }
 }
 
 /**
  * Toggle the logical operator for a specific group
  */
-export function toggleGroupLogicalOperator(state: FilterState, groupId: string): FilterState {
+export function toggleGroupLogicalOperator(
+  state: FilterState,
+  groupId: string,
+): FilterState {
   return {
     ...state,
     filters: toggleGroupOperatorRecursive(state.filters, groupId),
@@ -307,13 +332,16 @@ export function toggleGroupLogicalOperator(state: FilterState, groupId: string):
 
 function toggleGroupOperatorRecursive(
   filters: (Filter | FilterGroup)[],
-  groupId: string
+  groupId: string,
 ): (Filter | FilterGroup)[] {
   return filters.map((item) => {
     if (isFilterGroup(item) && item.id === groupId) {
       return {
         ...item,
-        logicalOperator: item.logicalOperator === LogicalOperators.AND ? LogicalOperators.OR : LogicalOperators.AND,
+        logicalOperator:
+          item.logicalOperator === LogicalOperators.AND
+            ? LogicalOperators.OR
+            : LogicalOperators.AND,
       }
     }
     if (isFilterGroup(item)) {
@@ -331,14 +359,14 @@ function toggleGroupOperatorRecursive(
  */
 export function findFilterById(
   state: FilterState,
-  filterId: string
+  filterId: string,
 ): Filter | FilterGroup | null {
   return findFilterByIdRecursive(state.filters, filterId)
 }
 
 function findFilterByIdRecursive(
   filters: (Filter | FilterGroup)[],
-  filterId: string
+  filterId: string,
 ): Filter | FilterGroup | null {
   for (const item of filters) {
     if (item.id === filterId) {
@@ -358,7 +386,7 @@ function findFilterByIdRecursive(
 export function reorderFilters(
   state: FilterState,
   startIndex: number,
-  endIndex: number
+  endIndex: number,
 ): FilterState {
   const result = Array.from(state.filters)
   const [removed] = result.splice(startIndex, 1)
@@ -376,7 +404,7 @@ export function reorderFilters(
 export function moveFilterToGroup(
   state: FilterState,
   filterId: string,
-  targetGroupId: string | null
+  targetGroupId: string | null,
 ): FilterState {
   // Find the filter
   const filter = findFilterById(state, filterId)

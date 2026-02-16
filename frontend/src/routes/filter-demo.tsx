@@ -1,8 +1,18 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useState } from 'react'
-import { FilterBuilder, toQueryKitString } from '@/components/filter-builder/filter-builder'
-import type { FilterConfig, FilterPreset, FilterState } from '@/components/filter-builder/types'
-import { Operators, LogicalOperators } from '@/components/filter-builder/utils/operators'
+import {
+  FilterBuilder,
+  toQueryKitString,
+} from '@/components/filter-builder/filter-builder'
+import type {
+  FilterConfig,
+  FilterPreset,
+  FilterState,
+} from '@/components/filter-builder/types'
+import {
+  Operators,
+  LogicalOperators,
+} from '@/components/filter-builder/utils/operators'
 import {
   Card,
   CardContent,
@@ -40,11 +50,20 @@ function FilterDemoPage() {
       propertyLabel: 'Assignee',
       controlType: 'multiselect',
       options: [
-        { value: '00000000-0000-0000-0000-000000000001', label: 'Current User' },
+        {
+          value: '00000000-0000-0000-0000-000000000001',
+          label: 'Current User',
+        },
         { value: '480c3396-bb7c-4ed7-a7a2-310c0cd95edc', label: 'Paul DeVito' },
         { value: 'ee1c5169-07fa-45a4-ab07-7c1602f612bf', label: 'John Smith' },
-        { value: 'a3b8c9d0-e1f2-4a5b-8c7d-9e0f1a2b3c4d', label: 'Alice Johnson' },
-        { value: 'f5e6d7c8-b9a0-4321-fedc-ba9876543210', label: 'Bob Williams' },
+        {
+          value: 'a3b8c9d0-e1f2-4a5b-8c7d-9e0f1a2b3c4d',
+          label: 'Alice Johnson',
+        },
+        {
+          value: 'f5e6d7c8-b9a0-4321-fedc-ba9876543210',
+          label: 'Bob Williams',
+        },
       ],
       defaultOperator: Operators.IN,
     },
@@ -59,7 +78,12 @@ function FilterDemoPage() {
         { value: 'documentation', label: 'Documentation' },
         { value: 'urgent', label: 'Urgent' },
       ],
-      operators: [Operators.IN, Operators.NOT_IN, Operators.HAS, Operators.NOT_HAS],
+      operators: [
+        Operators.IN,
+        Operators.NOT_IN,
+        Operators.HAS,
+        Operators.NOT_HAS,
+      ],
     },
     {
       propertyKey: 'firstName',
@@ -117,14 +141,24 @@ function FilterDemoPage() {
       propertyKey: 'author.name',
       propertyLabel: 'Author Name',
       controlType: 'text',
-      operators: [Operators.EQUALS, Operators.NOT_EQUALS, Operators.CONTAINS, Operators.NOT_CONTAINS],
+      operators: [
+        Operators.EQUALS,
+        Operators.NOT_EQUALS,
+        Operators.CONTAINS,
+        Operators.NOT_CONTAINS,
+      ],
       defaultOperator: Operators.CONTAINS,
     },
     {
       propertyKey: 'author.address.city',
       propertyLabel: 'Author City',
       controlType: 'text',
-      operators: [Operators.EQUALS, Operators.NOT_EQUALS, Operators.CONTAINS, Operators.NOT_CONTAINS],
+      operators: [
+        Operators.EQUALS,
+        Operators.NOT_EQUALS,
+        Operators.CONTAINS,
+        Operators.NOT_CONTAINS,
+      ],
       defaultOperator: Operators.EQUALS,
     },
     {
@@ -352,23 +386,49 @@ function FilterDemoPage() {
                 <li>Each group has its own AND/OR operator</li>
                 <li>Click "Ungroup" to move filters back to parent level</li>
                 <li>
-                  Try the "Complex Nested Query" preset to see grouping in action
+                  Try the "Complex Nested Query" preset to see grouping in
+                  action
                 </li>
               </ul>
             </CardContent>
           </Card>
           <Card className="bg-green-50 dark:bg-green-950/20 border-green-200 dark:border-green-800">
             <CardContent className="pt-4">
-              <h3 className="font-semibold mb-2">QueryKit Features Demonstrated:</h3>
+              <h3 className="font-semibold mb-2">
+                QueryKit Features Demonstrated:
+              </h3>
               <ul className="text-sm space-y-1 list-disc list-inside">
-                <li><strong>Text:</strong> equals, contains, starts/ends with, sounds like</li>
-                <li><strong>Case sensitivity:</strong> Toggle via checkbox (adds * suffix)</li>
-                <li><strong>Multiselect:</strong> in (^^), has (^$), match all (% prefix)</li>
-                <li><strong>Dates:</strong> on, before, after, between (with exclusion)</li>
-                <li><strong>DateTime formats:</strong> date, local, UTC (Z), offset (±HH:mm)</li>
-                <li><strong>Numbers:</strong> comparison and collection count (#) operators</li>
-                <li><strong>Nested properties:</strong> dot notation (author.address.city)</li>
-                <li><strong>Logical:</strong> AND (&&) / OR (||) with grouping</li>
+                <li>
+                  <strong>Text:</strong> equals, contains, starts/ends with,
+                  sounds like
+                </li>
+                <li>
+                  <strong>Case sensitivity:</strong> Toggle via checkbox (adds *
+                  suffix)
+                </li>
+                <li>
+                  <strong>Multiselect:</strong> in (^^), has (^$), match all (%
+                  prefix)
+                </li>
+                <li>
+                  <strong>Dates:</strong> on, before, after, between (with
+                  exclusion)
+                </li>
+                <li>
+                  <strong>DateTime formats:</strong> date, local, UTC (Z),
+                  offset (±HH:mm)
+                </li>
+                <li>
+                  <strong>Numbers:</strong> comparison and collection count (#)
+                  operators
+                </li>
+                <li>
+                  <strong>Nested properties:</strong> dot notation
+                  (author.address.city)
+                </li>
+                <li>
+                  <strong>Logical:</strong> AND (&&) / OR (||) with grouping
+                </li>
               </ul>
             </CardContent>
           </Card>

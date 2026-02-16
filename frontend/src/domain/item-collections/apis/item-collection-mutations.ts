@@ -8,8 +8,13 @@ import type {
 } from '../types'
 import { ItemCollectionKeys } from './item-collection.keys'
 
-export async function createItemCollection(dto: ItemCollectionForCreationDto): Promise<ItemCollectionDto> {
-  const response = await apiClient.post<ItemCollectionDto>('/api/v1/itemcollections', dto)
+export async function createItemCollection(
+  dto: ItemCollectionForCreationDto,
+): Promise<ItemCollectionDto> {
+  const response = await apiClient.post<ItemCollectionDto>(
+    '/api/v1/itemcollections',
+    dto,
+  )
   return response.data
 }
 
@@ -23,16 +28,27 @@ export function useCreateItemCollection() {
   })
 }
 
-export async function updateItemCollection(id: string, dto: ItemCollectionForUpdateDto): Promise<ItemCollectionDto> {
-  const response = await apiClient.put<ItemCollectionDto>(`/api/v1/itemcollections/${id}`, dto)
+export async function updateItemCollection(
+  id: string,
+  dto: ItemCollectionForUpdateDto,
+): Promise<ItemCollectionDto> {
+  const response = await apiClient.put<ItemCollectionDto>(
+    `/api/v1/itemcollections/${id}`,
+    dto,
+  )
   return response.data
 }
 
 export function useUpdateItemCollection() {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: ({ id, dto }: { id: string; dto: ItemCollectionForUpdateDto }) =>
-      updateItemCollection(id, dto),
+    mutationFn: ({
+      id,
+      dto,
+    }: {
+      id: string
+      dto: ItemCollectionForUpdateDto
+    }) => updateItemCollection(id, dto),
     onSuccess: (_, { id }) => {
       queryClient.invalidateQueries({ queryKey: ItemCollectionKeys.lists() })
       queryClient.invalidateQueries({ queryKey: ItemCollectionKeys.detail(id) })
@@ -56,11 +72,11 @@ export function useDeleteItemCollection() {
 
 export async function updateItemCollectionItems(
   id: string,
-  items: ItemCollectionItemForCreationDto[]
+  items: ItemCollectionItemForCreationDto[],
 ): Promise<ItemCollectionDto> {
   const response = await apiClient.put<ItemCollectionDto>(
     `/api/v1/itemcollections/${id}/items`,
-    items
+    items,
   )
   return response.data
 }
@@ -68,8 +84,13 @@ export async function updateItemCollectionItems(
 export function useUpdateItemCollectionItems() {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: ({ id, items }: { id: string; items: ItemCollectionItemForCreationDto[] }) =>
-      updateItemCollectionItems(id, items),
+    mutationFn: ({
+      id,
+      items,
+    }: {
+      id: string
+      items: ItemCollectionItemForCreationDto[]
+    }) => updateItemCollectionItems(id, items),
     onSuccess: (_, { id }) => {
       queryClient.invalidateQueries({ queryKey: ItemCollectionKeys.lists() })
       queryClient.invalidateQueries({ queryKey: ItemCollectionKeys.detail(id) })

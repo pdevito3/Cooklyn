@@ -6,15 +6,15 @@ import {
   AlertCircleIcon,
   ImageIcon,
   StarIcon,
-} from "@hugeicons/core-free-icons";
-import { HugeiconsIcon } from "@hugeicons/react";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useCallback, useMemo, useRef, useState } from "react";
+} from '@hugeicons/core-free-icons'
+import { HugeiconsIcon } from '@hugeicons/react'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { useCallback, useMemo, useRef, useState } from 'react'
 
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Checkbox } from '@/components/ui/checkbox'
 import {
   Table,
   TableBody,
@@ -22,54 +22,58 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { usePreviewCmtImport, useImportCmtRecipes } from "@/domain/recipes/apis/recipe-mutations";
-import type { CmtImportPreviewDto, CmtImportResultDto } from "@/domain/recipes/types";
+} from '@/components/ui/table'
+import {
+  usePreviewCmtImport,
+  useImportCmtRecipes,
+} from '@/domain/recipes/apis/recipe-mutations'
+import type {
+  CmtImportPreviewDto,
+  CmtImportResultDto,
+} from '@/domain/recipes/types'
 
-export const Route = createFileRoute("/recipes/import-cmt")({
+export const Route = createFileRoute('/recipes/import-cmt')({
   component: ImportCmtPage,
-});
+})
 
 function ImportCmtPage() {
-  const navigate = useNavigate();
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const navigate = useNavigate()
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
-  const [file, setFile] = useState<File | null>(null);
-  const [preview, setPreview] = useState<CmtImportPreviewDto | null>(null);
-  const [selected, setSelected] = useState<Set<number>>(new Set());
-  const [importRatings, setImportRatings] = useState(true);
-  const [result, setResult] = useState<CmtImportResultDto | null>(null);
+  const [file, setFile] = useState<File | null>(null)
+  const [preview, setPreview] = useState<CmtImportPreviewDto | null>(null)
+  const [selected, setSelected] = useState<Set<number>>(new Set())
+  const [importRatings, setImportRatings] = useState(true)
+  const [result, setResult] = useState<CmtImportResultDto | null>(null)
 
-  const previewMutation = usePreviewCmtImport();
-  const importMutation = useImportCmtRecipes();
+  const previewMutation = usePreviewCmtImport()
+  const importMutation = useImportCmtRecipes()
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const f = e.target.files?.[0];
+    const f = e.target.files?.[0]
     if (f) {
-      setFile(f);
-      setPreview(null);
-      setResult(null);
+      setFile(f)
+      setPreview(null)
+      setResult(null)
     }
-  };
+  }
 
   const handleUpload = () => {
-    if (!file) return;
+    if (!file) return
     previewMutation.mutate(file, {
       onSuccess: (data) => {
-        setPreview(data);
+        setPreview(data)
         // Select all non-duplicate recipes by default
         const initialSelected = new Set(
-          data.recipes
-            .filter((r) => !r.isDuplicate)
-            .map((r) => r.index)
-        );
-        setSelected(initialSelected);
+          data.recipes.filter((r) => !r.isDuplicate).map((r) => r.index),
+        )
+        setSelected(initialSelected)
       },
-    });
-  };
+    })
+  }
 
   const handleImport = () => {
-    if (!file || selected.size === 0) return;
+    if (!file || selected.size === 0) return
     importMutation.mutate(
       {
         file,
@@ -78,46 +82,46 @@ function ImportCmtPage() {
       },
       {
         onSuccess: (data) => {
-          setResult(data);
+          setResult(data)
         },
-      }
-    );
-  };
+      },
+    )
+  }
 
   const toggleRecipe = useCallback((index: number) => {
     setSelected((prev) => {
-      const next = new Set(prev);
+      const next = new Set(prev)
       if (next.has(index)) {
-        next.delete(index);
+        next.delete(index)
       } else {
-        next.add(index);
+        next.add(index)
       }
-      return next;
-    });
-  }, []);
+      return next
+    })
+  }, [])
 
   const selectAll = useCallback(() => {
-    if (!preview) return;
-    setSelected(new Set(preview.recipes.map((r) => r.index)));
-  }, [preview]);
+    if (!preview) return
+    setSelected(new Set(preview.recipes.map((r) => r.index)))
+  }, [preview])
 
   const deselectAll = useCallback(() => {
-    setSelected(new Set());
-  }, []);
+    setSelected(new Set())
+  }, [])
 
-  const selectedCount = selected.size;
+  const selectedCount = selected.size
 
   const recipesWithRatings = useMemo(
     () => preview?.recipes.filter((r) => r.rating !== null).length ?? 0,
-    [preview]
-  );
+    [preview],
+  )
 
   // -- Render --
 
   if (result) {
     return (
       <div className="space-y-6">
-        <Header onBack={() => navigate({ to: "/recipes" })} />
+        <Header onBack={() => navigate({ to: '/recipes' })} />
         <div className="mx-auto max-w-3xl">
           <Card>
             <CardHeader>
@@ -132,11 +136,15 @@ function ImportCmtPage() {
             <CardContent className="space-y-4">
               <div className="grid grid-cols-3 gap-4 text-center">
                 <div>
-                  <div className="text-2xl font-bold">{result.importedCount}</div>
+                  <div className="text-2xl font-bold">
+                    {result.importedCount}
+                  </div>
                   <div className="text-sm text-muted-foreground">Imported</div>
                 </div>
                 <div>
-                  <div className="text-2xl font-bold">{result.skippedCount}</div>
+                  <div className="text-2xl font-bold">
+                    {result.skippedCount}
+                  </div>
                   <div className="text-sm text-muted-foreground">Skipped</div>
                 </div>
                 <div>
@@ -159,16 +167,16 @@ function ImportCmtPage() {
               )}
 
               <div className="flex gap-3">
-                <Button onClick={() => navigate({ to: "/recipes" })}>
+                <Button onClick={() => navigate({ to: '/recipes' })}>
                   View Recipes
                 </Button>
                 <Button
                   variant="outline"
                   onClick={() => {
-                    setFile(null);
-                    setPreview(null);
-                    setResult(null);
-                    setSelected(new Set());
+                    setFile(null)
+                    setPreview(null)
+                    setResult(null)
+                    setSelected(new Set())
                   }}
                 >
                   Import More
@@ -178,12 +186,12 @@ function ImportCmtPage() {
           </Card>
         </div>
       </div>
-    );
+    )
   }
 
   return (
     <div className="space-y-6">
-      <Header onBack={() => navigate({ to: "/recipes" })} />
+      <Header onBack={() => navigate({ to: '/recipes' })} />
 
       <div className="mx-auto max-w-5xl space-y-6">
         {/* Upload Card */}
@@ -205,7 +213,7 @@ function ImportCmtPage() {
                 onClick={() => fileInputRef.current?.click()}
               >
                 <HugeiconsIcon icon={Upload04Icon} className="mr-2 h-4 w-4" />
-                {file ? file.name : "Choose ZIP file"}
+                {file ? file.name : 'Choose ZIP file'}
               </Button>
               <Button
                 onClick={handleUpload}
@@ -220,7 +228,7 @@ function ImportCmtPage() {
                     Parsing...
                   </>
                 ) : (
-                  "Upload & Preview"
+                  'Upload & Preview'
                 )}
               </Button>
             </div>
@@ -229,7 +237,7 @@ function ImportCmtPage() {
               <p className="mt-3 text-sm font-medium text-destructive">
                 {previewMutation.error instanceof Error
                   ? previewMutation.error.message
-                  : "Failed to parse ZIP file."}
+                  : 'Failed to parse ZIP file.'}
               </p>
             )}
           </CardContent>
@@ -247,7 +255,8 @@ function ImportCmtPage() {
                       Found {preview.totalCount} recipes
                       {preview.duplicateCount > 0 && (
                         <span className="text-muted-foreground">
-                          {" "}({preview.duplicateCount} duplicates)
+                          {' '}
+                          ({preview.duplicateCount} duplicates)
                         </span>
                       )}
                     </p>
@@ -279,8 +288,9 @@ function ImportCmtPage() {
 
                 {importRatings && recipesWithRatings > 0 && (
                   <div className="mt-3 rounded-md border bg-muted/50 p-3 text-xs text-muted-foreground">
-                    <span className="font-medium">Rating mapping:</span>{" "}
-                    5 = Loved It, 4 = Liked It, 3 = It Was Ok, 2 = Not Great, 1 = Hated It
+                    <span className="font-medium">Rating mapping:</span> 5 =
+                    Loved It, 4 = Liked It, 3 = It Was Ok, 2 = Not Great, 1 =
+                    Hated It
                   </div>
                 )}
               </CardContent>
@@ -296,8 +306,12 @@ function ImportCmtPage() {
                         <TableHead className="w-10" />
                         <TableHead>Title</TableHead>
                         <TableHead className="w-20 text-center">Srv.</TableHead>
-                        <TableHead className="w-20 text-center">Ingr.</TableHead>
-                        <TableHead className="w-20 text-center">Rating</TableHead>
+                        <TableHead className="w-20 text-center">
+                          Ingr.
+                        </TableHead>
+                        <TableHead className="w-20 text-center">
+                          Rating
+                        </TableHead>
                         <TableHead className="w-16 text-center">Img</TableHead>
                         <TableHead className="w-28" />
                       </TableRow>
@@ -306,7 +320,9 @@ function ImportCmtPage() {
                       {preview.recipes.map((recipe) => (
                         <TableRow
                           key={recipe.index}
-                          className={recipe.isDuplicate ? "opacity-60" : undefined}
+                          className={
+                            recipe.isDuplicate ? 'opacity-60' : undefined
+                          }
                         >
                           <TableCell>
                             <Checkbox
@@ -317,7 +333,9 @@ function ImportCmtPage() {
                           </TableCell>
                           <TableCell>
                             <div className="max-w-md">
-                              <span className="font-medium">{recipe.title}</span>
+                              <span className="font-medium">
+                                {recipe.title}
+                              </span>
                               {recipe.source && (
                                 <span className="ml-2 text-xs text-muted-foreground truncate">
                                   {truncateSource(recipe.source)}
@@ -326,7 +344,7 @@ function ImportCmtPage() {
                             </div>
                           </TableCell>
                           <TableCell className="text-center text-sm">
-                            {recipe.servings ?? "-"}
+                            {recipe.servings ?? '-'}
                           </TableCell>
                           <TableCell className="text-center text-sm">
                             {recipe.ingredientCount}
@@ -334,11 +352,14 @@ function ImportCmtPage() {
                           <TableCell className="text-center text-sm">
                             {recipe.rating ? (
                               <span className="inline-flex items-center gap-1">
-                                <HugeiconsIcon icon={StarIcon} className="h-3 w-3" />
+                                <HugeiconsIcon
+                                  icon={StarIcon}
+                                  className="h-3 w-3"
+                                />
                                 {recipe.rating}
                               </span>
                             ) : (
-                              "-"
+                              '-'
                             )}
                           </TableCell>
                           <TableCell className="text-center">
@@ -395,7 +416,7 @@ function ImportCmtPage() {
                 <p className="mt-1 text-sm">
                   {importMutation.error instanceof Error
                     ? importMutation.error.message
-                    : "An unexpected error occurred"}
+                    : 'An unexpected error occurred'}
                 </p>
               </div>
             )}
@@ -403,7 +424,7 @@ function ImportCmtPage() {
         )}
       </div>
     </div>
-  );
+  )
 }
 
 function Header({ onBack }: { onBack: () => void }) {
@@ -421,14 +442,14 @@ function Header({ onBack }: { onBack: () => void }) {
         </p>
       </div>
     </div>
-  );
+  )
 }
 
 function truncateSource(source: string): string {
   try {
-    const url = new URL(source);
-    return url.hostname;
+    const url = new URL(source)
+    return url.hostname
   } catch {
-    return source.length > 40 ? source.slice(0, 40) + "..." : source;
+    return source.length > 40 ? source.slice(0, 40) + '...' : source
   }
 }

@@ -14,9 +14,10 @@ interface FilterBadgeProps {
 
 export function FilterBadge({ filter, onRemove, onEdit }: FilterBadgeProps) {
   // For multiselect, use selectedLabels for display if available
-  const displayValue = filter.controlType === 'multiselect' && filter.selectedLabels
-    ? filter.selectedLabels
-    : filter.value
+  const displayValue =
+    filter.controlType === 'multiselect' && filter.selectedLabels
+      ? filter.selectedLabels
+      : filter.value
   const formattedValue = formatFilterValue(displayValue)
   // A filter is case-sensitive if:
   // 1. The caseSensitive flag is explicitly true, OR
@@ -32,17 +33,16 @@ export function FilterBadge({ filter, onRemove, onEdit }: FilterBadgeProps) {
       onClick={onEdit}
     >
       <span className="font-medium">{filter.propertyLabel}</span>
-      <span className="text-foreground/60 font-semibold px-1 text-xs">
-        |
-      </span>
+      <span className="text-foreground/60 font-semibold px-1 text-xs">|</span>
       <span className="text-xs">{getOperatorLabel(filter.operator)}</span>
-      <span className="text-foreground/60 font-semibold px-1 text-xs">
-        |
-      </span>
+      <span className="text-foreground/60 font-semibold px-1 text-xs">|</span>
       <span className="max-w-[200px] truncate text-xs">{formattedValue}</span>
 
       {filter.controlType === 'text' && isCaseSensitive && (
-        <HugeiconsIcon icon={TextFontIcon} className="size-3 text-muted-foreground ml-1" />
+        <HugeiconsIcon
+          icon={TextFontIcon}
+          className="size-3 text-muted-foreground ml-1"
+        />
       )}
 
       {filter.controlType === 'multiselect' && filter.matchAll && (
@@ -70,7 +70,7 @@ export function FilterBadge({ filter, onRemove, onEdit }: FilterBadgeProps) {
  * Format filter value for display in badge
  */
 function formatFilterValue(
-  value: string | string[] | number | boolean | DateValue
+  value: string | string[] | number | boolean | DateValue,
 ): string {
   if (Array.isArray(value)) {
     if (value.length === 0) return 'None'

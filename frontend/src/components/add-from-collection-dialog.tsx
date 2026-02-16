@@ -37,16 +37,21 @@ export function AddFromCollectionDialog({
   shoppingListId,
 }: AddFromCollectionDialogProps) {
   const addFromCollection = useAddItemsFromCollection()
-  const [selectedCollectionId, setSelectedCollectionId] = useState<string | null>(null)
+  const [selectedCollectionId, setSelectedCollectionId] = useState<
+    string | null
+  >(null)
 
   // Fetch collections when dialog is open
   // Once Phase 6 is implemented, replace this with useItemCollections hook
   const { data: collections = [] } = useQuery({
     queryKey: ['item-collections', 'list-for-dialog'],
     queryFn: async () => {
-      const response = await apiClient.get<ItemCollectionSummary[]>('/api/v1/itemcollections', {
-        params: { pageSize: 100 },
-      })
+      const response = await apiClient.get<ItemCollectionSummary[]>(
+        '/api/v1/itemcollections',
+        {
+          params: { pageSize: 100 },
+        },
+      )
       return response.data
     },
     enabled: open,
@@ -64,7 +69,7 @@ export function AddFromCollectionDialog({
           onOpenChange(false)
           setSelectedCollectionId(null)
         },
-      }
+      },
     )
   }
 
@@ -83,9 +88,16 @@ export function AddFromCollectionDialog({
               <SelectValue placeholder="Select a collection">
                 {(value: unknown) => {
                   if (value === null || value === undefined) {
-                    return <span className="text-muted-foreground">Select a collection</span>
+                    return (
+                      <span className="text-muted-foreground">
+                        Select a collection
+                      </span>
+                    )
                   }
-                  return collections.find((c) => c.id === value)?.name ?? String(value)
+                  return (
+                    collections.find((c) => c.id === value)?.name ??
+                    String(value)
+                  )
                 }}
               </SelectValue>
             </SelectTrigger>

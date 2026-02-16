@@ -20,7 +20,7 @@ export function ScaleInput({ value, onChange }: ScaleInputProps) {
         if (!isNaN(parsed) && parsed > 0) onChange(parsed)
       }
     },
-    [onChange]
+    [onChange],
   )
 
   const handleBlur = useCallback(() => {
@@ -64,13 +64,13 @@ export function ScaleInput({ value, onChange }: ScaleInputProps) {
 // Common fractions for friendly display
 const FRACTIONS: [number, string][] = [
   [0.125, '\u215B'], // ⅛
-  [0.25, '\u00BC'],  // ¼
+  [0.25, '\u00BC'], // ¼
   [1 / 3, '\u2153'], // ⅓
   [0.375, '\u215C'], // ⅜
-  [0.5, '\u00BD'],   // ½
+  [0.5, '\u00BD'], // ½
   [0.625, '\u215D'], // ⅝
   [2 / 3, '\u2154'], // ⅔
-  [0.75, '\u00BE'],  // ¾
+  [0.75, '\u00BE'], // ¾
   [0.875, '\u215E'], // ⅞
 ]
 

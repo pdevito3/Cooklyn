@@ -53,10 +53,12 @@ const usernameFinders: ClaimFinder[] = [
  * Parse BFF claims into a usable auth state.
  * Handles claims from any OIDC provider (FusionAuth, Duende, etc.)
  */
-export function parseAuthClaims(claims: BffClaim[]): Omit<AuthState, 'isLoading'> {
+export function parseAuthClaims(
+  claims: BffClaim[],
+): Omit<AuthState, 'isLoading'> {
   const username = usernameFinders.reduce<string | undefined>(
     (found, finder) => found ?? finder(claims),
-    undefined
+    undefined,
   )
   const logoutUrl = findClaim('bff:logout_url')(claims)
   const sub = findClaim('sub')(claims)

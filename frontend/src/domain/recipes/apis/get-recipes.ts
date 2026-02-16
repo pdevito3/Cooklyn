@@ -23,11 +23,12 @@ export interface RecipeListResponse {
  * Fetch paginated list of recipes
  */
 export async function getRecipes(
-  params?: RecipeParametersDto
+  params?: RecipeParametersDto,
 ): Promise<RecipeListResponse> {
   const queryParams = new URLSearchParams()
 
-  if (params?.pageNumber) queryParams.set('pageNumber', params.pageNumber.toString())
+  if (params?.pageNumber)
+    queryParams.set('pageNumber', params.pageNumber.toString())
   if (params?.pageSize) queryParams.set('pageSize', params.pageSize.toString())
   if (params?.filters) queryParams.set('filters', params.filters)
   if (params?.sortOrder) queryParams.set('sortOrder', params.sortOrder)
@@ -75,12 +76,17 @@ export function useRecipes(params?: RecipeParametersDto) {
 /**
  * Hook for infinite scrolling recipe list
  */
-export function useInfiniteRecipes(params?: Omit<RecipeParametersDto, 'pageNumber'>) {
+export function useInfiniteRecipes(
+  params?: Omit<RecipeParametersDto, 'pageNumber'>,
+) {
   return useInfiniteQuery({
     queryKey: RecipeKeys.list(params),
-    queryFn: ({ pageParam }) => getRecipes({ ...params, pageNumber: pageParam }),
+    queryFn: ({ pageParam }) =>
+      getRecipes({ ...params, pageNumber: pageParam }),
     initialPageParam: 1,
     getNextPageParam: (lastPage) =>
-      lastPage.pagination.hasNext ? lastPage.pagination.pageNumber + 1 : undefined,
+      lastPage.pagination.hasNext
+        ? lastPage.pagination.pageNumber + 1
+        : undefined,
   })
 }

@@ -1,7 +1,4 @@
-import {
-  ArrowLeft02Icon,
-  ArrowRight02Icon,
-} from '@hugeicons/core-free-icons'
+import { ArrowLeft02Icon, ArrowRight02Icon } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
 import { useEffect, useRef } from 'react'
 import { useHotkeys } from 'react-hotkeys-hook'
@@ -100,9 +97,7 @@ export function CookingStepDisplay({
                   <p
                     className={cn(
                       'whitespace-pre-wrap leading-relaxed',
-                      isActive
-                        ? 'text-base font-medium md:text-lg'
-                        : 'text-sm',
+                      isActive ? 'text-base font-medium md:text-lg' : 'text-sm',
                     )}
                   >
                     {step}

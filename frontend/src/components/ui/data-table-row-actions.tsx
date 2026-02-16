@@ -1,15 +1,15 @@
-import type { Row } from "@tanstack/react-table"
-import { MoreHorizontalCircle01Icon } from "@hugeicons/core-free-icons"
-import { HugeiconsIcon } from "@hugeicons/react"
+import type { Row } from '@tanstack/react-table'
+import { MoreHorizontalCircle01Icon } from '@hugeicons/core-free-icons'
+import { HugeiconsIcon } from '@hugeicons/react'
 
-import { Button } from "@/components/ui/button"
+import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from '@/components/ui/dropdown-menu'
 
 interface DataTableRowActionsProps<TData> {
   row: Row<TData>

@@ -72,14 +72,20 @@ export class ProblemDetailsError extends Error {
    * Returns a user-friendly message suitable for display
    */
   get displayMessage(): string {
-    return this.problemDetails.detail || this.problemDetails.title || 'An error occurred'
+    return (
+      this.problemDetails.detail ||
+      this.problemDetails.title ||
+      'An error occurred'
+    )
   }
 }
 
 /**
  * Type guard to check if an error is a ProblemDetailsError
  */
-export function isProblemDetailsError(error: unknown): error is ProblemDetailsError {
+export function isProblemDetailsError(
+  error: unknown,
+): error is ProblemDetailsError {
   return error instanceof ProblemDetailsError
 }
 

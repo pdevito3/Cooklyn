@@ -4,17 +4,17 @@ import {
   Edit01Icon,
   Image02Icon,
   Restaurant01Icon,
-} from "@hugeicons/core-free-icons";
-import { HugeiconsIcon } from "@hugeicons/react";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
-import { useHotkeys } from "react-hotkeys-hook";
+} from '@hugeicons/core-free-icons'
+import { HugeiconsIcon } from '@hugeicons/react'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { useState } from 'react'
+import { useHotkeys } from 'react-hotkeys-hook'
 
-import { CookingView } from "@/components/cooking-view";
-import { RatingIcon } from "@/components/rating-icon";
-import { ScaleInput, formatScaledAmount } from "@/components/scale-input";
-import { SourceImagePicker } from "@/components/source-image-picker";
-import { StepViewer } from "@/components/step-viewer";
+import { CookingView } from '@/components/cooking-view'
+import { RatingIcon } from '@/components/rating-icon'
+import { ScaleInput, formatScaledAmount } from '@/components/scale-input'
+import { SourceImagePicker } from '@/components/source-image-picker'
+import { StepViewer } from '@/components/step-viewer'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -24,64 +24,64 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Kbd } from "@/components/ui/kbd";
-import { Skeleton } from "@/components/ui/skeleton";
-import { formatUnit } from "@/domain/recipes/types";
-import { useDeleteRecipe } from "@/domain/recipes/apis/recipe-mutations";
-import { useRecipe } from "@/domain/recipes/apis/get-recipe";
-import { cn } from "@/lib/utils";
+} from '@/components/ui/alert-dialog'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Kbd } from '@/components/ui/kbd'
+import { Skeleton } from '@/components/ui/skeleton'
+import { formatUnit } from '@/domain/recipes/types'
+import { useDeleteRecipe } from '@/domain/recipes/apis/recipe-mutations'
+import { useRecipe } from '@/domain/recipes/apis/get-recipe'
+import { cn } from '@/lib/utils'
 
-export const Route = createFileRoute("/recipes/$id/")({
+export const Route = createFileRoute('/recipes/$id/')({
   component: RecipeDetailPage,
-});
+})
 
 function RecipeDetailPage() {
-  const { id } = Route.useParams();
-  const navigate = useNavigate();
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [imagePickerOpen, setImagePickerOpen] = useState(false);
-  const [cookingViewOpen, setCookingViewOpen] = useState(false);
-  const [scale, setScale] = useState(1);
+  const { id } = Route.useParams()
+  const navigate = useNavigate()
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+  const [imagePickerOpen, setImagePickerOpen] = useState(false)
+  const [cookingViewOpen, setCookingViewOpen] = useState(false)
+  const [scale, setScale] = useState(1)
 
-  const { data: recipe, isLoading, error } = useRecipe(id);
-  const deleteRecipe = useDeleteRecipe();
+  const { data: recipe, isLoading, error } = useRecipe(id)
+  const deleteRecipe = useDeleteRecipe()
 
   const handleBack = () => {
-    navigate({ to: "/recipes" });
-  };
+    navigate({ to: '/recipes' })
+  }
 
   const handleEdit = () => {
-    navigate({ to: "/recipes/$id/edit", params: { id } });
-  };
+    navigate({ to: '/recipes/$id/edit', params: { id } })
+  }
 
   const handleDelete = () => {
-    setDeleteDialogOpen(true);
-  };
+    setDeleteDialogOpen(true)
+  }
 
-  useHotkeys("e", () => {
-    if (recipe) handleEdit();
-  });
-  useHotkeys("delete", () => {
-    if (recipe) handleDelete();
-  });
-  useHotkeys("c", () => {
-    if (recipe?.steps && !cookingViewOpen) setCookingViewOpen(true);
-  });
+  useHotkeys('e', () => {
+    if (recipe) handleEdit()
+  })
+  useHotkeys('delete', () => {
+    if (recipe) handleDelete()
+  })
+  useHotkeys('c', () => {
+    if (recipe?.steps && !cookingViewOpen) setCookingViewOpen(true)
+  })
 
   const confirmDelete = () => {
     deleteRecipe.mutate(id, {
       onSuccess: () => {
-        navigate({ to: "/recipes" });
+        navigate({ to: '/recipes' })
       },
-    });
-  };
+    })
+  }
 
   const placeholderImage =
-    'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="800" height="400" viewBox="0 0 800 400"%3E%3Crect fill="%23e2e8f0" width="800" height="400"/%3E%3Ctext fill="%2394a3b8" font-family="system-ui" font-size="24" x="50%25" y="50%25" text-anchor="middle" dominant-baseline="middle"%3ENo Image%3C/text%3E%3C/svg%3E';
+    'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="800" height="400" viewBox="0 0 800 400"%3E%3Crect fill="%23e2e8f0" width="800" height="400"/%3E%3Ctext fill="%2394a3b8" font-family="system-ui" font-size="24" x="50%25" y="50%25" text-anchor="middle" dominant-baseline="middle"%3ENo Image%3C/text%3E%3C/svg%3E'
 
   if (isLoading) {
     return (
@@ -97,7 +97,7 @@ function RecipeDetailPage() {
           <Skeleton className="w-3/4 h-4" />
         </div>
       </div>
-    );
+    )
   }
 
   if (error) {
@@ -114,16 +114,16 @@ function RecipeDetailPage() {
         <div className="p-4 border rounded-lg border-destructive/20 bg-destructive/10 text-destructive">
           <p className="font-medium">Error loading recipe</p>
           <p className="mt-1 text-sm">
-            {error instanceof Error ? error.message : "Failed to load recipe"}
+            {error instanceof Error ? error.message : 'Failed to load recipe'}
           </p>
         </div>
         <Button onClick={handleBack}>Back to Recipes</Button>
       </div>
-    );
+    )
   }
 
   if (!recipe) {
-    return null;
+    return null
   }
 
   return (
@@ -140,8 +140,8 @@ function RecipeDetailPage() {
             </h1>
             {recipe.source && (
               <p className="text-muted-foreground">
-                Source:{" "}
-                {recipe.source.startsWith("http") ? (
+                Source:{' '}
+                {recipe.source.startsWith('http') ? (
                   <a
                     href={recipe.source}
                     target="_blank"
@@ -186,12 +186,12 @@ function RecipeDetailPage() {
           className="aspect-square w-full object-cover"
         />
         {/* Rating overlay */}
-        {recipe.rating && recipe.rating !== "Not Rated" && (
+        {recipe.rating && recipe.rating !== 'Not Rated' && (
           <span className="absolute right-2 top-2 flex h-8 w-8 items-center justify-center rounded-full bg-white/90 shadow-sm">
             <RatingIcon rating={recipe.rating} size="sm" />
           </span>
         )}
-        {recipe.source?.startsWith("http") && (
+        {recipe.source?.startsWith('http') && (
           <Button
             variant="secondary"
             size="sm"
@@ -242,32 +242,32 @@ function RecipeDetailPage() {
           </CardHeader>
           <CardContent>
             {(() => {
-              const sorted = [...recipe.ingredients].sort(
+              const sorted = [...recipe.ingredients].toSorted(
                 (a, b) => a.sortOrder - b.sortOrder,
-              );
-              let lastGroup: string | null | undefined = undefined;
+              )
+              let lastGroup: string | null | undefined = undefined
 
               return (
                 <div className="space-y-1">
                   {sorted.map((ingredient) => {
                     const showGroupHeader =
                       ingredient.groupName !== lastGroup &&
-                      ingredient.groupName !== null;
-                    const isFirstGroup = lastGroup === undefined;
-                    lastGroup = ingredient.groupName;
+                      ingredient.groupName !== null
+                    const isFirstGroup = lastGroup === undefined
+                    lastGroup = ingredient.groupName
 
                     const scaledAmount =
                       ingredient.amount != null
                         ? formatScaledAmount(ingredient.amount * scale)
-                        : null;
+                        : null
 
                     return (
                       <div key={ingredient.id}>
                         {showGroupHeader && (
                           <h4
                             className={cn(
-                              "border-b pb-1 text-sm font-semibold uppercase tracking-wide text-foreground/70",
-                              isFirstGroup ? "mt-0 mb-2" : "mt-4 mb-2",
+                              'border-b pb-1 text-sm font-semibold uppercase tracking-wide text-foreground/70',
+                              isFirstGroup ? 'mt-0 mb-2' : 'mt-4 mb-2',
                             )}
                           >
                             {ingredient.groupName}
@@ -277,8 +277,8 @@ function RecipeDetailPage() {
                           {scaledAmount != null ? (
                             <span
                               className={cn(
-                                "font-medium",
-                                scale !== 1 && "text-primary",
+                                'font-medium',
+                                scale !== 1 && 'text-primary',
                               )}
                             >
                               {scaledAmount}
@@ -301,10 +301,10 @@ function RecipeDetailPage() {
                           <span>{ingredient.name ?? ingredient.rawText}</span>
                         </li>
                       </div>
-                    );
+                    )
                   })}
                 </div>
-              );
+              )
             })()}
           </CardContent>
         </Card>
@@ -393,14 +393,14 @@ function RecipeDetailPage() {
               onClick={confirmDelete}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
-              {deleteRecipe.isPending ? "Deleting..." : "Delete"}
+              {deleteRecipe.isPending ? 'Deleting...' : 'Delete'}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
 
       {/* Source Image Picker */}
-      {recipe.source?.startsWith("http") && (
+      {recipe.source?.startsWith('http') && (
         <SourceImagePicker
           recipeId={id}
           source={recipe.source}
@@ -419,5 +419,5 @@ function RecipeDetailPage() {
         />
       )}
     </div>
-  );
+  )
 }

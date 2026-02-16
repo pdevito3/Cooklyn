@@ -1,6 +1,6 @@
-"use client"
+'use client'
 
-import { motion } from "motion/react"
+import { motion } from 'motion/react'
 import {
   Checkbox as AriaCheckbox,
   CheckboxGroup as AriaCheckboxGroup,
@@ -9,13 +9,13 @@ import {
   type CheckboxGroupProps as AriaCheckboxGroupProps,
   type ValidationResult as AriaValidationResult,
   type CheckboxProps as AriaCheckboxProps,
-} from "react-aria-components"
+} from 'react-aria-components'
 
-import { cn } from "@/lib/utils"
-import { Label } from "@/components/ui/label"
+import { cn } from '@/lib/utils'
+import { Label } from '@/components/ui/label'
 
 const labelVariants =
-  "text-sm font-medium leading-none data-[disabled]:cursor-not-allowed data-[disabled]:opacity-70 group-data-[invalid]:text-destructive"
+  'text-sm font-medium leading-none data-[disabled]:cursor-not-allowed data-[disabled]:opacity-70 group-data-[invalid]:text-destructive'
 
 const tickVariants = {
   checked: {
@@ -59,12 +59,12 @@ const Checkbox = ({ className, children, ...props }: AriaCheckboxProps) => (
   <AriaCheckbox
     className={composeRenderProps(className, (className) =>
       cn(
-        "group/checkbox flex items-center gap-x-2",
+        'group/checkbox flex items-center gap-x-2',
         /* Disabled */
-        "data-[disabled]:cursor-not-allowed data-[disabled]:opacity-70",
+        'data-[disabled]:cursor-not-allowed data-[disabled]:opacity-70',
         labelVariants,
-        className
-      )
+        className,
+      ),
     )}
     {...props}
   >
@@ -72,17 +72,17 @@ const Checkbox = ({ className, children, ...props }: AriaCheckboxProps) => (
       <>
         <div
           className={cn(
-            "flex size-4 shrink-0 items-center justify-center rounded-sm border border-primary text-current ring-offset-background",
+            'flex size-4 shrink-0 items-center justify-center rounded-sm border border-primary text-current ring-offset-background',
             /* Focus Visible */
-            "group-data-[focus-visible]/checkbox:outline-none group-data-[focus-visible]/checkbox:ring-2 group-data-[focus-visible]/checkbox:ring-ring group-data-[focus-visible]/checkbox:ring-offset-2",
+            'group-data-[focus-visible]/checkbox:outline-none group-data-[focus-visible]/checkbox:ring-2 group-data-[focus-visible]/checkbox:ring-ring group-data-[focus-visible]/checkbox:ring-offset-2',
             /* Selected */
-            "group-data-[indeterminate]/checkbox:bg-primary group-data-[selected]/checkbox:bg-primary group-data-[indeterminate]/checkbox:text-primary-foreground group-data-[selected]/checkbox:text-primary-foreground",
+            'group-data-[indeterminate]/checkbox:bg-primary group-data-[selected]/checkbox:bg-primary group-data-[indeterminate]/checkbox:text-primary-foreground group-data-[selected]/checkbox:text-primary-foreground',
             /* Disabled */
-            "group-data-[disabled]/checkbox:cursor-not-allowed group-data-[disabled]/checkbox:opacity-50",
+            'group-data-[disabled]/checkbox:cursor-not-allowed group-data-[disabled]/checkbox:opacity-50',
             /* Invalid */
-            "group-data-[invalid]/checkbox:border-destructive group-data-[invalid]/checkbox:group-data-[selected]/checkbox:bg-destructive group-data-[invalid]/checkbox:group-data-[selected]/checkbox:text-destructive-foreground",
+            'group-data-[invalid]/checkbox:border-destructive group-data-[invalid]/checkbox:group-data-[selected]/checkbox:bg-destructive group-data-[invalid]/checkbox:group-data-[selected]/checkbox:text-destructive-foreground',
             /* Resets */
-            "focus:outline-none focus-visible:outline-none"
+            'focus:outline-none focus-visible:outline-none',
           )}
         >
           {renderProps.isIndeterminate ? (
@@ -108,7 +108,7 @@ const Checkbox = ({ className, children, ...props }: AriaCheckboxProps) => (
               stroke="currentColor"
               className="size-3.5"
               initial={false}
-              animate={renderProps.isSelected ? "checked" : "unchecked"}
+              animate={renderProps.isSelected ? 'checked' : 'unchecked'}
             >
               <motion.path
                 strokeLinecap="round"
@@ -142,7 +142,7 @@ function CheckboxGroupWithLabel({
   return (
     <CheckboxGroup
       className={composeRenderProps(className, (className) =>
-        cn("group flex flex-col gap-2", className)
+        cn('group flex flex-col gap-2', className),
       )}
       {...props}
     >
@@ -157,7 +157,7 @@ function CheckboxGroupWithLabel({
           )}
           {errorMessage && (
             <Text className="text-sm text-destructive" slot="errorMessage">
-              {typeof errorMessage === "function" ? "" : errorMessage}
+              {typeof errorMessage === 'function' ? '' : errorMessage}
             </Text>
           )}
         </>

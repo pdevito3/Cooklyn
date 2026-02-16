@@ -33,25 +33,25 @@ export default defineConfig({
       '/bff': {
         target: process.env.BFF_HTTPS || process.env.BFF_HTTP,
         changeOrigin: true,
-        secure: false
+        secure: false,
       },
       // OIDC callback endpoints
       '/signin-oidc': {
         target: process.env.BFF_HTTPS || process.env.BFF_HTTP,
         changeOrigin: true,
-        secure: false
+        secure: false,
       },
       '/signout-callback-oidc': {
         target: process.env.BFF_HTTPS || process.env.BFF_HTTP,
         changeOrigin: true,
-        secure: false
+        secure: false,
       },
       // API calls proxied through BFF
       '/api': {
         target: process.env.BFF_HTTPS || process.env.BFF_HTTP,
         changeOrigin: true,
-        secure: false
-      }
-    }
-  }
+        secure: false,
+      },
+    },
+  },
 })

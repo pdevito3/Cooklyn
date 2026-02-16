@@ -4,7 +4,9 @@ import type { ShoppingListDto } from '../types'
 import { ShoppingListKeys } from './shopping-list.keys'
 
 export async function getShoppingList(id: string): Promise<ShoppingListDto> {
-  const response = await apiClient.get<ShoppingListDto>(`/api/v1/shoppinglists/${id}`)
+  const response = await apiClient.get<ShoppingListDto>(
+    `/api/v1/shoppinglists/${id}`,
+  )
   return response.data
 }
 

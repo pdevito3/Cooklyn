@@ -3,7 +3,10 @@ import { ArrowLeft02Icon } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
 
 import { useRecipe } from '@/domain/recipes/apis/get-recipe'
-import { useUpdateRecipe, useUpdateRecipeIngredients } from '@/domain/recipes/apis/recipe-mutations'
+import {
+  useUpdateRecipe,
+  useUpdateRecipeIngredients,
+} from '@/domain/recipes/apis/recipe-mutations'
 import { RecipeForm, type RecipeFormValues } from '@/components/recipe-form'
 import { RecipeImageSection } from '@/components/recipe-image-section'
 import { Button } from '@/components/ui/button'
@@ -48,10 +51,10 @@ function EditRecipePage() {
               onError: () => {
                 navigate({ to: '/recipes/$id', params: { id } })
               },
-            }
+            },
           )
         },
-      }
+      },
     )
   }
 
@@ -82,7 +85,9 @@ function EditRecipePage() {
           <Button variant="ghost" size="icon" onClick={handleBack}>
             <HugeiconsIcon icon={ArrowLeft02Icon} className="h-5 w-5" />
           </Button>
-          <h1 className="text-3xl font-bold tracking-tight">Recipe Not Found</h1>
+          <h1 className="text-3xl font-bold tracking-tight">
+            Recipe Not Found
+          </h1>
         </div>
         <div className="rounded-lg border border-destructive/20 bg-destructive/10 p-4 text-destructive">
           <p className="font-medium">Error loading recipe</p>
@@ -90,7 +95,9 @@ function EditRecipePage() {
             {error instanceof Error ? error.message : 'Failed to load recipe'}
           </p>
         </div>
-        <Button onClick={() => navigate({ to: '/recipes' })}>Back to Recipes</Button>
+        <Button onClick={() => navigate({ to: '/recipes' })}>
+          Back to Recipes
+        </Button>
       </div>
     )
   }
@@ -108,15 +115,17 @@ function EditRecipePage() {
         </Button>
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Edit Recipe</h1>
-          <p className="text-muted-foreground">
-            Editing: {recipe.title}
-          </p>
+          <p className="text-muted-foreground">Editing: {recipe.title}</p>
         </div>
       </div>
 
       {/* Image Upload + Form */}
       <div className="mx-auto max-w-3xl space-y-6">
-        <RecipeImageSection recipeId={id} imageUrl={recipe.imageUrl} source={recipe.source} />
+        <RecipeImageSection
+          recipeId={id}
+          imageUrl={recipe.imageUrl}
+          source={recipe.source}
+        />
 
         <RecipeForm
           existingRecipe={recipe}

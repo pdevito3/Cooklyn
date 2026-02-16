@@ -179,7 +179,9 @@ function parseFraction(text: string): number | null {
   return num / den
 }
 
-function tryMatchUnit(text: string): { unitName: string; consumed: number } | null {
+function tryMatchUnit(
+  text: string,
+): { unitName: string; consumed: number } | null {
   const words = text.split(/\s+/)
 
   // Try case-sensitive single-word match first (for T vs t)
@@ -196,7 +198,10 @@ function tryMatchUnit(text: string): { unitName: string; consumed: number } | nu
     const twoWord = `${words[0]} ${words[1]}`.toLowerCase()
     const match = UNIT_ALIASES[twoWord]
     if (match) {
-      return { unitName: match, consumed: words[0].length + 1 + words[1].length }
+      return {
+        unitName: match,
+        consumed: words[0].length + 1 + words[1].length,
+      }
     }
   }
 
@@ -217,7 +222,7 @@ function tryMatchUnit(text: string): { unitName: string; consumed: number } | nu
  */
 export function parseLine(
   line: string,
-  sortOrder: number
+  sortOrder: number,
 ): IngredientForCreationDto {
   const trimmed = line.trim()
   let remaining = trimmed
@@ -307,7 +312,9 @@ export function parseText(text: string): IngredientForCreationDto[] {
  * Convert structured ingredients back to text, inserting group headers as needed.
  * Adds a blank line before group headers (except at the very start) for readability.
  */
-export function ingredientsToText(ingredients: IngredientForCreationDto[]): string {
+export function ingredientsToText(
+  ingredients: IngredientForCreationDto[],
+): string {
   const lines: string[] = []
   let currentGroup: string | null = null
 

@@ -1,6 +1,11 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { apiClient } from '@/lib/api-client'
-import type { StoreDto, StoreForCreationDto, StoreForUpdateDto, StoreAisleForUpdateDto } from '../types'
+import type {
+  StoreDto,
+  StoreForCreationDto,
+  StoreForUpdateDto,
+  StoreAisleForUpdateDto,
+} from '../types'
 import { StoreKeys } from './store.keys'
 
 export async function createStore(dto: StoreForCreationDto): Promise<StoreDto> {
@@ -18,7 +23,10 @@ export function useCreateStore() {
   })
 }
 
-export async function updateStore(id: string, dto: StoreForUpdateDto): Promise<StoreDto> {
+export async function updateStore(
+  id: string,
+  dto: StoreForUpdateDto,
+): Promise<StoreDto> {
   const response = await apiClient.put<StoreDto>(`/api/v1/stores/${id}`, dto)
   return response.data
 }
@@ -49,16 +57,27 @@ export function useDeleteStore() {
   })
 }
 
-export async function updateStoreAisles(id: string, aisles: StoreAisleForUpdateDto[]): Promise<StoreDto> {
-  const response = await apiClient.put<StoreDto>(`/api/v1/stores/${id}/aisles`, aisles)
+export async function updateStoreAisles(
+  id: string,
+  aisles: StoreAisleForUpdateDto[],
+): Promise<StoreDto> {
+  const response = await apiClient.put<StoreDto>(
+    `/api/v1/stores/${id}/aisles`,
+    aisles,
+  )
   return response.data
 }
 
 export function useUpdateStoreAisles() {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: ({ id, aisles }: { id: string; aisles: StoreAisleForUpdateDto[] }) =>
-      updateStoreAisles(id, aisles),
+    mutationFn: ({
+      id,
+      aisles,
+    }: {
+      id: string
+      aisles: StoreAisleForUpdateDto[]
+    }) => updateStoreAisles(id, aisles),
     onSuccess: (_, { id }) => {
       queryClient.invalidateQueries({ queryKey: StoreKeys.lists() })
       queryClient.invalidateQueries({ queryKey: StoreKeys.detail(id) })
@@ -66,16 +85,27 @@ export function useUpdateStoreAisles() {
   })
 }
 
-export async function updateStoreDefaultCollections(id: string, itemCollectionIds: string[]): Promise<StoreDto> {
-  const response = await apiClient.put<StoreDto>(`/api/v1/stores/${id}/default-collections`, { itemCollectionIds })
+export async function updateStoreDefaultCollections(
+  id: string,
+  itemCollectionIds: string[],
+): Promise<StoreDto> {
+  const response = await apiClient.put<StoreDto>(
+    `/api/v1/stores/${id}/default-collections`,
+    { itemCollectionIds },
+  )
   return response.data
 }
 
 export function useUpdateStoreDefaultCollections() {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: ({ id, itemCollectionIds }: { id: string; itemCollectionIds: string[] }) =>
-      updateStoreDefaultCollections(id, itemCollectionIds),
+    mutationFn: ({
+      id,
+      itemCollectionIds,
+    }: {
+      id: string
+      itemCollectionIds: string[]
+    }) => updateStoreDefaultCollections(id, itemCollectionIds),
     onSuccess: (_, { id }) => {
       queryClient.invalidateQueries({ queryKey: StoreKeys.lists() })
       queryClient.invalidateQueries({ queryKey: StoreKeys.detail(id) })

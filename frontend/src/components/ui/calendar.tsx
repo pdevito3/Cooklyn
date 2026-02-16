@@ -1,9 +1,16 @@
-"use client"
+'use client'
 
-import { createContext, useContext, useState, useMemo, useEffect, useCallback } from "react"
-import { CalendarDate, getLocalTimeZone, today } from "@internationalized/date"
-import { ArrowLeft01Icon, ArrowRight01Icon } from "@hugeicons/core-free-icons"
-import { HugeiconsIcon } from "@hugeicons/react"
+import {
+  createContext,
+  useContext,
+  useState,
+  useMemo,
+  useEffect,
+  useCallback,
+} from 'react'
+import { CalendarDate, getLocalTimeZone, today } from '@internationalized/date'
+import { ArrowLeft01Icon, ArrowRight01Icon } from '@hugeicons/core-free-icons'
+import { HugeiconsIcon } from '@hugeicons/react'
 import {
   Button as AriaButton,
   Calendar as AriaCalendar,
@@ -27,11 +34,11 @@ import {
   type CalendarProps as AriaCalendarProps,
   type DateValue as AriaDateValue,
   type RangeCalendarProps as AriaRangeCalendarProps,
-} from "react-aria-components"
+} from 'react-aria-components'
 
-import { cn } from "@/lib/utils"
-import { buttonVariants } from "@/components/ui/button"
-import { DateField, DateInput } from "@/components/ui/datefield"
+import { cn } from '@/lib/utils'
+import { buttonVariants } from '@/components/ui/button'
+import { DateField, DateInput } from '@/components/ui/datefield'
 
 const Calendar = AriaCalendar
 
@@ -41,7 +48,7 @@ const RangeCalendar = AriaRangeCalendar
 // Calendar Zoom Feature - Month/Year Navigation
 // ============================================================================
 
-type CalendarView = "days" | "months" | "years"
+type CalendarView = 'days' | 'months' | 'years'
 
 interface CalendarZoomContextValue {
   view: CalendarView
@@ -68,10 +75,10 @@ function CalendarZoomProvider({ children }: CalendarZoomProviderProps) {
   const state = useCalendarState()
   const currentYear = state?.focusedDate?.year ?? new Date().getFullYear()
 
-  const [view, setView] = useState<CalendarView>("days")
+  const [view, setView] = useState<CalendarView>('days')
   const [viewYear, setViewYear] = useState(currentYear)
   const [viewDecadeStart, setViewDecadeStart] = useState(
-    Math.floor(currentYear / 12) * 12
+    Math.floor(currentYear / 12) * 12,
   )
 
   // Sync viewYear when calendar's focused date changes
@@ -92,7 +99,7 @@ function CalendarZoomProvider({ children }: CalendarZoomProviderProps) {
       viewDecadeStart,
       setViewDecadeStart,
     }),
-    [view, viewYear, viewDecadeStart]
+    [view, viewYear, viewDecadeStart],
   )
 
   return (
@@ -117,7 +124,10 @@ function getPresetDate(daysOffset: number): CalendarDate {
 }
 
 // Helper to get week range (Sunday-based)
-function getWeekRange(weeksOffset: number): { start: CalendarDate; end: CalendarDate } {
+function getWeekRange(weeksOffset: number): {
+  start: CalendarDate
+  end: CalendarDate
+} {
   const todayDate = today(getLocalTimeZone())
   const targetWeekStart = todayDate.add({ weeks: weeksOffset })
   const dayOfWeek = targetWeekStart.toDate(getLocalTimeZone()).getDay()
@@ -127,7 +137,10 @@ function getWeekRange(weeksOffset: number): { start: CalendarDate; end: Calendar
 }
 
 // Helper to get month range
-function getMonthRange(monthsOffset: number): { start: CalendarDate; end: CalendarDate } {
+function getMonthRange(monthsOffset: number): {
+  start: CalendarDate
+  end: CalendarDate
+} {
   const todayDate = today(getLocalTimeZone())
   const targetMonth = todayDate.add({ months: monthsOffset })
   const monthStart = new CalendarDate(targetMonth.year, targetMonth.month, 1)
@@ -136,7 +149,10 @@ function getMonthRange(monthsOffset: number): { start: CalendarDate; end: Calend
 }
 
 // Helper to get year range
-function getYearRange(yearsOffset: number): { start: CalendarDate; end: CalendarDate } {
+function getYearRange(yearsOffset: number): {
+  start: CalendarDate
+  end: CalendarDate
+} {
   const todayDate = today(getLocalTimeZone())
   const targetYear = todayDate.year + yearsOffset
   const yearStart = new CalendarDate(targetYear, 1, 1)
@@ -146,21 +162,21 @@ function getYearRange(yearsOffset: number): { start: CalendarDate; end: Calendar
 
 // Single date quick select presets
 const singleDatePresets = [
-  { label: "Today", getDate: () => getPresetDate(0) },
-  { label: "Tomorrow", getDate: () => getPresetDate(1) },
-  { label: "Yesterday", getDate: () => getPresetDate(-1) },
+  { label: 'Today', getDate: () => getPresetDate(0) },
+  { label: 'Tomorrow', getDate: () => getPresetDate(1) },
+  { label: 'Yesterday', getDate: () => getPresetDate(-1) },
 ] as const
 
 // Date range quick select presets
 const dateRangePresets = [
-  { label: "This Week", getRange: () => getWeekRange(0) },
-  { label: "Last Week", getRange: () => getWeekRange(-1) },
-  { label: "Next Week", getRange: () => getWeekRange(1) },
-  { label: "This Month", getRange: () => getMonthRange(0) },
-  { label: "Last Month", getRange: () => getMonthRange(-1) },
-  { label: "Next Month", getRange: () => getMonthRange(1) },
-  { label: "This Year", getRange: () => getYearRange(0) },
-  { label: "Last Year", getRange: () => getYearRange(-1) },
+  { label: 'This Week', getRange: () => getWeekRange(0) },
+  { label: 'Last Week', getRange: () => getWeekRange(-1) },
+  { label: 'Next Week', getRange: () => getWeekRange(1) },
+  { label: 'This Month', getRange: () => getMonthRange(0) },
+  { label: 'Last Month', getRange: () => getMonthRange(-1) },
+  { label: 'Next Month', getRange: () => getMonthRange(1) },
+  { label: 'This Year', getRange: () => getYearRange(0) },
+  { label: 'Last Year', getRange: () => getYearRange(-1) },
 ] as const
 
 // Quick selects panel for single date calendar
@@ -171,15 +187,17 @@ interface QuickSelectsPanelProps {
 function QuickSelectsPanel({ onSelect }: QuickSelectsPanelProps) {
   return (
     <div className="flex flex-col gap-1 border-r pr-3 mr-3">
-      <div className="text-xs font-medium text-muted-foreground mb-1">Quick Select</div>
+      <div className="text-xs font-medium text-muted-foreground mb-1">
+        Quick Select
+      </div>
       {singleDatePresets.map((preset) => (
         <button
           key={preset.label}
           type="button"
           onClick={() => onSelect(preset.getDate())}
           className={cn(
-            buttonVariants({ variant: "ghost", size: "sm" }),
-            "justify-start h-7 text-xs font-normal"
+            buttonVariants({ variant: 'ghost', size: 'sm' }),
+            'justify-start h-7 text-xs font-normal',
           )}
         >
           {preset.label}
@@ -197,15 +215,17 @@ interface QuickSelectsRangePanelProps {
 function QuickSelectsRangePanel({ onSelect }: QuickSelectsRangePanelProps) {
   return (
     <div className="flex flex-col gap-1 border-r pr-3 mr-3">
-      <div className="text-xs font-medium text-muted-foreground mb-1">Quick Select</div>
+      <div className="text-xs font-medium text-muted-foreground mb-1">
+        Quick Select
+      </div>
       {dateRangePresets.map((preset) => (
         <button
           key={preset.label}
           type="button"
           onClick={() => onSelect(preset.getRange())}
           className={cn(
-            buttonVariants({ variant: "ghost", size: "sm" }),
-            "justify-start h-7 text-xs font-normal"
+            buttonVariants({ variant: 'ghost', size: 'sm' }),
+            'justify-start h-7 text-xs font-normal',
           )}
         >
           {preset.label}
@@ -222,7 +242,7 @@ function MonthPickerGrid() {
   const { locale } = useLocale()
 
   const months = useMemo(() => {
-    const formatter = new Intl.DateTimeFormat(locale, { month: "short" })
+    const formatter = new Intl.DateTimeFormat(locale, { month: 'short' })
     return Array.from({ length: 12 }, (_, i) => ({
       index: i + 1,
       name: formatter.format(new Date(2024, i, 1)),
@@ -234,18 +254,22 @@ function MonthPickerGrid() {
   const handleMonthSelect = (monthIndex: number) => {
     const safeDay = Math.min(
       state.focusedDate.day,
-      getDaysInMonth(zoomContext.viewYear, monthIndex)
+      getDaysInMonth(zoomContext.viewYear, monthIndex),
     )
     const newDate = new CalendarDate(zoomContext.viewYear, monthIndex, safeDay)
     state.setFocusedDate(newDate)
-    zoomContext.setView("days")
+    zoomContext.setView('days')
   }
 
   const currentMonth = state.focusedDate.month
   const currentYear = state.focusedDate.year
 
   return (
-    <div className="grid grid-cols-3 gap-1 p-1" role="grid" aria-label="Month picker">
+    <div
+      className="grid grid-cols-3 gap-1 p-1"
+      role="grid"
+      aria-label="Month picker"
+    >
       {months.map(({ index, name }) => {
         const isSelected =
           index === currentMonth && zoomContext.viewYear === currentYear
@@ -255,9 +279,9 @@ function MonthPickerGrid() {
             type="button"
             onClick={() => handleMonthSelect(index)}
             className={cn(
-              buttonVariants({ variant: "ghost" }),
-              "h-9 text-sm font-normal",
-              isSelected && "bg-primary text-primary-foreground"
+              buttonVariants({ variant: 'ghost' }),
+              'h-9 text-sm font-normal',
+              isSelected && 'bg-primary text-primary-foreground',
             )}
             aria-selected={isSelected}
           >
@@ -284,13 +308,17 @@ function YearPickerGrid() {
 
   const handleYearSelect = (year: number) => {
     zoomContext.setViewYear(year)
-    zoomContext.setView("months")
+    zoomContext.setView('months')
   }
 
   const currentYear = state.focusedDate.year
 
   return (
-    <div className="grid grid-cols-3 gap-1 p-1" role="grid" aria-label="Year picker">
+    <div
+      className="grid grid-cols-3 gap-1 p-1"
+      role="grid"
+      aria-label="Year picker"
+    >
       {years.map((year) => {
         const isSelected = year === currentYear
         return (
@@ -299,9 +327,9 @@ function YearPickerGrid() {
             type="button"
             onClick={() => handleYearSelect(year)}
             className={cn(
-              buttonVariants({ variant: "ghost" }),
-              "h-9 text-sm font-normal",
-              isSelected && "bg-primary text-primary-foreground"
+              buttonVariants({ variant: 'ghost' }),
+              'h-9 text-sm font-normal',
+              isSelected && 'bg-primary text-primary-foreground',
             )}
             aria-selected={isSelected}
           >
@@ -326,9 +354,9 @@ function CalendarContent({ children }: CalendarContentProps) {
   }
 
   switch (zoomContext.view) {
-    case "months":
+    case 'months':
       return <MonthPickerGrid />
-    case "years":
+    case 'years':
       return <YearPickerGrid />
     default:
       return <>{children}</>
@@ -342,42 +370,42 @@ const CalendarHeadingZoomable = (props: React.HTMLAttributes<HTMLElement>) => {
   const state = useCalendarState()
 
   const getHeadingText = () => {
-    if (!state) return ""
+    if (!state) return ''
 
-    if (zoomContext?.view === "months") {
+    if (zoomContext?.view === 'months') {
       return zoomContext.viewYear.toString()
     }
-    if (zoomContext?.view === "years") {
+    if (zoomContext?.view === 'years') {
       const start = zoomContext.viewDecadeStart
       return `${start} - ${start + 11}`
     }
 
     // Default: format month/year
     const formatter = new Intl.DateTimeFormat(undefined, {
-      month: "long",
-      year: "numeric",
+      month: 'long',
+      year: 'numeric',
     })
     return formatter.format(
-      new Date(state.focusedDate.year, state.focusedDate.month - 1, 1)
+      new Date(state.focusedDate.year, state.focusedDate.month - 1, 1),
     )
   }
 
   const handleHeadingClick = () => {
     if (!zoomContext) return
 
-    if (zoomContext.view === "days") {
-      zoomContext.setView("months")
-    } else if (zoomContext.view === "months") {
-      zoomContext.setView("years")
+    if (zoomContext.view === 'days') {
+      zoomContext.setView('months')
+    } else if (zoomContext.view === 'months') {
+      zoomContext.setView('years')
     }
   }
 
   const handlePrevious = () => {
     if (!zoomContext) return
 
-    if (zoomContext.view === "months") {
+    if (zoomContext.view === 'months') {
       zoomContext.setViewYear(zoomContext.viewYear - 1)
-    } else if (zoomContext.view === "years") {
+    } else if (zoomContext.view === 'years') {
       zoomContext.setViewDecadeStart(zoomContext.viewDecadeStart - 12)
     }
   }
@@ -385,14 +413,14 @@ const CalendarHeadingZoomable = (props: React.HTMLAttributes<HTMLElement>) => {
   const handleNext = () => {
     if (!zoomContext) return
 
-    if (zoomContext.view === "months") {
+    if (zoomContext.view === 'months') {
       zoomContext.setViewYear(zoomContext.viewYear + 1)
-    } else if (zoomContext.view === "years") {
+    } else if (zoomContext.view === 'years') {
       zoomContext.setViewDecadeStart(zoomContext.viewDecadeStart + 12)
     }
   }
 
-  const isZoomed = zoomContext && zoomContext.view !== "days"
+  const isZoomed = zoomContext && zoomContext.view !== 'days'
 
   return (
     <header className="flex w-full items-center gap-1 px-1 pb-4" {...props}>
@@ -401,29 +429,45 @@ const CalendarHeadingZoomable = (props: React.HTMLAttributes<HTMLElement>) => {
           type="button"
           onClick={handlePrevious}
           className={cn(
-            buttonVariants({ variant: "outline" }),
-            "size-7 bg-transparent p-0 opacity-50 hover:opacity-100"
+            buttonVariants({ variant: 'outline' }),
+            'size-7 bg-transparent p-0 opacity-50 hover:opacity-100',
           )}
         >
-          {direction === "rtl" ? (
-            <HugeiconsIcon icon={ArrowRight01Icon} aria-hidden className="size-4" />
+          {direction === 'rtl' ? (
+            <HugeiconsIcon
+              icon={ArrowRight01Icon}
+              aria-hidden
+              className="size-4"
+            />
           ) : (
-            <HugeiconsIcon icon={ArrowLeft01Icon} aria-hidden className="size-4" />
+            <HugeiconsIcon
+              icon={ArrowLeft01Icon}
+              aria-hidden
+              className="size-4"
+            />
           )}
         </button>
       ) : (
         <AriaButton
           slot="previous"
           className={cn(
-            buttonVariants({ variant: "outline" }),
-            "size-7 bg-transparent p-0 opacity-50",
-            "data-[hovered]:opacity-100"
+            buttonVariants({ variant: 'outline' }),
+            'size-7 bg-transparent p-0 opacity-50',
+            'data-[hovered]:opacity-100',
           )}
         >
-          {direction === "rtl" ? (
-            <HugeiconsIcon icon={ArrowRight01Icon} aria-hidden className="size-4" />
+          {direction === 'rtl' ? (
+            <HugeiconsIcon
+              icon={ArrowRight01Icon}
+              aria-hidden
+              className="size-4"
+            />
           ) : (
-            <HugeiconsIcon icon={ArrowLeft01Icon} aria-hidden className="size-4" />
+            <HugeiconsIcon
+              icon={ArrowLeft01Icon}
+              aria-hidden
+              className="size-4"
+            />
           )}
         </AriaButton>
       )}
@@ -432,16 +476,16 @@ const CalendarHeadingZoomable = (props: React.HTMLAttributes<HTMLElement>) => {
         type="button"
         onClick={handleHeadingClick}
         className={cn(
-          "grow text-center text-sm font-medium",
-          "rounded-md py-1 transition-colors",
-          zoomContext?.view !== "years" && "cursor-pointer hover:bg-muted"
+          'grow text-center text-sm font-medium',
+          'rounded-md py-1 transition-colors',
+          zoomContext?.view !== 'years' && 'cursor-pointer hover:bg-muted',
         )}
-        disabled={zoomContext?.view === "years"}
+        disabled={zoomContext?.view === 'years'}
         aria-label={
-          zoomContext?.view === "days"
-            ? "Select month"
-            : zoomContext?.view === "months"
-              ? "Select year"
+          zoomContext?.view === 'days'
+            ? 'Select month'
+            : zoomContext?.view === 'months'
+              ? 'Select year'
               : undefined
         }
       >
@@ -453,29 +497,45 @@ const CalendarHeadingZoomable = (props: React.HTMLAttributes<HTMLElement>) => {
           type="button"
           onClick={handleNext}
           className={cn(
-            buttonVariants({ variant: "outline" }),
-            "size-7 bg-transparent p-0 opacity-50 hover:opacity-100"
+            buttonVariants({ variant: 'outline' }),
+            'size-7 bg-transparent p-0 opacity-50 hover:opacity-100',
           )}
         >
-          {direction === "rtl" ? (
-            <HugeiconsIcon icon={ArrowLeft01Icon} aria-hidden className="size-4" />
+          {direction === 'rtl' ? (
+            <HugeiconsIcon
+              icon={ArrowLeft01Icon}
+              aria-hidden
+              className="size-4"
+            />
           ) : (
-            <HugeiconsIcon icon={ArrowRight01Icon} aria-hidden className="size-4" />
+            <HugeiconsIcon
+              icon={ArrowRight01Icon}
+              aria-hidden
+              className="size-4"
+            />
           )}
         </button>
       ) : (
         <AriaButton
           slot="next"
           className={cn(
-            buttonVariants({ variant: "outline" }),
-            "size-7 bg-transparent p-0 opacity-50",
-            "data-[hovered]:opacity-100"
+            buttonVariants({ variant: 'outline' }),
+            'size-7 bg-transparent p-0 opacity-50',
+            'data-[hovered]:opacity-100',
           )}
         >
-          {direction === "rtl" ? (
-            <HugeiconsIcon icon={ArrowLeft01Icon} aria-hidden className="size-4" />
+          {direction === 'rtl' ? (
+            <HugeiconsIcon
+              icon={ArrowLeft01Icon}
+              aria-hidden
+              className="size-4"
+            />
           ) : (
-            <HugeiconsIcon icon={ArrowRight01Icon} aria-hidden className="size-4" />
+            <HugeiconsIcon
+              icon={ArrowRight01Icon}
+              aria-hidden
+              className="size-4"
+            />
           )}
         </AriaButton>
       )}
@@ -495,32 +555,48 @@ const CalendarHeading = (props: React.HTMLAttributes<HTMLElement>) => {
       <AriaButton
         slot="previous"
         className={cn(
-          buttonVariants({ variant: "outline" }),
-          "size-7 bg-transparent p-0 opacity-50",
+          buttonVariants({ variant: 'outline' }),
+          'size-7 bg-transparent p-0 opacity-50',
           /* Hover */
-          "data-[hovered]:opacity-100"
+          'data-[hovered]:opacity-100',
         )}
       >
-        {direction === "rtl" ? (
-          <HugeiconsIcon icon={ArrowRight01Icon} aria-hidden className="size-4" />
+        {direction === 'rtl' ? (
+          <HugeiconsIcon
+            icon={ArrowRight01Icon}
+            aria-hidden
+            className="size-4"
+          />
         ) : (
-          <HugeiconsIcon icon={ArrowLeft01Icon} aria-hidden className="size-4" />
+          <HugeiconsIcon
+            icon={ArrowLeft01Icon}
+            aria-hidden
+            className="size-4"
+          />
         )}
       </AriaButton>
       <AriaHeading className="grow text-center text-sm font-medium" />
       <AriaButton
         slot="next"
         className={cn(
-          buttonVariants({ variant: "outline" }),
-          "size-7 bg-transparent p-0 opacity-50",
+          buttonVariants({ variant: 'outline' }),
+          'size-7 bg-transparent p-0 opacity-50',
           /* Hover */
-          "data-[hovered]:opacity-100"
+          'data-[hovered]:opacity-100',
         )}
       >
-        {direction === "rtl" ? (
-          <HugeiconsIcon icon={ArrowLeft01Icon} aria-hidden className="size-4" />
+        {direction === 'rtl' ? (
+          <HugeiconsIcon
+            icon={ArrowLeft01Icon}
+            aria-hidden
+            className="size-4"
+          />
         ) : (
-          <HugeiconsIcon icon={ArrowRight01Icon} aria-hidden className="size-4" />
+          <HugeiconsIcon
+            icon={ArrowRight01Icon}
+            aria-hidden
+            className="size-4"
+          />
         )}
       </AriaButton>
     </header>
@@ -530,8 +606,8 @@ const CalendarHeading = (props: React.HTMLAttributes<HTMLElement>) => {
 const CalendarGrid = ({ className, ...props }: AriaCalendarGridProps) => (
   <AriaCalendarGrid
     className={cn(
-      "border-separate border-spacing-x-0 border-spacing-y-1",
-      className
+      'border-separate border-spacing-x-0 border-spacing-y-1',
+      className,
     )}
     {...props}
   />
@@ -547,8 +623,8 @@ const CalendarHeaderCell = ({
 }: AriaCalendarHeaderCellProps) => (
   <AriaCalendarHeaderCell
     className={cn(
-      "w-9 rounded-md text-[0.8rem] font-normal text-muted-foreground",
-      className
+      'w-9 rounded-md text-[0.8rem] font-normal text-muted-foreground',
+      className,
     )}
     {...props}
   />
@@ -558,7 +634,7 @@ const CalendarGridBody = ({
   className,
   ...props
 }: AriaCalendarGridBodyProps) => (
-  <AriaCalendarGridBody className={cn("[&>tr>td]:p-0", className)} {...props} />
+  <AriaCalendarGridBody className={cn('[&>tr>td]:p-0', className)} {...props} />
 )
 
 const CalendarCell = ({ className, ...props }: AriaCalendarCellProps) => {
@@ -567,47 +643,48 @@ const CalendarCell = ({ className, ...props }: AriaCalendarCellProps) => {
     <AriaCalendarCell
       className={composeRenderProps(className, (className, renderProps) =>
         cn(
-          buttonVariants({ variant: "ghost" }),
-          "relative flex size-9 items-center justify-center p-0 text-sm font-normal",
+          buttonVariants({ variant: 'ghost' }),
+          'relative flex size-9 items-center justify-center p-0 text-sm font-normal',
           /* Disabled */
-          renderProps.isDisabled && "text-muted-foreground opacity-50",
+          renderProps.isDisabled && 'text-muted-foreground opacity-50',
           /* Selected */
           renderProps.isSelected &&
-            "bg-primary text-primary-foreground data-[focused]:bg-primary data-[focused]:text-primary-foreground",
+            'bg-primary text-primary-foreground data-[focused]:bg-primary data-[focused]:text-primary-foreground',
           /* Hover */
           renderProps.isHovered &&
             renderProps.isSelected &&
             (renderProps.isSelectionStart ||
               renderProps.isSelectionEnd ||
               !isRange) &&
-            "data-[hovered]:bg-primary data-[hovered]:text-primary-foreground",
+            'data-[hovered]:bg-primary data-[hovered]:text-primary-foreground',
           /* Selection Start/End */
           renderProps.isSelected &&
             isRange &&
             !renderProps.isSelectionStart &&
             !renderProps.isSelectionEnd &&
-            "rounded-none bg-accent text-accent-foreground",
+            'rounded-none bg-accent text-accent-foreground',
           /* Outside Month */
           renderProps.isOutsideMonth &&
-            "text-muted-foreground opacity-50 data-[selected]:bg-accent/50 data-[selected]:text-muted-foreground data-[selected]:opacity-30",
+            'text-muted-foreground opacity-50 data-[selected]:bg-accent/50 data-[selected]:text-muted-foreground data-[selected]:opacity-30',
           /* Current Date */
           renderProps.date.compare(today(getLocalTimeZone())) === 0 &&
             !renderProps.isSelected &&
-            "bg-accent text-accent-foreground",
+            'bg-accent text-accent-foreground',
           /* Unavailable Date */
-          renderProps.isUnavailable && "cursor-default text-destructive",
+          renderProps.isUnavailable && 'cursor-default text-destructive',
           renderProps.isInvalid &&
-            "bg-destructive text-destructive-foreground data-[focused]:bg-destructive data-[hovered]:bg-destructive data-[focused]:text-destructive-foreground data-[hovered]:text-destructive-foreground",
-          className
-        )
+            'bg-destructive text-destructive-foreground data-[focused]:bg-destructive data-[hovered]:bg-destructive data-[focused]:text-destructive-foreground data-[hovered]:text-destructive-foreground',
+          className,
+        ),
       )}
       {...props}
     />
   )
 }
 
-interface JollyCalendarProps<T extends AriaDateValue>
-  extends AriaCalendarProps<T> {
+interface JollyCalendarProps<
+  T extends AriaDateValue,
+> extends AriaCalendarProps<T> {
   errorMessage?: string
   showQuickSelects?: boolean
   showDateInput?: boolean
@@ -636,32 +713,43 @@ function JollyCalendar<T extends AriaDateValue>({
   useEffect(() => {
     if (value) {
       const calDate = value as CalendarDate
-      setFocusedValue(new CalendarDate(calDate.year, calDate.month, calDate.day))
+      setFocusedValue(
+        new CalendarDate(calDate.year, calDate.month, calDate.day),
+      )
     }
   }, [value])
 
-  const handleQuickSelect = useCallback((date: CalendarDate) => {
-    // Update focused value to navigate calendar view to selected date
-    setFocusedValue(date)
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    onChange?.(date as any)
-  }, [onChange])
-
-  const handleDateInputChange = useCallback((newValue: AriaDateValue | null) => {
-    if (newValue) {
-      const calDate = newValue as CalendarDate
-      setFocusedValue(calDate)
+  const handleQuickSelect = useCallback(
+    (date: CalendarDate) => {
+      // Update focused value to navigate calendar view to selected date
+      setFocusedValue(date)
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      onChange?.(calDate as any)
-    }
-  }, [onChange])
+      onChange?.(date as any)
+    },
+    [onChange],
+  )
+
+  const handleDateInputChange = useCallback(
+    (newValue: AriaDateValue | null) => {
+      if (newValue) {
+        const calDate = newValue as CalendarDate
+        setFocusedValue(calDate)
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        onChange?.(calDate as any)
+      }
+    },
+    [onChange],
+  )
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const handleCalendarChange = useCallback((newValue: any) => {
-    const calDate = newValue as CalendarDate
-    setFocusedValue(calDate)
-    onChange?.(newValue)
-  }, [onChange])
+  const handleCalendarChange = useCallback(
+    (newValue: any) => {
+      const calDate = newValue as CalendarDate
+      setFocusedValue(calDate)
+      onChange?.(newValue)
+    },
+    [onChange],
+  )
 
   return (
     <div className="flex flex-col gap-2">
@@ -674,11 +762,11 @@ function JollyCalendar<T extends AriaDateValue>({
           <DateInput className="h-9" />
         </DateField>
       )}
-      <div className={cn("flex", showQuickSelects && "gap-0")}>
+      <div className={cn('flex', showQuickSelects && 'gap-0')}>
         {showQuickSelects && <QuickSelectsPanel onSelect={handleQuickSelect} />}
         <Calendar
           className={composeRenderProps(className, (className) =>
-            cn("w-fit", className)
+            cn('w-fit', className),
           )}
           value={value}
           onChange={handleCalendarChange}
@@ -710,8 +798,9 @@ function JollyCalendar<T extends AriaDateValue>({
   )
 }
 
-interface JollyRangeCalendarProps<T extends AriaDateValue>
-  extends AriaRangeCalendarProps<T> {
+interface JollyRangeCalendarProps<
+  T extends AriaDateValue,
+> extends AriaRangeCalendarProps<T> {
   errorMessage?: string
   showQuickSelects?: boolean
   showDateInput?: boolean
@@ -744,37 +833,49 @@ function JollyRangeCalendar<T extends AriaDateValue>({
     }
   }, [value?.start])
 
-  const handleQuickSelect = useCallback((range: { start: CalendarDate; end: CalendarDate }) => {
-    // Update focused value to navigate calendar view to selected range start
-    setFocusedValue(range.start)
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    onChange?.({ start: range.start, end: range.end } as any)
-  }, [onChange])
-
-  const handleStartDateChange = useCallback((newValue: AriaDateValue | null) => {
-    if (newValue && value) {
-      const calDate = newValue as CalendarDate
-      setFocusedValue(calDate)
+  const handleQuickSelect = useCallback(
+    (range: { start: CalendarDate; end: CalendarDate }) => {
+      // Update focused value to navigate calendar view to selected range start
+      setFocusedValue(range.start)
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      onChange?.({ start: calDate, end: value.end } as any)
-    }
-  }, [onChange, value])
+      onChange?.({ start: range.start, end: range.end } as any)
+    },
+    [onChange],
+  )
 
-  const handleEndDateChange = useCallback((newValue: AriaDateValue | null) => {
-    if (newValue && value) {
-      const calDate = newValue as CalendarDate
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      onChange?.({ start: value.start, end: calDate } as any)
-    }
-  }, [onChange, value])
+  const handleStartDateChange = useCallback(
+    (newValue: AriaDateValue | null) => {
+      if (newValue && value) {
+        const calDate = newValue as CalendarDate
+        setFocusedValue(calDate)
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        onChange?.({ start: calDate, end: value.end } as any)
+      }
+    },
+    [onChange, value],
+  )
+
+  const handleEndDateChange = useCallback(
+    (newValue: AriaDateValue | null) => {
+      if (newValue && value) {
+        const calDate = newValue as CalendarDate
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        onChange?.({ start: value.start, end: calDate } as any)
+      }
+    },
+    [onChange, value],
+  )
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const handleCalendarChange = useCallback((newValue: any) => {
-    if (newValue?.start) {
-      setFocusedValue(newValue.start)
-    }
-    onChange?.(newValue)
-  }, [onChange])
+  const handleCalendarChange = useCallback(
+    (newValue: any) => {
+      if (newValue?.start) {
+        setFocusedValue(newValue.start)
+      }
+      onChange?.(newValue)
+    },
+    [onChange],
+  )
 
   return (
     <div className="flex flex-col gap-2">
@@ -799,11 +900,13 @@ function JollyRangeCalendar<T extends AriaDateValue>({
           </DateField>
         </div>
       )}
-      <div className={cn("flex", showQuickSelects && "gap-0")}>
-        {showQuickSelects && <QuickSelectsRangePanel onSelect={handleQuickSelect} />}
+      <div className={cn('flex', showQuickSelects && 'gap-0')}>
+        {showQuickSelects && (
+          <QuickSelectsRangePanel onSelect={handleQuickSelect} />
+        )}
         <RangeCalendar
           className={composeRenderProps(className, (className) =>
-            cn("w-fit", className)
+            cn('w-fit', className),
           )}
           value={value}
           onChange={handleCalendarChange}

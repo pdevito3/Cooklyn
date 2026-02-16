@@ -141,11 +141,7 @@ export function FilterBuilder({
               Group Filters
             </Button>
 
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleClearAll}
-            >
+            <Button variant="outline" size="sm" onClick={handleClearAll}>
               Clear
             </Button>
           </>
@@ -165,11 +161,7 @@ export function FilterBuilder({
                 : 'Group Filters'}
             </Button>
 
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleCancelGrouping}
-            >
+            <Button variant="outline" size="sm" onClick={handleCancelGrouping}>
               Cancel
             </Button>
           </>
@@ -183,7 +175,10 @@ export function FilterBuilder({
             onClick={handleToggleLogicalOperator}
             className="h-7 px-2 text-xs"
           >
-            Switch to {state.rootLogicalOperator === LogicalOperators.AND ? LogicalOperators.OR : LogicalOperators.AND}
+            Switch to{' '}
+            {state.rootLogicalOperator === LogicalOperators.AND
+              ? LogicalOperators.OR
+              : LogicalOperators.AND}
           </Button>
         )}
       </div>

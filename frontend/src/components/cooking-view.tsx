@@ -28,7 +28,8 @@ export function CookingView({
 }: CookingViewProps) {
   const isMobile = useIsMobile()
   const [currentStep, setCurrentStep] = useState(0)
-  const [desktopIngredientsOpen, setDesktopIngredientsOpen] = useState(!isMobile)
+  const [desktopIngredientsOpen, setDesktopIngredientsOpen] =
+    useState(!isMobile)
 
   const parsed = parseSteps(steps).map(stripLeadingNumber)
   const hasIngredients = ingredients.length > 0
@@ -79,7 +80,10 @@ export function CookingView({
       style={{ touchAction: 'pan-y' }}
     >
       {/* Progress bar */}
-      <CookingProgressBar currentStep={currentStep} totalSteps={parsed.length} />
+      <CookingProgressBar
+        currentStep={currentStep}
+        totalSteps={parsed.length}
+      />
 
       {/* Top bar */}
       <div className="flex items-center justify-between border-b px-4 py-2">

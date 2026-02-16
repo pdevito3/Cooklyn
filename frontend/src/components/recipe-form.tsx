@@ -1,23 +1,23 @@
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Delete02Icon, ImageUploadIcon } from "@hugeicons/core-free-icons";
-import { HugeiconsIcon } from "@hugeicons/react";
-import { useEffect, useMemo, useRef, useState } from "react";
-import { Controller, useForm } from "react-hook-form";
-import { useHotkeys } from "react-hotkeys-hook";
-import { z } from "zod";
+import { zodResolver } from '@hookform/resolvers/zod'
+import { Delete02Icon, ImageUploadIcon } from '@hugeicons/core-free-icons'
+import { HugeiconsIcon } from '@hugeicons/react'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { Controller, useForm } from 'react-hook-form'
+import { useHotkeys } from 'react-hotkeys-hook'
+import { z } from 'zod'
 
-import { ImageCropDialog } from "@/components/image-crop-dialog";
-import { IngredientEditor } from "@/components/ingredient-editor";
-import { RatingIcon } from "@/components/rating-icon";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Kbd } from "@/components/ui/kbd";
-import { Label } from "@/components/ui/label";
+import { ImageCropDialog } from '@/components/image-crop-dialog'
+import { IngredientEditor } from '@/components/ingredient-editor'
+import { RatingIcon } from '@/components/rating-icon'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Kbd } from '@/components/ui/kbd'
+import { Label } from '@/components/ui/label'
 import {
   MultiSelect,
   type MultiSelectOption,
-} from "@/components/ui/multi-select";
+} from '@/components/ui/multi-select'
 import {
   Select,
   SelectContent,
@@ -27,14 +27,14 @@ import {
   SelectItemText,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
+} from '@/components/ui/select'
+import { Textarea } from '@/components/ui/textarea'
 import {
   RECIPE_FLAGS,
   RECIPE_RATINGS,
   type IngredientForCreationDto,
   type RecipeDto,
-} from "@/domain/recipes/types";
+} from '@/domain/recipes/types'
 
 const ingredientSchema = z.object({
   rawText: z.string(),
@@ -45,42 +45,42 @@ const ingredientSchema = z.object({
   customUnit: z.string().nullable(),
   groupName: z.string().nullable(),
   sortOrder: z.number(),
-});
+})
 
 const recipeFormSchema = z.object({
-  title: z.string().min(1, "Title is required").max(200, "Title is too long"),
-  description: z.string().max(2000, "Description is too long").nullable(),
+  title: z.string().min(1, 'Title is required').max(200, 'Title is too long'),
+  description: z.string().max(2000, 'Description is too long').nullable(),
   rating: z.string().nullable(),
-  source: z.string().max(500, "Source is too long").nullable(),
+  source: z.string().max(500, 'Source is too long').nullable(),
   servings: z.number().int().min(1).max(999).nullable(),
   steps: z.string().nullable(),
   notes: z.string().nullable(),
   flags: z.array(z.object({ value: z.string(), label: z.string() })),
   ingredients: z.array(ingredientSchema),
-});
+})
 
-export type RecipeFormValues = z.infer<typeof recipeFormSchema>;
+export type RecipeFormValues = z.infer<typeof recipeFormSchema>
 
 interface RecipeFormProps {
-  defaultValues?: Partial<RecipeFormValues>;
-  existingRecipe?: RecipeDto;
-  onSubmit: (values: RecipeFormValues) => void;
-  onCancel?: () => void;
-  isSubmitting?: boolean;
-  submitLabel?: string;
-  imageFile?: File | null;
-  onImageFileChange?: (file: File | null) => void;
+  defaultValues?: Partial<RecipeFormValues>
+  existingRecipe?: RecipeDto
+  onSubmit: (values: RecipeFormValues) => void
+  onCancel?: () => void
+  isSubmitting?: boolean
+  submitLabel?: string
+  imageFile?: File | null
+  onImageFileChange?: (file: File | null) => void
 }
 
 const flagOptions: MultiSelectOption[] = RECIPE_FLAGS.map((flag) => ({
   value: flag,
   label: flag,
-}));
+}))
 
 const ratingOptions = RECIPE_RATINGS.map((rating) => ({
   value: rating,
   label: rating,
-}));
+}))
 
 export function RecipeForm({
   defaultValues,
@@ -88,29 +88,29 @@ export function RecipeForm({
   onSubmit,
   onCancel,
   isSubmitting = false,
-  submitLabel = "Save Recipe",
+  submitLabel = 'Save Recipe',
   imageFile,
   onImageFileChange,
 }: RecipeFormProps) {
-  const imageInputRef = useRef<HTMLInputElement>(null);
-  const [cropDialogOpen, setCropDialogOpen] = useState(false);
-  const [rawImageUrl, setRawImageUrl] = useState<string | null>(null);
+  const imageInputRef = useRef<HTMLInputElement>(null)
+  const [cropDialogOpen, setCropDialogOpen] = useState(false)
+  const [rawImageUrl, setRawImageUrl] = useState<string | null>(null)
   const imagePreviewUrl = useMemo(
     () => (imageFile ? URL.createObjectURL(imageFile) : null),
     [imageFile],
-  );
+  )
   useEffect(() => {
     return () => {
-      if (imagePreviewUrl) URL.revokeObjectURL(imagePreviewUrl);
-    };
-  }, [imagePreviewUrl]);
+      if (imagePreviewUrl) URL.revokeObjectURL(imagePreviewUrl)
+    }
+  }, [imagePreviewUrl])
   // Transform existing recipe to form values
   const initialValues: RecipeFormValues = existingRecipe
     ? {
         title: existingRecipe.title,
         description: existingRecipe.description,
         rating:
-          existingRecipe.rating === "Not Rated" ? null : existingRecipe.rating,
+          existingRecipe.rating === 'Not Rated' ? null : existingRecipe.rating,
         source: existingRecipe.source,
         servings: existingRecipe.servings,
         steps: existingRecipe.steps,
@@ -128,7 +128,7 @@ export function RecipeForm({
         })),
       }
     : {
-        title: defaultValues?.title ?? "",
+        title: defaultValues?.title ?? '',
         description: defaultValues?.description ?? null,
         rating: defaultValues?.rating ?? null,
         source: defaultValues?.source ?? null,
@@ -137,7 +137,7 @@ export function RecipeForm({
         notes: defaultValues?.notes ?? null,
         flags: defaultValues?.flags ?? [],
         ingredients: defaultValues?.ingredients ?? [],
-      };
+      }
 
   const {
     register,
@@ -147,15 +147,15 @@ export function RecipeForm({
   } = useForm<RecipeFormValues>({
     resolver: zodResolver(recipeFormSchema),
     defaultValues: initialValues,
-  });
+  })
 
   useHotkeys(
-    "mod+enter",
+    'mod+enter',
     () => {
-      if (!isSubmitting) handleSubmit(onSubmit)();
+      if (!isSubmitting) handleSubmit(onSubmit)()
     },
-    { enableOnFormTags: ["INPUT", "TEXTAREA", "SELECT"], preventDefault: true },
-  );
+    { enableOnFormTags: ['INPUT', 'TEXTAREA', 'SELECT'], preventDefault: true },
+  )
 
   const actionButtons = (
     <>
@@ -170,11 +170,11 @@ export function RecipeForm({
         </Button>
       )}
       <Button type="submit" disabled={isSubmitting}>
-        {isSubmitting ? "Saving..." : submitLabel}
+        {isSubmitting ? 'Saving...' : submitLabel}
         {!isSubmitting && <Kbd>⌘↵</Kbd>}
       </Button>
     </>
-  );
+  )
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="@container space-y-6">
@@ -192,7 +192,7 @@ export function RecipeForm({
               id="title"
               autoFocus
               placeholder="Enter recipe title"
-              {...register("title")}
+              {...register('title')}
               aria-invalid={!!errors.title}
             />
             {errors.title && (
@@ -207,7 +207,7 @@ export function RecipeForm({
             <Textarea
               id="description"
               placeholder="Brief description of the recipe"
-              {...register("description")}
+              {...register('description')}
               aria-invalid={!!errors.description}
             />
             {errors.description && (
@@ -248,13 +248,13 @@ export function RecipeForm({
                 accept="image/*"
                 className="hidden"
                 onChange={(e) => {
-                  const file = e.target.files?.[0];
+                  const file = e.target.files?.[0]
                   if (file) {
-                    const url = URL.createObjectURL(file);
-                    setRawImageUrl(url);
-                    setCropDialogOpen(true);
+                    const url = URL.createObjectURL(file)
+                    setRawImageUrl(url)
+                    setCropDialogOpen(true)
                   }
-                  e.target.value = "";
+                  e.target.value = ''
                 }}
               />
               {imageFile && (
@@ -290,16 +290,16 @@ export function RecipeForm({
                   imageSrc={rawImageUrl}
                   open={cropDialogOpen}
                   onOpenChange={(open) => {
-                    setCropDialogOpen(open);
+                    setCropDialogOpen(open)
                     if (!open) {
-                      URL.revokeObjectURL(rawImageUrl);
-                      setRawImageUrl(null);
+                      URL.revokeObjectURL(rawImageUrl)
+                      setRawImageUrl(null)
                     }
                   }}
                   onCropComplete={(croppedFile) => {
-                    onImageFileChange(croppedFile);
-                    if (rawImageUrl) URL.revokeObjectURL(rawImageUrl);
-                    setRawImageUrl(null);
+                    onImageFileChange(croppedFile)
+                    if (rawImageUrl) URL.revokeObjectURL(rawImageUrl)
+                    setRawImageUrl(null)
                   }}
                 />
               )}
@@ -319,10 +319,10 @@ export function RecipeForm({
                     placeholder="Number of servings"
                     min={1}
                     max={999}
-                    value={field.value ?? ""}
+                    value={field.value ?? ''}
                     onChange={(e) => {
-                      const val = e.target.value;
-                      field.onChange(val === "" ? null : parseInt(val, 10));
+                      const val = e.target.value
+                      field.onChange(val === '' ? null : parseInt(val, 10))
                     }}
                     aria-invalid={!!errors.servings}
                   />
@@ -341,7 +341,7 @@ export function RecipeForm({
                 id="source"
                 disabled={!!existingRecipe}
                 placeholder="Recipe source or URL"
-                {...register("source")}
+                {...register('source')}
                 aria-invalid={!!errors.source}
               />
               {errors.source && (
@@ -455,7 +455,7 @@ export function RecipeForm({
               id="steps"
               placeholder="Enter step-by-step instructions..."
               className="min-h-[200px]"
-              {...register("steps")}
+              {...register('steps')}
               aria-invalid={!!errors.steps}
             />
             <p className="text-sm text-muted-foreground">
@@ -474,7 +474,7 @@ export function RecipeForm({
             <Textarea
               id="notes"
               placeholder="Additional notes, tips, or variations..."
-              {...register("notes")}
+              {...register('notes')}
               aria-invalid={!!errors.notes}
             />
             {errors.notes && (
@@ -488,5 +488,5 @@ export function RecipeForm({
 
       <div className="flex justify-end gap-4 @sm:hidden">{actionButtons}</div>
     </form>
-  );
+  )
 }

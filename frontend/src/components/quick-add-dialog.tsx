@@ -2,7 +2,10 @@ import { useState, useEffect, useRef } from 'react'
 import { format } from 'date-fns'
 
 import { useShoppingLists } from '@/domain/shopping-lists/apis/get-shopping-lists'
-import { useCreateShoppingList, useAddMultipleShoppingListItems } from '@/domain/shopping-lists/apis/shopping-list-mutations'
+import {
+  useCreateShoppingList,
+  useAddMultipleShoppingListItems,
+} from '@/domain/shopping-lists/apis/shopping-list-mutations'
 import type { ShoppingListItemForCreationDto } from '@/domain/shopping-lists/types'
 import { useMyDefaultStore } from '@/domain/users/apis/get-my-default-store'
 import { parseText } from '@/domain/recipes/utils/ingredient-parser'
@@ -46,8 +49,11 @@ export function QuickAddDialog({ open, onOpenChange }: QuickAddDialogProps) {
   const [text, setText] = useState('')
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
-  const activeLists = (listsData?.items.filter((l) => l.status === 'Active') ?? [])
-    .sort((a, b) => new Date(b.createdOn).getTime() - new Date(a.createdOn).getTime())
+  const activeLists = (
+    listsData?.items.filter((l) => l.status === 'Active') ?? []
+  ).toSorted(
+    (a, b) => new Date(b.createdOn).getTime() - new Date(a.createdOn).getTime(),
+  )
 
   // Auto-select first active list when dialog opens
   const firstActiveListId = activeLists[0]?.id ?? null
@@ -90,13 +96,15 @@ export function QuickAddDialog({ open, onOpenChange }: QuickAddDialogProps) {
     if (!text.trim()) return
 
     const parsed = parseText(text)
-    const items: ShoppingListItemForCreationDto[] = parsed.map((ingredient) => ({
-      name: ingredient.name ?? ingredient.rawText,
-      quantity: ingredient.amount ?? null,
-      unit: ingredient.unit ?? null,
-      storeSectionId: null,
-      notes: null,
-    }))
+    const items: ShoppingListItemForCreationDto[] = parsed.map(
+      (ingredient) => ({
+        name: ingredient.name ?? ingredient.rawText,
+        quantity: ingredient.amount ?? null,
+        unit: ingredient.unit ?? null,
+        storeSectionId: null,
+        notes: null,
+      }),
+    )
 
     if (items.length === 0) return
 
@@ -124,12 +132,15 @@ export function QuickAddDialog({ open, onOpenChange }: QuickAddDialogProps) {
           setText('')
           onOpenChange(false)
         },
-      }
+      },
     )
   }
 
   const isSubmitting = addItems.isPending || createList.isPending
-  const canSubmit = text.trim() && (selectedListId || (isCreatingNewList && newListName.trim())) && !isSubmitting
+  const canSubmit =
+    text.trim() &&
+    (selectedListId || (isCreatingNewList && newListName.trim())) &&
+    !isSubmitting
 
   return (
     <ResponsiveDialog open={open} onOpenChange={onOpenChange}>
@@ -141,13 +152,20 @@ export function QuickAddDialog({ open, onOpenChange }: QuickAddDialogProps) {
           <div className="space-y-2">
             <Label>Shopping List</Label>
             <Select
-              value={isCreatingNewList ? NEW_LIST_VALUE : (selectedListId ?? '')}
+              value={
+                isCreatingNewList ? NEW_LIST_VALUE : (selectedListId ?? '')
+              }
               onValueChange={handleSelectChange}
             >
               <SelectTrigger>
                 <SelectValue>
                   {(value: string) => {
-                    if (!value) return <span className="text-muted-foreground">Select a list</span>
+                    if (!value)
+                      return (
+                        <span className="text-muted-foreground">
+                          Select a list
+                        </span>
+                      )
                     if (value === NEW_LIST_VALUE) return '+ Create new list'
                     const list = activeLists.find((l) => l.id === value)
                     return list?.name ?? value
@@ -178,11 +196,15 @@ export function QuickAddDialog({ open, onOpenChange }: QuickAddDialogProps) {
             <Label>Items (one per line)</Label>
             <Textarea
               ref={textareaRef}
-              placeholder={"2 cups flour\n1 lb chicken breast\nmilk\n3 eggs"}
+              placeholder={'2 cups flour\n1 lb chicken breast\nmilk\n3 eggs'}
               value={text}
               onChange={(e) => setText(e.target.value)}
               onKeyDown={(e) => {
-                if (e.key === 'Enter' && (e.metaKey || e.ctrlKey) && canSubmit) {
+                if (
+                  e.key === 'Enter' &&
+                  (e.metaKey || e.ctrlKey) &&
+                  canSubmit
+                ) {
                   e.preventDefault()
                   handleSubmit()
                 }
@@ -195,10 +217,7 @@ export function QuickAddDialog({ open, onOpenChange }: QuickAddDialogProps) {
           <Button variant="outline" onClick={() => onOpenChange(false)}>
             Cancel
           </Button>
-          <Button
-            onClick={handleSubmit}
-            disabled={!canSubmit}
-          >
+          <Button onClick={handleSubmit} disabled={!canSubmit}>
             {isSubmitting ? 'Adding...' : 'Add Items'}
             {!isSubmitting && <Kbd>⌘↵</Kbd>}
           </Button>

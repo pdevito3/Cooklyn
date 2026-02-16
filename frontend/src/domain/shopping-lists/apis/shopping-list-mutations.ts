@@ -12,8 +12,13 @@ import type {
 } from '../types'
 import { ShoppingListKeys } from './shopping-list.keys'
 
-export async function createShoppingList(dto: ShoppingListForCreationDto): Promise<ShoppingListDto> {
-  const response = await apiClient.post<ShoppingListDto>('/api/v1/shoppinglists', dto)
+export async function createShoppingList(
+  dto: ShoppingListForCreationDto,
+): Promise<ShoppingListDto> {
+  const response = await apiClient.post<ShoppingListDto>(
+    '/api/v1/shoppinglists',
+    dto,
+  )
   return response.data
 }
 
@@ -27,8 +32,14 @@ export function useCreateShoppingList() {
   })
 }
 
-export async function updateShoppingList(id: string, dto: ShoppingListForUpdateDto): Promise<ShoppingListDto> {
-  const response = await apiClient.put<ShoppingListDto>(`/api/v1/shoppinglists/${id}`, dto)
+export async function updateShoppingList(
+  id: string,
+  dto: ShoppingListForUpdateDto,
+): Promise<ShoppingListDto> {
+  const response = await apiClient.put<ShoppingListDto>(
+    `/api/v1/shoppinglists/${id}`,
+    dto,
+  )
   return response.data
 }
 
@@ -58,8 +69,12 @@ export function useDeleteShoppingList() {
   })
 }
 
-export async function completeShoppingList(id: string): Promise<ShoppingListDto> {
-  const response = await apiClient.post<ShoppingListDto>(`/api/v1/shoppinglists/${id}/complete`)
+export async function completeShoppingList(
+  id: string,
+): Promise<ShoppingListDto> {
+  const response = await apiClient.post<ShoppingListDto>(
+    `/api/v1/shoppinglists/${id}/complete`,
+  )
   return response.data
 }
 
@@ -75,7 +90,9 @@ export function useCompleteShoppingList() {
 }
 
 export async function reopenShoppingList(id: string): Promise<ShoppingListDto> {
-  const response = await apiClient.post<ShoppingListDto>(`/api/v1/shoppinglists/${id}/reopen`)
+  const response = await apiClient.post<ShoppingListDto>(
+    `/api/v1/shoppinglists/${id}/reopen`,
+  )
   return response.data
 }
 
@@ -92,11 +109,11 @@ export function useReopenShoppingList() {
 
 export async function addShoppingListItem(
   shoppingListId: string,
-  dto: ShoppingListItemForCreationDto
+  dto: ShoppingListItemForCreationDto,
 ): Promise<ShoppingListDto> {
   const response = await apiClient.post<ShoppingListDto>(
     `/api/v1/shoppinglists/${shoppingListId}/items`,
-    dto
+    dto,
   )
   return response.data
 }
@@ -104,11 +121,18 @@ export async function addShoppingListItem(
 export function useAddShoppingListItem() {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: ({ shoppingListId, dto }: { shoppingListId: string; dto: ShoppingListItemForCreationDto }) =>
-      addShoppingListItem(shoppingListId, dto),
+    mutationFn: ({
+      shoppingListId,
+      dto,
+    }: {
+      shoppingListId: string
+      dto: ShoppingListItemForCreationDto
+    }) => addShoppingListItem(shoppingListId, dto),
     onSuccess: (_, { shoppingListId }) => {
       queryClient.invalidateQueries({ queryKey: ShoppingListKeys.lists() })
-      queryClient.invalidateQueries({ queryKey: ShoppingListKeys.detail(shoppingListId) })
+      queryClient.invalidateQueries({
+        queryKey: ShoppingListKeys.detail(shoppingListId),
+      })
     },
   })
 }
@@ -116,11 +140,11 @@ export function useAddShoppingListItem() {
 export async function updateShoppingListItem(
   shoppingListId: string,
   itemId: string,
-  dto: ShoppingListItemForUpdateDto
+  dto: ShoppingListItemForUpdateDto,
 ): Promise<ShoppingListItemDto> {
   const response = await apiClient.put<ShoppingListItemDto>(
     `/api/v1/shoppinglists/${shoppingListId}/items/${itemId}`,
-    dto
+    dto,
   )
   return response.data
 }
@@ -138,36 +162,47 @@ export function useUpdateShoppingListItem() {
       dto: ShoppingListItemForUpdateDto
     }) => updateShoppingListItem(shoppingListId, itemId, dto),
     onSuccess: (_, { shoppingListId }) => {
-      queryClient.invalidateQueries({ queryKey: ShoppingListKeys.detail(shoppingListId) })
+      queryClient.invalidateQueries({
+        queryKey: ShoppingListKeys.detail(shoppingListId),
+      })
     },
   })
 }
 
 export async function deleteShoppingListItem(
   shoppingListId: string,
-  itemId: string
+  itemId: string,
 ): Promise<void> {
-  await apiClient.delete(`/api/v1/shoppinglists/${shoppingListId}/items/${itemId}`)
+  await apiClient.delete(
+    `/api/v1/shoppinglists/${shoppingListId}/items/${itemId}`,
+  )
 }
 
 export function useDeleteShoppingListItem() {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: ({ shoppingListId, itemId }: { shoppingListId: string; itemId: string }) =>
-      deleteShoppingListItem(shoppingListId, itemId),
+    mutationFn: ({
+      shoppingListId,
+      itemId,
+    }: {
+      shoppingListId: string
+      itemId: string
+    }) => deleteShoppingListItem(shoppingListId, itemId),
     onSuccess: (_, { shoppingListId }) => {
       queryClient.invalidateQueries({ queryKey: ShoppingListKeys.lists() })
-      queryClient.invalidateQueries({ queryKey: ShoppingListKeys.detail(shoppingListId) })
+      queryClient.invalidateQueries({
+        queryKey: ShoppingListKeys.detail(shoppingListId),
+      })
     },
   })
 }
 
 export async function toggleShoppingListItemCheck(
   shoppingListId: string,
-  itemId: string
+  itemId: string,
 ): Promise<ShoppingListDto> {
   const response = await apiClient.post<ShoppingListDto>(
-    `/api/v1/shoppinglists/${shoppingListId}/items/${itemId}/toggle-check`
+    `/api/v1/shoppinglists/${shoppingListId}/items/${itemId}/toggle-check`,
   )
   return response.data
 }
@@ -175,18 +210,27 @@ export async function toggleShoppingListItemCheck(
 export function useToggleShoppingListItemCheck() {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: ({ shoppingListId, itemId }: { shoppingListId: string; itemId: string }) =>
-      toggleShoppingListItemCheck(shoppingListId, itemId),
+    mutationFn: ({
+      shoppingListId,
+      itemId,
+    }: {
+      shoppingListId: string
+      itemId: string
+    }) => toggleShoppingListItemCheck(shoppingListId, itemId),
     onSuccess: (_, { shoppingListId }) => {
-      queryClient.invalidateQueries({ queryKey: ShoppingListKeys.detail(shoppingListId) })
+      queryClient.invalidateQueries({
+        queryKey: ShoppingListKeys.detail(shoppingListId),
+      })
       queryClient.invalidateQueries({ queryKey: ShoppingListKeys.lists() })
     },
   })
 }
 
-export async function removeCheckedItems(shoppingListId: string): Promise<ShoppingListDto> {
+export async function removeCheckedItems(
+  shoppingListId: string,
+): Promise<ShoppingListDto> {
   const response = await apiClient.post<ShoppingListDto>(
-    `/api/v1/shoppinglists/${shoppingListId}/remove-checked`
+    `/api/v1/shoppinglists/${shoppingListId}/remove-checked`,
   )
   return response.data
 }
@@ -197,18 +241,20 @@ export function useRemoveCheckedItems() {
     mutationFn: removeCheckedItems,
     onSuccess: (_, shoppingListId) => {
       queryClient.invalidateQueries({ queryKey: ShoppingListKeys.lists() })
-      queryClient.invalidateQueries({ queryKey: ShoppingListKeys.detail(shoppingListId) })
+      queryClient.invalidateQueries({
+        queryKey: ShoppingListKeys.detail(shoppingListId),
+      })
     },
   })
 }
 
 export async function addItemsFromRecipe(
   shoppingListId: string,
-  dto: AddItemsFromRecipeDto
+  dto: AddItemsFromRecipeDto,
 ): Promise<ShoppingListDto> {
   const response = await apiClient.post<ShoppingListDto>(
     `/api/v1/shoppinglists/${shoppingListId}/add-from-recipe`,
-    dto
+    dto,
   )
   return response.data
 }
@@ -216,22 +262,29 @@ export async function addItemsFromRecipe(
 export function useAddItemsFromRecipe() {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: ({ shoppingListId, dto }: { shoppingListId: string; dto: AddItemsFromRecipeDto }) =>
-      addItemsFromRecipe(shoppingListId, dto),
+    mutationFn: ({
+      shoppingListId,
+      dto,
+    }: {
+      shoppingListId: string
+      dto: AddItemsFromRecipeDto
+    }) => addItemsFromRecipe(shoppingListId, dto),
     onSuccess: (_, { shoppingListId }) => {
       queryClient.invalidateQueries({ queryKey: ShoppingListKeys.lists() })
-      queryClient.invalidateQueries({ queryKey: ShoppingListKeys.detail(shoppingListId) })
+      queryClient.invalidateQueries({
+        queryKey: ShoppingListKeys.detail(shoppingListId),
+      })
     },
   })
 }
 
 export async function addItemsFromCollection(
   shoppingListId: string,
-  dto: AddItemsFromCollectionDto
+  dto: AddItemsFromCollectionDto,
 ): Promise<ShoppingListDto> {
   const response = await apiClient.post<ShoppingListDto>(
     `/api/v1/shoppinglists/${shoppingListId}/add-from-collection`,
-    dto
+    dto,
   )
   return response.data
 }
@@ -239,11 +292,18 @@ export async function addItemsFromCollection(
 export function useAddItemsFromCollection() {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: ({ shoppingListId, dto }: { shoppingListId: string; dto: AddItemsFromCollectionDto }) =>
-      addItemsFromCollection(shoppingListId, dto),
+    mutationFn: ({
+      shoppingListId,
+      dto,
+    }: {
+      shoppingListId: string
+      dto: AddItemsFromCollectionDto
+    }) => addItemsFromCollection(shoppingListId, dto),
     onSuccess: (_, { shoppingListId }) => {
       queryClient.invalidateQueries({ queryKey: ShoppingListKeys.lists() })
-      queryClient.invalidateQueries({ queryKey: ShoppingListKeys.detail(shoppingListId) })
+      queryClient.invalidateQueries({
+        queryKey: ShoppingListKeys.detail(shoppingListId),
+      })
     },
   })
 }
@@ -264,7 +324,9 @@ export function useAddMultipleShoppingListItems() {
     },
     onSuccess: (_, { shoppingListId }) => {
       queryClient.invalidateQueries({ queryKey: ShoppingListKeys.lists() })
-      queryClient.invalidateQueries({ queryKey: ShoppingListKeys.detail(shoppingListId) })
+      queryClient.invalidateQueries({
+        queryKey: ShoppingListKeys.detail(shoppingListId),
+      })
     },
   })
 }

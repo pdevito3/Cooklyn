@@ -1,12 +1,15 @@
 {
   "name": "Cooklyn-frontend",
-  "private": true,
   "version": "0.0.0",
+  "private": true,
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "lint": "eslint .",
+    "lint": "oxlint .",
+    "lint:fix": "oxlint --fix .",
+    "format": "oxfmt --check .",
+    "format:fix": "oxfmt .",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -44,22 +47,18 @@
     "zod": "^4.3.4"
   },
   "devDependencies": {
-    "@eslint/js": "^9.39.1",
     "@tailwindcss/vite": "^4.1.18",
     "@tanstack/router-plugin": "^1.142.0",
     "@types/node": "^24.10.1",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^5.1.1",
-    "eslint": "^9.39.1",
-    "eslint-plugin-react-hooks": "^5.2.0",
-    "eslint-plugin-react-refresh": "^0.4.24",
-    "globals": "^16.5.0",
+    "oxfmt": "^0.33.0",
+    "oxlint": "^1.48.0",
     "playwright": "^1.57.0",
     "tailwindcss": "^4.1.18",
     "tsx": "^4.21.0",
     "typescript": "~5.9.3",
-    "typescript-eslint": "^8.48.1",
     "vite": "^7.2.6",
     "vite-plugin-react-click-to-component": "^4.2.0",
     "vite-plugin-svgr": "^4.5.0"

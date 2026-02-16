@@ -50,12 +50,19 @@ function ShoppingListEditPage() {
     updateList.mutate(
       { id, dto: { name, storeId } },
       {
-        onSuccess: () => navigate({ to: '/shopping-lists/$id', params: { id } }),
-      }
+        onSuccess: () =>
+          navigate({ to: '/shopping-lists/$id', params: { id } }),
+      },
     )
   }
 
-  useHotkeys('mod+enter', () => { handleSave() }, { enableOnFormTags: ['INPUT', 'TEXTAREA', 'SELECT'], preventDefault: true })
+  useHotkeys(
+    'mod+enter',
+    () => {
+      handleSave()
+    },
+    { enableOnFormTags: ['INPUT', 'TEXTAREA', 'SELECT'], preventDefault: true },
+  )
 
   if (isLoading) {
     return (
@@ -76,11 +83,15 @@ function ShoppingListEditPage() {
         <Button
           variant="ghost"
           size="icon"
-          onClick={() => navigate({ to: '/shopping-lists/$id', params: { id } })}
+          onClick={() =>
+            navigate({ to: '/shopping-lists/$id', params: { id } })
+          }
         >
           <HugeiconsIcon icon={ArrowLeft02Icon} className="h-4 w-4" />
         </Button>
-        <h1 className="text-3xl font-bold tracking-tight">Edit Shopping List</h1>
+        <h1 className="text-3xl font-bold tracking-tight">
+          Edit Shopping List
+        </h1>
       </div>
 
       <Card>
@@ -107,9 +118,13 @@ function ShoppingListEditPage() {
                 <SelectValue placeholder="No store">
                   {(value: unknown) => {
                     if (value === null || value === undefined) {
-                      return <span className="text-muted-foreground">No store</span>
+                      return (
+                        <span className="text-muted-foreground">No store</span>
+                      )
                     }
-                    return stores.find((s) => s.id === value)?.name ?? String(value)
+                    return (
+                      stores.find((s) => s.id === value)?.name ?? String(value)
+                    )
                   }}
                 </SelectValue>
               </SelectTrigger>
@@ -123,13 +138,18 @@ function ShoppingListEditPage() {
             </Select>
           </div>
           <div className="flex gap-2">
-            <Button onClick={handleSave} disabled={!name.trim() || updateList.isPending}>
+            <Button
+              onClick={handleSave}
+              disabled={!name.trim() || updateList.isPending}
+            >
               {updateList.isPending ? 'Saving...' : 'Save'}
               {!updateList.isPending && <Kbd>⌘↵</Kbd>}
             </Button>
             <Button
               variant="outline"
-              onClick={() => navigate({ to: '/shopping-lists/$id', params: { id } })}
+              onClick={() =>
+                navigate({ to: '/shopping-lists/$id', params: { id } })
+              }
             >
               Cancel
             </Button>

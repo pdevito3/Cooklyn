@@ -61,7 +61,7 @@ export function TextFilterModal({
   const [value, setValue] = useState((initialFilter?.value as string) || '')
   const [operator, setOperator] = useState<OperatorType>(initialBaseOperator)
   const [caseSensitive, setCaseSensitive] = useState(
-    initialFilter ? !initialIsCaseInsensitive : false
+    initialFilter ? !initialIsCaseInsensitive : false,
   )
   const inputRef = useRef<HTMLInputElement>(null)
 
@@ -119,10 +119,18 @@ export function TextFilterModal({
             <Label>Operator</Label>
             <DropdownMenu>
               <DropdownMenuTrigger
-                render={<Button variant="outline" className="w-full justify-between" />}
+                render={
+                  <Button
+                    variant="outline"
+                    className="w-full justify-between"
+                  />
+                }
               >
                 {selectedOperatorLabel}
-                <HugeiconsIcon icon={ArrowDown01Icon} className="size-4 opacity-50" />
+                <HugeiconsIcon
+                  icon={ArrowDown01Icon}
+                  className="size-4 opacity-50"
+                />
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-full">
                 {availableOperators.map((op) => (
@@ -153,10 +161,7 @@ export function TextFilterModal({
             />
           </div>
 
-          <Checkbox
-            isSelected={caseSensitive}
-            onChange={setCaseSensitive}
-          >
+          <Checkbox isSelected={caseSensitive} onChange={setCaseSensitive}>
             Case sensitive
           </Checkbox>
         </div>

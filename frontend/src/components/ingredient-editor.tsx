@@ -1,5 +1,10 @@
 import { useState, useCallback } from 'react'
-import { ArrowUp02Icon, ArrowDown02Icon, Delete02Icon, InformationCircleIcon } from '@hugeicons/core-free-icons'
+import {
+  ArrowUp02Icon,
+  ArrowDown02Icon,
+  Delete02Icon,
+  InformationCircleIcon,
+} from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
 import { Dialog as DialogPrimitive } from '@base-ui/react/dialog'
 
@@ -7,8 +12,14 @@ import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { formatUnit, type IngredientForCreationDto } from '@/domain/recipes/types'
-import { parseText, ingredientsToText } from '@/domain/recipes/utils/ingredient-parser'
+import {
+  formatUnit,
+  type IngredientForCreationDto,
+} from '@/domain/recipes/types'
+import {
+  parseText,
+  ingredientsToText,
+} from '@/domain/recipes/utils/ingredient-parser'
 import { cn } from '@/lib/utils'
 
 interface IngredientEditorProps {
@@ -20,7 +31,7 @@ export function IngredientEditor({ value, onChange }: IngredientEditorProps) {
   const [mode, setMode] = useState<'text' | 'structured'>('text')
   const [textTab, setTextTab] = useState<'write' | 'preview'>('write')
   const [rawText, setRawText] = useState(() =>
-    value.length > 0 ? ingredientsToText(value) : ''
+    value.length > 0 ? ingredientsToText(value) : '',
   )
 
   const handleTextChange = useCallback(
@@ -29,7 +40,7 @@ export function IngredientEditor({ value, onChange }: IngredientEditorProps) {
       const parsed = parseText(text)
       onChange(parsed)
     },
-    [onChange]
+    [onChange],
   )
 
   const handleRemoveIngredient = useCallback(
@@ -40,7 +51,7 @@ export function IngredientEditor({ value, onChange }: IngredientEditorProps) {
       onChange(reordered)
       setRawText(ingredientsToText(reordered))
     },
-    [value, onChange]
+    [value, onChange],
   )
 
   const handleMoveIngredient = useCallback(
@@ -55,11 +66,15 @@ export function IngredientEditor({ value, onChange }: IngredientEditorProps) {
       onChange(reordered)
       setRawText(ingredientsToText(reordered))
     },
-    [value, onChange]
+    [value, onChange],
   )
 
   const handleStructuredFieldChange = useCallback(
-    (index: number, field: keyof IngredientForCreationDto, fieldValue: string) => {
+    (
+      index: number,
+      field: keyof IngredientForCreationDto,
+      fieldValue: string,
+    ) => {
       const updated = [...value]
       const item = { ...updated[index] }
 
@@ -86,7 +101,7 @@ export function IngredientEditor({ value, onChange }: IngredientEditorProps) {
       onChange(updated)
       setRawText(ingredientsToText(updated))
     },
-    [value, onChange]
+    [value, onChange],
   )
 
   const [helpOpen, setHelpOpen] = useState(false)
@@ -97,10 +112,11 @@ export function IngredientEditor({ value, onChange }: IngredientEditorProps) {
         <div className="flex items-center gap-2">
           <Label>Ingredients</Label>
           <DialogPrimitive.Root open={helpOpen} onOpenChange={setHelpOpen}>
-            <DialogPrimitive.Trigger
-              className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
-            >
-              <HugeiconsIcon icon={InformationCircleIcon} className="h-3.5 w-3.5" />
+            <DialogPrimitive.Trigger className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors">
+              <HugeiconsIcon
+                icon={InformationCircleIcon}
+                className="h-3.5 w-3.5"
+              />
               Formatting help
             </DialogPrimitive.Trigger>
             <DialogPrimitive.Portal>
@@ -119,7 +135,7 @@ export function IngredientEditor({ value, onChange }: IngredientEditorProps) {
                       Enter one ingredient per line as: amount unit name
                     </p>
                     <pre className="mt-1.5 rounded-md bg-muted/50 p-2 font-mono text-xs">
-{`2 cups flour
+                      {`2 cups flour
 1 tsp salt
 3 large eggs`}
                     </pre>
@@ -130,7 +146,7 @@ export function IngredientEditor({ value, onChange }: IngredientEditorProps) {
                       Use slashes for fractions, including mixed numbers.
                     </p>
                     <pre className="mt-1.5 rounded-md bg-muted/50 p-2 font-mono text-xs">
-{`1/2 cup sugar
+                      {`1/2 cup sugar
 1 1/2 tsp baking powder
 3/4 lb ground beef`}
                     </pre>
@@ -138,10 +154,11 @@ export function IngredientEditor({ value, onChange }: IngredientEditorProps) {
                   <div>
                     <h4 className="font-medium">Groups</h4>
                     <p className="mt-1 text-muted-foreground">
-                      End a line with a colon to create a group header. All ingredients after it belong to that group.
+                      End a line with a colon to create a group header. All
+                      ingredients after it belong to that group.
                     </p>
                     <pre className="mt-1.5 rounded-md bg-muted/50 p-2 font-mono text-xs">
-{`Biscuit:
+                      {`Biscuit:
 2 cups flour
 1 T butter
 
@@ -156,22 +173,46 @@ Gravy:
                       Common abbreviations are recognized automatically.
                     </p>
                     <div className="mt-1.5 grid grid-cols-2 gap-x-4 gap-y-0.5 text-xs text-muted-foreground">
-                      <span><code className="font-mono">tsp</code> = Teaspoon</span>
-                      <span><code className="font-mono">tbsp</code> = Tablespoon</span>
-                      <span><code className="font-mono">c</code> = Cup</span>
-                      <span><code className="font-mono">oz</code> = Ounce</span>
-                      <span><code className="font-mono">lb</code> = Pound</span>
-                      <span><code className="font-mono">g</code> = Gram</span>
-                      <span><code className="font-mono">kg</code> = Kilogram</span>
-                      <span><code className="font-mono">ml</code> = Milliliter</span>
-                      <span><code className="font-mono">T</code> = Tablespoon</span>
-                      <span><code className="font-mono">t</code> = Teaspoon</span>
+                      <span>
+                        <code className="font-mono">tsp</code> = Teaspoon
+                      </span>
+                      <span>
+                        <code className="font-mono">tbsp</code> = Tablespoon
+                      </span>
+                      <span>
+                        <code className="font-mono">c</code> = Cup
+                      </span>
+                      <span>
+                        <code className="font-mono">oz</code> = Ounce
+                      </span>
+                      <span>
+                        <code className="font-mono">lb</code> = Pound
+                      </span>
+                      <span>
+                        <code className="font-mono">g</code> = Gram
+                      </span>
+                      <span>
+                        <code className="font-mono">kg</code> = Kilogram
+                      </span>
+                      <span>
+                        <code className="font-mono">ml</code> = Milliliter
+                      </span>
+                      <span>
+                        <code className="font-mono">T</code> = Tablespoon
+                      </span>
+                      <span>
+                        <code className="font-mono">t</code> = Teaspoon
+                      </span>
                     </div>
                   </div>
                 </div>
                 <div className="mt-5 flex justify-end">
                   <DialogPrimitive.Close
-                    render={<Button variant="outline" size="sm">Close</Button>}
+                    render={
+                      <Button variant="outline" size="sm">
+                        Close
+                      </Button>
+                    }
                   />
                 </div>
               </DialogPrimitive.Popup>
@@ -197,7 +238,7 @@ Gravy:
                 'px-3 py-1.5 text-sm font-medium transition-colors',
                 textTab === 'write'
                   ? 'border-b-2 border-primary text-foreground'
-                  : 'text-muted-foreground hover:text-foreground'
+                  : 'text-muted-foreground hover:text-foreground',
               )}
               onClick={() => setTextTab('write')}
             >
@@ -209,7 +250,7 @@ Gravy:
                 'px-3 py-1.5 text-sm font-medium transition-colors',
                 textTab === 'preview'
                   ? 'border-b-2 border-primary text-foreground'
-                  : 'text-muted-foreground hover:text-foreground'
+                  : 'text-muted-foreground hover:text-foreground',
               )}
               onClick={() => setTextTab('preview')}
             >
@@ -234,8 +275,11 @@ Gravy:
                 {(() => {
                   let lastGroup: string | null = null
                   return value.map((ingredient, i) => {
-                    const showGroupHeader = ingredient.groupName !== lastGroup && ingredient.groupName !== null
-                    const isFirstGroup = lastGroup === null && ingredient.groupName !== null
+                    const showGroupHeader =
+                      ingredient.groupName !== lastGroup &&
+                      ingredient.groupName !== null
+                    const isFirstGroup =
+                      lastGroup === null && ingredient.groupName !== null
                     lastGroup = ingredient.groupName
                     return (
                       <div key={i}>
@@ -243,7 +287,7 @@ Gravy:
                           <div
                             className={cn(
                               'mb-1 border-b border-muted pb-0.5 text-xs font-bold uppercase tracking-wide text-foreground/70',
-                              isFirstGroup ? 'mt-0' : 'mt-3'
+                              isFirstGroup ? 'mt-0' : 'mt-3',
                             )}
                           >
                             {ingredient.groupName}
@@ -254,17 +298,23 @@ Gravy:
                             {i + 1}.
                           </span>
                           {ingredient.amountText && (
-                            <span className="font-medium">{ingredient.amountText}</span>
-                          )}
-                          {ingredient.unit && (
-                            <span className="text-muted-foreground">{formatUnit(ingredient.unit, ingredient.amount)}</span>
-                          )}
-                          {ingredient.name && <span>{ingredient.name}</span>}
-                          {!ingredient.amountText && !ingredient.unit && !ingredient.name && (
-                            <span className="italic text-muted-foreground">
-                              {ingredient.rawText}
+                            <span className="font-medium">
+                              {ingredient.amountText}
                             </span>
                           )}
+                          {ingredient.unit && (
+                            <span className="text-muted-foreground">
+                              {formatUnit(ingredient.unit, ingredient.amount)}
+                            </span>
+                          )}
+                          {ingredient.name && <span>{ingredient.name}</span>}
+                          {!ingredient.amountText &&
+                            !ingredient.unit &&
+                            !ingredient.name && (
+                              <span className="italic text-muted-foreground">
+                                {ingredient.rawText}
+                              </span>
+                            )}
                         </div>
                       </div>
                     )
@@ -273,7 +323,8 @@ Gravy:
               </div>
             ) : (
               <p className="py-8 text-center text-sm text-muted-foreground">
-                Nothing to preview yet. Switch to Write and add some ingredients.
+                Nothing to preview yet. Switch to Write and add some
+                ingredients.
               </p>
             )}
           </div>
@@ -317,7 +368,11 @@ Gravy:
                     placeholder="Amount"
                     value={ingredient.amountText ?? ''}
                     onChange={(e) =>
-                      handleStructuredFieldChange(index, 'amountText', e.target.value)
+                      handleStructuredFieldChange(
+                        index,
+                        'amountText',
+                        e.target.value,
+                      )
                     }
                   />
                   <Input

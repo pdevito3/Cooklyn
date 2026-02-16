@@ -319,8 +319,12 @@ export const OPERATORS: Record<OperatorType, OperatorMetadata> = {
 /**
  * Get operators available for a specific control type
  */
-export function getOperatorsForControlType(controlType: ControlType): OperatorMetadata[] {
-  return Object.values(OPERATORS).filter((op) => op.appliesTo.includes(controlType))
+export function getOperatorsForControlType(
+  controlType: ControlType,
+): OperatorMetadata[] {
+  return Object.values(OPERATORS).filter((op) =>
+    op.appliesTo.includes(controlType),
+  )
 }
 
 /**
@@ -351,6 +355,8 @@ export function getOperatorLabel(operator: OperatorType): string {
 /**
  * Check if an operator requires case-sensitivity handling
  */
-export function operatorSupportsCaseSensitivity(operator: OperatorType): boolean {
+export function operatorSupportsCaseSensitivity(
+  operator: OperatorType,
+): boolean {
   return OPERATORS[operator]?.requiresCaseSensitive === true
 }

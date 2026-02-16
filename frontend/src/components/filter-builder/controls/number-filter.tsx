@@ -11,7 +11,11 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import type { OperatorType, Filter } from '../types'
-import { getOperatorsForControlType, getOperatorLabel, Operators } from '../utils/operators'
+import {
+  getOperatorsForControlType,
+  getOperatorLabel,
+  Operators,
+} from '../utils/operators'
 
 interface NumberFilterProps {
   propertyKey: string
@@ -35,7 +39,9 @@ export function NumberFilter({
 
   const [value, setValue] = useState(initialFilter?.value?.toString() || '')
   const [operator, setOperator] = useState<OperatorType>(
-    initialFilter?.operator || availableOperators[0]?.symbol || Operators.COUNT_EQUALS
+    initialFilter?.operator ||
+      availableOperators[0]?.symbol ||
+      Operators.COUNT_EQUALS,
   )
 
   const handleSubmit = () => {
@@ -62,10 +68,19 @@ export function NumberFilter({
         <Label>Operator</Label>
         <DropdownMenu>
           <DropdownMenuTrigger
-            render={<Button variant="outline" className="w-full justify-between" size="sm" />}
+            render={
+              <Button
+                variant="outline"
+                className="w-full justify-between"
+                size="sm"
+              />
+            }
           >
             {selectedOperatorLabel}
-            <HugeiconsIcon icon={ArrowDown01Icon} className="size-4 opacity-50" />
+            <HugeiconsIcon
+              icon={ArrowDown01Icon}
+              className="size-4 opacity-50"
+            />
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-full">
             {availableOperators.map((op) => (

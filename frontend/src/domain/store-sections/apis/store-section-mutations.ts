@@ -1,10 +1,19 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { apiClient } from '@/lib/api-client'
-import type { StoreSectionDto, StoreSectionForCreationDto, StoreSectionForUpdateDto } from '../types'
+import type {
+  StoreSectionDto,
+  StoreSectionForCreationDto,
+  StoreSectionForUpdateDto,
+} from '../types'
 import { StoreSectionKeys } from './store-section.keys'
 
-export async function createStoreSection(dto: StoreSectionForCreationDto): Promise<StoreSectionDto> {
-  const response = await apiClient.post<StoreSectionDto>('/api/v1/storesections', dto)
+export async function createStoreSection(
+  dto: StoreSectionForCreationDto,
+): Promise<StoreSectionDto> {
+  const response = await apiClient.post<StoreSectionDto>(
+    '/api/v1/storesections',
+    dto,
+  )
   return response.data
 }
 
@@ -18,8 +27,14 @@ export function useCreateStoreSection() {
   })
 }
 
-export async function updateStoreSection(id: string, dto: StoreSectionForUpdateDto): Promise<StoreSectionDto> {
-  const response = await apiClient.put<StoreSectionDto>(`/api/v1/storesections/${id}`, dto)
+export async function updateStoreSection(
+  id: string,
+  dto: StoreSectionForUpdateDto,
+): Promise<StoreSectionDto> {
+  const response = await apiClient.put<StoreSectionDto>(
+    `/api/v1/storesections/${id}`,
+    dto,
+  )
   return response.data
 }
 

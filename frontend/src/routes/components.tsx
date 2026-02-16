@@ -1,8 +1,20 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useState } from 'react'
-import { today, getLocalTimeZone, type DateValue } from '@internationalized/date'
-import { Notification03Icon, Calendar03Icon, ArrowUpDownIcon, Mail01Icon, Add01Icon, Settings01Icon, UserIcon } from "@hugeicons/core-free-icons"
-import { HugeiconsIcon } from "@hugeicons/react"
+import {
+  today,
+  getLocalTimeZone,
+  type DateValue,
+} from '@internationalized/date'
+import {
+  Notification03Icon,
+  Calendar03Icon,
+  ArrowUpDownIcon,
+  Mail01Icon,
+  Add01Icon,
+  Settings01Icon,
+  UserIcon,
+} from '@hugeicons/core-free-icons'
+import { HugeiconsIcon } from '@hugeicons/react'
 
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -11,7 +23,14 @@ import { Label } from '@/components/ui/label'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Separator } from '@/components/ui/separator'
 import { Skeleton } from '@/components/ui/skeleton'
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import {
   DropdownMenu,
@@ -29,10 +48,23 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet'
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover'
 import { JollyCalendar } from '@/components/ui/calendar'
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@/components/ui/collapsible'
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -84,7 +116,10 @@ import {
   AutocompleteEmpty,
   useAutocompleteFilter,
 } from '@/components/ui/autocomplete'
-import { MultiSelect, type MultiSelectOption } from '@/components/ui/multi-select'
+import {
+  MultiSelect,
+  type MultiSelectOption,
+} from '@/components/ui/multi-select'
 import {
   ResponsiveDialog,
   ResponsiveDialogContent,
@@ -137,20 +172,29 @@ const countries = [
 function ComponentsPage() {
   const [date, setDate] = useState<DateValue>(today(getLocalTimeZone()))
   const [isCollapsibleOpen, setIsCollapsibleOpen] = useState(false)
-  const [selectedFramework, setSelectedFramework] = useState<Framework | null>(null)
-  const [selectedLanguages, setSelectedLanguages] = useState<MultiSelectOption[]>([])
+  const [selectedFramework, setSelectedFramework] = useState<Framework | null>(
+    null,
+  )
+  const [selectedLanguages, setSelectedLanguages] = useState<
+    MultiSelectOption[]
+  >([])
   const [comboboxValue, setComboboxValue] = useState<Framework | null>(null)
   const [autocompleteValue, setAutocompleteValue] = useState('')
   const { contains } = useAutocompleteFilter({ sensitivity: 'base' })
 
   const filteredCountries = countries.filter((country) =>
-    contains(country.label, autocompleteValue)
+    contains(country.label, autocompleteValue),
   )
 
   const tableData = [
     { id: 1, name: 'John Doe', email: 'john@example.com', status: 'Active' },
     { id: 2, name: 'Jane Smith', email: 'jane@example.com', status: 'Pending' },
-    { id: 3, name: 'Bob Johnson', email: 'bob@example.com', status: 'Inactive' },
+    {
+      id: 3,
+      name: 'Bob Johnson',
+      email: 'bob@example.com',
+      status: 'Inactive',
+    },
   ]
 
   return (
@@ -177,7 +221,9 @@ function ComponentsPage() {
                     </BreadcrumbItem>
                     <BreadcrumbSeparator />
                     <BreadcrumbItem>
-                      <BreadcrumbLink href="/components">Components</BreadcrumbLink>
+                      <BreadcrumbLink href="/components">
+                        Components
+                      </BreadcrumbLink>
                     </BreadcrumbItem>
                     <BreadcrumbSeparator />
                     <BreadcrumbItem>
@@ -207,7 +253,9 @@ function ComponentsPage() {
                   <Button size="sm">Small</Button>
                   <Button size="default">Default</Button>
                   <Button size="lg">Large</Button>
-                  <Button size="icon"><HugeiconsIcon icon={Add01Icon} className="h-4 w-4" /></Button>
+                  <Button size="icon">
+                    <HugeiconsIcon icon={Add01Icon} className="h-4 w-4" />
+                  </Button>
                 </div>
               </CardContent>
             </Card>
@@ -236,7 +284,11 @@ function ComponentsPage() {
                 <div className="grid gap-4 max-w-sm">
                   <div className="space-y-2">
                     <Label htmlFor="email">Email</Label>
-                    <Input id="email" type="email" placeholder="Enter your email" />
+                    <Input
+                      id="email"
+                      type="email"
+                      placeholder="Enter your email"
+                    />
                   </div>
                   <Checkbox>Accept terms and conditions</Checkbox>
                 </div>
@@ -246,7 +298,9 @@ function ComponentsPage() {
 
           {/* Select, Combobox & Autocomplete */}
           <section className="mb-10">
-            <h2 className="text-2xl font-semibold mb-4">Select, Combobox & Autocomplete</h2>
+            <h2 className="text-2xl font-semibold mb-4">
+              Select, Combobox & Autocomplete
+            </h2>
             <Card>
               <CardContent className="pt-6">
                 <div className="grid gap-6 max-w-sm">
@@ -263,7 +317,9 @@ function ComponentsPage() {
                       </SelectTrigger>
                       <SelectContent>
                         <SelectGroup>
-                          <SelectGroupLabel>Popular Frameworks</SelectGroupLabel>
+                          <SelectGroupLabel>
+                            Popular Frameworks
+                          </SelectGroupLabel>
                           {frameworks.slice(0, 4).map((framework) => (
                             <SelectItem key={framework.value} value={framework}>
                               <SelectItemText>{framework.label}</SelectItemText>
@@ -309,8 +365,13 @@ function ComponentsPage() {
                             <ComboboxEmpty>No framework found.</ComboboxEmpty>
                             <ComboboxList>
                               {(framework: Framework) => (
-                                <ComboboxItem key={framework.value} value={framework}>
-                                  <span className="flex-1">{framework.label}</span>
+                                <ComboboxItem
+                                  key={framework.value}
+                                  value={framework}
+                                >
+                                  <span className="flex-1">
+                                    {framework.label}
+                                  </span>
                                   <ComboboxItemIndicator />
                                 </ComboboxItem>
                               )}
@@ -343,10 +404,15 @@ function ComponentsPage() {
                       <AutocompletePortal>
                         <AutocompletePositioner sideOffset={4}>
                           <AutocompletePopup>
-                            <AutocompleteEmpty>No countries found.</AutocompleteEmpty>
+                            <AutocompleteEmpty>
+                              No countries found.
+                            </AutocompleteEmpty>
                             <AutocompleteList>
-                              {(country: typeof countries[number]) => (
-                                <AutocompleteItem key={country.value} value={country}>
+                              {(country: (typeof countries)[number]) => (
+                                <AutocompleteItem
+                                  key={country.value}
+                                  value={country}
+                                >
                                   {country.label}
                                 </AutocompleteItem>
                               )}
@@ -373,7 +439,8 @@ function ComponentsPage() {
                     />
                     {selectedLanguages.length > 0 && (
                       <p className="text-sm text-muted-foreground">
-                        Selected: {selectedLanguages.map(l => l.label).join(', ')}
+                        Selected:{' '}
+                        {selectedLanguages.map((l) => l.label).join(', ')}
                       </p>
                     )}
                   </div>
@@ -430,12 +497,16 @@ function ComponentsPage() {
               <CardContent className="pt-6">
                 <div className="flex flex-wrap gap-4">
                   <ResponsiveDialog>
-                    <ResponsiveDialogTrigger render={<Button variant="outline" />}>
+                    <ResponsiveDialogTrigger
+                      render={<Button variant="outline" />}
+                    >
                       Open Dialog
                     </ResponsiveDialogTrigger>
                     <ResponsiveDialogContent>
                       <ResponsiveDialogHeader>
-                        <ResponsiveDialogTitle>Dialog Title</ResponsiveDialogTitle>
+                        <ResponsiveDialogTitle>
+                          Dialog Title
+                        </ResponsiveDialogTitle>
                         <ResponsiveDialogDescription>
                           Centered on desktop, slides up from bottom on mobile.
                         </ResponsiveDialogDescription>
@@ -472,28 +543,42 @@ function ComponentsPage() {
 
           {/* Dropdown & Popover */}
           <section className="mb-10">
-            <h2 className="text-2xl font-semibold mb-4">Dropdown Menu & Popover</h2>
+            <h2 className="text-2xl font-semibold mb-4">
+              Dropdown Menu & Popover
+            </h2>
             <Card>
               <CardContent className="pt-6">
                 <div className="flex flex-wrap gap-4">
                   <DropdownMenu>
                     <DropdownMenuTrigger render={<Button variant="outline" />}>
-                      <HugeiconsIcon icon={Settings01Icon} className="mr-2 h-4 w-4" />
+                      <HugeiconsIcon
+                        icon={Settings01Icon}
+                        className="mr-2 h-4 w-4"
+                      />
                       Options
                     </DropdownMenuTrigger>
                     <DropdownMenuContent>
                       <DropdownMenuLabel>My Account</DropdownMenuLabel>
                       <DropdownMenuSeparator />
                       <DropdownMenuItem>
-                        <HugeiconsIcon icon={UserIcon} className="mr-2 h-4 w-4" />
+                        <HugeiconsIcon
+                          icon={UserIcon}
+                          className="mr-2 h-4 w-4"
+                        />
                         Profile
                       </DropdownMenuItem>
                       <DropdownMenuItem>
-                        <HugeiconsIcon icon={Mail01Icon} className="mr-2 h-4 w-4" />
+                        <HugeiconsIcon
+                          icon={Mail01Icon}
+                          className="mr-2 h-4 w-4"
+                        />
                         Messages
                       </DropdownMenuItem>
                       <DropdownMenuItem>
-                        <HugeiconsIcon icon={Settings01Icon} className="mr-2 h-4 w-4" />
+                        <HugeiconsIcon
+                          icon={Settings01Icon}
+                          className="mr-2 h-4 w-4"
+                        />
                         Settings
                       </DropdownMenuItem>
                     </DropdownMenuContent>
@@ -501,20 +586,25 @@ function ComponentsPage() {
 
                   <Popover>
                     <PopoverTrigger render={<Button variant="outline" />}>
-                      <HugeiconsIcon icon={Calendar03Icon} className="mr-2 h-4 w-4" />
+                      <HugeiconsIcon
+                        icon={Calendar03Icon}
+                        className="mr-2 h-4 w-4"
+                      />
                       Pick a date
                     </PopoverTrigger>
                     <PopoverContent className="w-auto p-3" align="start">
-                      <JollyCalendar
-                        value={date}
-                        onChange={setDate}
-                      />
+                      <JollyCalendar value={date} onChange={setDate} />
                     </PopoverContent>
                   </Popover>
 
                   <Tooltip>
-                    <TooltipTrigger render={<Button variant="outline" size="icon" />}>
-                      <HugeiconsIcon icon={Notification03Icon} className="h-4 w-4" />
+                    <TooltipTrigger
+                      render={<Button variant="outline" size="icon" />}
+                    >
+                      <HugeiconsIcon
+                        icon={Notification03Icon}
+                        className="h-4 w-4"
+                      />
                     </TooltipTrigger>
                     <TooltipContent>
                       <p>You have 3 notifications</p>
@@ -530,13 +620,21 @@ function ComponentsPage() {
             <h2 className="text-2xl font-semibold mb-4">Collapsible</h2>
             <Card>
               <CardContent className="pt-6">
-                <Collapsible open={isCollapsibleOpen} onOpenChange={setIsCollapsibleOpen}>
+                <Collapsible
+                  open={isCollapsibleOpen}
+                  onOpenChange={setIsCollapsibleOpen}
+                >
                   <div className="flex items-center justify-between">
                     <h4 className="text-sm font-semibold">
                       @peduarte starred 3 repositories
                     </h4>
-                    <CollapsibleTrigger render={<Button variant="ghost" size="sm" />}>
-                      <HugeiconsIcon icon={ArrowUpDownIcon} className="h-4 w-4" />
+                    <CollapsibleTrigger
+                      render={<Button variant="ghost" size="sm" />}
+                    >
+                      <HugeiconsIcon
+                        icon={ArrowUpDownIcon}
+                        className="h-4 w-4"
+                      />
                       <span className="sr-only">Toggle</span>
                     </CollapsibleTrigger>
                   </div>
@@ -572,10 +670,20 @@ function ComponentsPage() {
                   <TableBody>
                     {tableData.map((row) => (
                       <TableRow key={row.id}>
-                        <TableCell className="font-medium">{row.name}</TableCell>
+                        <TableCell className="font-medium">
+                          {row.name}
+                        </TableCell>
                         <TableCell>{row.email}</TableCell>
                         <TableCell>
-                          <Badge variant={row.status === 'Active' ? 'default' : row.status === 'Pending' ? 'secondary' : 'outline'}>
+                          <Badge
+                            variant={
+                              row.status === 'Active'
+                                ? 'default'
+                                : row.status === 'Pending'
+                                  ? 'secondary'
+                                  : 'outline'
+                            }
+                          >
                             {row.status}
                           </Badge>
                         </TableCell>
@@ -602,7 +710,6 @@ function ComponentsPage() {
               </CardContent>
             </Card>
           </section>
-
         </div>
       </div>
     </TooltipProvider>

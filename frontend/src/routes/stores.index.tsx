@@ -5,7 +5,10 @@ import { Add01Icon, Store01Icon } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
 
 import { useStores } from '@/domain/stores/apis/get-stores'
-import { useCreateStore, useDeleteStore } from '@/domain/stores/apis/store-mutations'
+import {
+  useCreateStore,
+  useDeleteStore,
+} from '@/domain/stores/apis/store-mutations'
 import { useMyDefaultStore } from '@/domain/users/apis/get-my-default-store'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -47,7 +50,9 @@ function StoresIndexPage() {
   const [newName, setNewName] = useState('')
   const [newAddress, setNewAddress] = useState('')
 
-  useHotkeys('c', () => { setCreateOpen(true) })
+  useHotkeys('c', () => {
+    setCreateOpen(true)
+  })
 
   const handleCreate = () => {
     createStore.mutate(
@@ -59,7 +64,7 @@ function StoresIndexPage() {
           setNewAddress('')
           navigate({ to: '/stores/$id', params: { id: store.id } })
         },
-      }
+      },
     )
   }
 
@@ -76,7 +81,9 @@ function StoresIndexPage() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Stores</h1>
-          <p className="text-muted-foreground">Manage your stores and aisle ordering</p>
+          <p className="text-muted-foreground">
+            Manage your stores and aisle ordering
+          </p>
         </div>
         <Button onClick={() => setCreateOpen(true)}>
           <HugeiconsIcon icon={Add01Icon} className="mr-2 h-4 w-4" />
@@ -105,19 +112,29 @@ function StoresIndexPage() {
             <Card
               key={store.id}
               className="cursor-pointer transition-shadow hover:shadow-md"
-              onClick={() => navigate({ to: '/stores/$id', params: { id: store.id } })}
+              onClick={() =>
+                navigate({ to: '/stores/$id', params: { id: store.id } })
+              }
             >
               <CardHeader className="flex flex-row items-center gap-3">
-                <HugeiconsIcon icon={Store01Icon} className="h-5 w-5 text-muted-foreground" />
+                <HugeiconsIcon
+                  icon={Store01Icon}
+                  className="h-5 w-5 text-muted-foreground"
+                />
                 <CardTitle className="text-lg">{store.name}</CardTitle>
-                {defaultStoreId === store.id && <Badge variant="secondary">Default</Badge>}
+                {defaultStoreId === store.id && (
+                  <Badge variant="secondary">Default</Badge>
+                )}
               </CardHeader>
               <CardContent>
                 {store.address && (
-                  <p className="text-sm text-muted-foreground">{store.address}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {store.address}
+                  </p>
                 )}
                 <p className="text-sm text-muted-foreground mt-1">
-                  {store.storeAisles.length} aisle{store.storeAisles.length !== 1 ? 's' : ''}
+                  {store.storeAisles.length} aisle
+                  {store.storeAisles.length !== 1 ? 's' : ''}
                 </p>
               </CardContent>
             </Card>
@@ -140,7 +157,12 @@ function StoresIndexPage() {
           <DialogHeader>
             <DialogTitle>New Store</DialogTitle>
           </DialogHeader>
-          <form onSubmit={(e) => { e.preventDefault(); handleCreate() }}>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault()
+              handleCreate()
+            }}
+          >
             <div className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="store-name">Name</Label>
@@ -163,10 +185,17 @@ function StoresIndexPage() {
               </div>
             </div>
             <DialogFooter className="mt-4">
-              <Button type="button" variant="outline" onClick={() => setCreateOpen(false)}>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setCreateOpen(false)}
+              >
                 Cancel
               </Button>
-              <Button type="submit" disabled={!newName.trim() || createStore.isPending}>
+              <Button
+                type="submit"
+                disabled={!newName.trim() || createStore.isPending}
+              >
                 {createStore.isPending ? 'Creating...' : 'Create'}
               </Button>
             </DialogFooter>
@@ -174,12 +203,16 @@ function StoresIndexPage() {
         </DialogContent>
       </Dialog>
 
-      <AlertDialog open={!!deleteId} onOpenChange={(open) => !open && setDeleteId(null)}>
+      <AlertDialog
+        open={!!deleteId}
+        onOpenChange={(open) => !open && setDeleteId(null)}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Delete Store</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete this store? This action cannot be undone.
+              Are you sure you want to delete this store? This action cannot be
+              undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

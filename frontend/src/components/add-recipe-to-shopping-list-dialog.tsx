@@ -38,11 +38,16 @@ export function AddRecipeToShoppingListDialog({
   const addFromRecipe = useAddItemsFromRecipe()
 
   const [selectedListId, setSelectedListId] = useState<string | null>(null)
-  const [selectedIngredientIds, setSelectedIngredientIds] = useState<string[]>([])
+  const [selectedIngredientIds, setSelectedIngredientIds] = useState<string[]>(
+    [],
+  )
 
-  const activeLists = listsData?.items.filter((l) => l.status === 'Active') ?? []
+  const activeLists =
+    listsData?.items.filter((l) => l.status === 'Active') ?? []
   const ingredients = recipe?.ingredients ?? []
-  const allSelected = ingredients.length > 0 && selectedIngredientIds.length === ingredients.length
+  const allSelected =
+    ingredients.length > 0 &&
+    selectedIngredientIds.length === ingredients.length
 
   // Default all ingredients to checked when recipe loads
   useEffect(() => {
@@ -63,7 +68,7 @@ export function AddRecipeToShoppingListDialog({
     setSelectedIngredientIds((prev) =>
       prev.includes(ingredientId)
         ? prev.filter((id) => id !== ingredientId)
-        : [...prev, ingredientId]
+        : [...prev, ingredientId],
     )
   }
 
@@ -91,7 +96,7 @@ export function AddRecipeToShoppingListDialog({
           setSelectedListId(null)
           setSelectedIngredientIds([])
         },
-      }
+      },
     )
   }
 
@@ -111,7 +116,11 @@ export function AddRecipeToShoppingListDialog({
                 <SelectValue placeholder="Select a shopping list">
                   {(value: unknown) => {
                     if (value === null || value === undefined) {
-                      return <span className="text-muted-foreground">Select a shopping list</span>
+                      return (
+                        <span className="text-muted-foreground">
+                          Select a shopping list
+                        </span>
+                      )
                     }
                     const list = activeLists.find((l) => l.id === value)
                     return list?.name ?? String(value)
@@ -131,10 +140,7 @@ export function AddRecipeToShoppingListDialog({
           {recipe && ingredients.length > 0 && (
             <div className="space-y-2 max-h-64 overflow-y-auto">
               <div className="flex items-center gap-2 pb-1 border-b">
-                <Checkbox
-                  isSelected={allSelected}
-                  onChange={toggleAll}
-                >
+                <Checkbox isSelected={allSelected} onChange={toggleAll}>
                   {allSelected ? 'Deselect All' : 'Select All'}
                 </Checkbox>
               </div>
@@ -144,7 +150,9 @@ export function AddRecipeToShoppingListDialog({
                     isSelected={selectedIngredientIds.includes(ingredient.id)}
                     onChange={() => toggleIngredient(ingredient.id)}
                   >
-                    {ingredient.rawText || ingredient.name || 'Unknown ingredient'}
+                    {ingredient.rawText ||
+                      ingredient.name ||
+                      'Unknown ingredient'}
                   </Checkbox>
                 </div>
               ))}
@@ -157,7 +165,11 @@ export function AddRecipeToShoppingListDialog({
           </Button>
           <Button
             onClick={handleAdd}
-            disabled={!selectedListId || selectedIngredientIds.length === 0 || addFromRecipe.isPending}
+            disabled={
+              !selectedListId ||
+              selectedIngredientIds.length === 0 ||
+              addFromRecipe.isPending
+            }
           >
             {addFromRecipe.isPending ? 'Adding...' : 'Add Items'}
           </Button>

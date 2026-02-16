@@ -112,7 +112,7 @@ apiClient.interceptors.response.use(
     }
 
     return Promise.reject(processedError)
-  }
+  },
 )
 
 /**
@@ -120,7 +120,7 @@ apiClient.interceptors.response.use(
  */
 export async function apiFetch<T>(
   url: string,
-  config?: ApiClientRequestConfig
+  config?: ApiClientRequestConfig,
 ): Promise<T> {
   const response = await apiClient.request<T>({ url, ...config })
   return response.data
@@ -142,7 +142,7 @@ export async function apiFetch<T>(
  */
 export async function fetchWithoutToast<T>(
   url: string,
-  config?: Omit<ApiClientRequestConfig, 'suppressErrorToast'>
+  config?: Omit<ApiClientRequestConfig, 'suppressErrorToast'>,
 ): Promise<T> {
   return apiFetch<T>(url, { ...config, suppressErrorToast: true })
 }

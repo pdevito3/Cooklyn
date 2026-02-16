@@ -1,9 +1,9 @@
 import { useState, useMemo } from 'react'
-import {
-  CalendarDate,
-  getLocalTimeZone,
-} from '@internationalized/date'
-import type { RangeValue, DateValue as AriaDateValue } from 'react-aria-components'
+import { CalendarDate, getLocalTimeZone } from '@internationalized/date'
+import type {
+  RangeValue,
+  DateValue as AriaDateValue,
+} from 'react-aria-components'
 import { Button } from '@/components/ui/button'
 import { JollyCalendar, JollyRangeCalendar } from '@/components/ui/calendar'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -27,7 +27,7 @@ function jsDateToCalendarDate(date: Date): CalendarDate {
   return new CalendarDate(
     date.getFullYear(),
     date.getMonth() + 1,
-    date.getDate()
+    date.getDate(),
   )
 }
 
@@ -60,7 +60,10 @@ export function DateFilter({
 }: DateFilterProps) {
   const initialDateValue = initialFilter?.value as DateValue | undefined
   // Show time inputs for any datetime variant
-  const isDateTime = dateType === 'datetime' || dateType === 'datetimeUtc' || dateType === 'datetimeOffset'
+  const isDateTime =
+    dateType === 'datetime' ||
+    dateType === 'datetimeUtc' ||
+    dateType === 'datetimeOffset'
 
   // Convert initial values to CalendarDate
   const initialCalendarDate = useMemo(() => {
@@ -83,21 +86,29 @@ export function DateFilter({
   const [mode, setMode] = useState<DateMode>(
     initialDateValue?.mode === 'excluding'
       ? 'on'
-      : initialDateValue?.mode || 'on'
+      : initialDateValue?.mode || 'on',
   )
-  const [date, setDate] = useState<CalendarDate | undefined>(initialCalendarDate)
-  const [dateRange, setDateRange] = useState<RangeValue<AriaDateValue> | null>(initialDateRange)
+  const [date, setDate] = useState<CalendarDate | undefined>(
+    initialCalendarDate,
+  )
+  const [dateRange, setDateRange] = useState<RangeValue<AriaDateValue> | null>(
+    initialDateRange,
+  )
   const [exclude, setExclude] = useState(
     initialDateValue?.mode === 'excluding'
       ? true
-      : initialDateValue?.exclude || false
+      : initialDateValue?.exclude || false,
   )
   // Time state for datetime mode
   const [startTime, setStartTime] = useState<string>(
-    initialDateValue?.startDate ? getTimeString(initialDateValue.startDate) : '00:00'
+    initialDateValue?.startDate
+      ? getTimeString(initialDateValue.startDate)
+      : '00:00',
   )
   const [endTime, setEndTime] = useState<string>(
-    initialDateValue?.endDate ? getTimeString(initialDateValue.endDate) : '23:59'
+    initialDateValue?.endDate
+      ? getTimeString(initialDateValue.endDate)
+      : '23:59',
   )
 
   const handleSubmit = () => {
@@ -105,12 +116,14 @@ export function DateFilter({
     if (mode !== 'between' && !date) return
 
     // Get base dates from calendar
-    let startDateValue = mode === 'between'
-      ? calendarDateToJsDate(dateRange!.start as CalendarDate)
-      : calendarDateToJsDate(date!)
-    let endDateValue = mode === 'between' && dateRange?.end
-      ? calendarDateToJsDate(dateRange.end as CalendarDate)
-      : undefined
+    let startDateValue =
+      mode === 'between'
+        ? calendarDateToJsDate(dateRange!.start as CalendarDate)
+        : calendarDateToJsDate(date!)
+    let endDateValue =
+      mode === 'between' && dateRange?.end
+        ? calendarDateToJsDate(dateRange.end as CalendarDate)
+        : undefined
 
     // Apply times if in datetime mode
     if (isDateTime) {
@@ -175,10 +188,7 @@ export function DateFilter({
       </div>
 
       {/* Exclude checkbox */}
-      <Checkbox
-        isSelected={exclude}
-        onChange={setExclude}
-      >
+      <Checkbox isSelected={exclude} onChange={setExclude}>
         <Label className="text-sm font-medium leading-none">
           Exclude {mode === 'between' ? 'date range' : 'dates'}
         </Label>
@@ -206,9 +216,7 @@ export function DateFilter({
       {/* Time inputs for datetime mode */}
       {isDateTime && (
         <div className="flex flex-col gap-2">
-          <div className="text-xs font-medium text-muted-foreground">
-            Time
-          </div>
+          <div className="text-xs font-medium text-muted-foreground">Time</div>
           <div className="flex gap-2 items-center">
             {mode === 'between' ? (
               <>

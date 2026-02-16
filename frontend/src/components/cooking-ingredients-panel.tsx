@@ -14,7 +14,7 @@ export function CookingIngredientsPanel({
 }: CookingIngredientsPanelProps) {
   const [scale, setScale] = useState(1)
 
-  const sorted = [...ingredients].sort((a, b) => a.sortOrder - b.sortOrder)
+  const sorted = [...ingredients].toSorted((a, b) => a.sortOrder - b.sortOrder)
   let lastGroup: string | null | undefined = undefined
 
   return (

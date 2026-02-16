@@ -1,7 +1,11 @@
 import { useState, useCallback } from 'react'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useHotkeys } from 'react-hotkeys-hook'
-import { ArrowLeft02Icon, Delete02Icon, DragDropIcon } from '@hugeicons/core-free-icons'
+import {
+  ArrowLeft02Icon,
+  Delete02Icon,
+  DragDropIcon,
+} from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
 import {
   DndContext,
@@ -22,7 +26,11 @@ import {
 import { CSS } from '@dnd-kit/utilities'
 
 import { useStore } from '@/domain/stores/apis/get-store'
-import { useUpdateStore, useDeleteStore, useUpdateStoreAisles } from '@/domain/stores/apis/store-mutations'
+import {
+  useUpdateStore,
+  useDeleteStore,
+  useUpdateStoreAisles,
+} from '@/domain/stores/apis/store-mutations'
 import type { StoreAisleForUpdateDto } from '@/domain/stores/types'
 import { DEFAULT_STORE_AISLES } from '@/domain/stores/constants'
 import { useStoreSections } from '@/domain/store-sections/apis/get-store-sections'
@@ -98,7 +106,9 @@ function SortableAisleRow({
       >
         <HugeiconsIcon icon={DragDropIcon} className="h-4 w-4" />
       </button>
-      <span className="text-sm font-medium text-muted-foreground w-6">{index + 1}</span>
+      <span className="text-sm font-medium text-muted-foreground w-6">
+        {index + 1}
+      </span>
       <Combobox
         items={sections}
         value={sections.find((s) => s.id === aisle.storeSectionId) ?? null}
@@ -108,7 +118,11 @@ function SortableAisleRow({
         }}
         itemToStringLabel={(section) => section?.name ?? ''}
       >
-        <ComboboxInput placeholder="Select section" className="w-48" autoFocus />
+        <ComboboxInput
+          placeholder="Select section"
+          className="w-48"
+          autoFocus
+        />
         <ComboboxContent emptyMessage="No sections found.">
           {(section: { id: string; name: string }) => (
             <ComboboxItem key={section.id} value={section}>
@@ -135,7 +149,9 @@ function StoreDetailPage() {
   const { id } = Route.useParams()
   const navigate = useNavigate()
   const { data: store, isLoading } = useStore(id)
-  const { data: sectionsData, refetch: refetchSections } = useStoreSections({ pageSize: 100 })
+  const { data: sectionsData, refetch: refetchSections } = useStoreSections({
+    pageSize: 100,
+  })
   const updateStore = useUpdateStore()
   const deleteStoreMutation = useDeleteStore()
   const updateAisles = useUpdateStoreAisles()
@@ -156,7 +172,7 @@ function StoreDetailPage() {
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
-    })
+    }),
   )
 
   useHotkeys('e', () => {
@@ -176,7 +192,7 @@ function StoreDetailPage() {
   const saveEdit = () => {
     updateStore.mutate(
       { id, dto: { name: editName, address: editAddress || null } },
-      { onSuccess: () => setIsEditing(false) }
+      { onSuccess: () => setIsEditing(false) },
     )
   }
 
@@ -187,7 +203,7 @@ function StoreDetailPage() {
         storeSectionId: a.storeSectionId,
         sortOrder: a.sortOrder,
         customName: a.customName,
-      }))
+      })),
     )
     setAislesEditing(true)
   }
@@ -200,7 +216,11 @@ function StoreDetailPage() {
   }
 
   const removeAisle = (index: number) => {
-    setAisles((prev) => prev.filter((_, i) => i !== index).map((a, i) => ({ ...a, sortOrder: i })))
+    setAisles((prev) =>
+      prev
+        .filter((_, i) => i !== index)
+        .map((a, i) => ({ ...a, sortOrder: i })),
+    )
   }
 
   const loadDefaultAisles = useCallback(async () => {
@@ -256,29 +276,32 @@ function StoreDetailPage() {
 
     if (oldIndex !== -1 && newIndex !== -1) {
       setAisles((prev) =>
-        arrayMove(prev, oldIndex, newIndex).map((a, i) => ({ ...a, sortOrder: i }))
+        arrayMove(prev, oldIndex, newIndex).map((a, i) => ({
+          ...a,
+          sortOrder: i,
+        })),
       )
     }
   }
 
   const handleSectionChange = (index: number, value: string) => {
     setAisles((prev) =>
-      prev.map((a, i) => (i === index ? { ...a, storeSectionId: value } : a))
+      prev.map((a, i) => (i === index ? { ...a, storeSectionId: value } : a)),
     )
   }
 
   const handleCustomNameChange = (index: number, value: string) => {
     setAisles((prev) =>
       prev.map((a, i) =>
-        i === index ? { ...a, customName: value || null } : a
-      )
+        i === index ? { ...a, customName: value || null } : a,
+      ),
     )
   }
 
   const saveAisles = () => {
     updateAisles.mutate(
       { id, aisles },
-      { onSuccess: () => setAislesEditing(false) }
+      { onSuccess: () => setAislesEditing(false) },
     )
   }
 
@@ -304,15 +327,23 @@ function StoreDetailPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-4">
-        <Button variant="ghost" size="icon" onClick={() => navigate({ to: '/stores' })}>
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => navigate({ to: '/stores' })}
+        >
           <HugeiconsIcon icon={ArrowLeft02Icon} className="h-4 w-4" />
         </Button>
         <div className="flex-1">
           <h1 className="text-3xl font-bold tracking-tight">{store.name}</h1>
-          {store.address && <p className="text-muted-foreground">{store.address}</p>}
+          {store.address && (
+            <p className="text-muted-foreground">{store.address}</p>
+          )}
         </div>
         {defaultStoreId === id ? (
-          <Button variant="outline" disabled>Default Store</Button>
+          <Button variant="outline" disabled>
+            Default Store
+          </Button>
         ) : (
           <Button
             variant="outline"
@@ -340,15 +371,25 @@ function StoreDetailPage() {
           <CardContent className="space-y-4">
             <div className="space-y-2">
               <Label>Name</Label>
-              <Input value={editName} onChange={(e) => setEditName(e.target.value)} />
+              <Input
+                value={editName}
+                onChange={(e) => setEditName(e.target.value)}
+              />
             </div>
             <div className="space-y-2">
               <Label>Address</Label>
-              <Input value={editAddress} onChange={(e) => setEditAddress(e.target.value)} />
+              <Input
+                value={editAddress}
+                onChange={(e) => setEditAddress(e.target.value)}
+              />
             </div>
             <div className="flex gap-2">
-              <Button onClick={saveEdit} disabled={updateStore.isPending}>Save</Button>
-              <Button variant="outline" onClick={() => setIsEditing(false)}>Cancel</Button>
+              <Button onClick={saveEdit} disabled={updateStore.isPending}>
+                Save
+              </Button>
+              <Button variant="outline" onClick={() => setIsEditing(false)}>
+                Cancel
+              </Button>
             </div>
           </CardContent>
         </Card>
@@ -357,24 +398,41 @@ function StoreDetailPage() {
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle>Aisle Ordering</CardTitle>
-          {!aislesEditing && <Button variant="outline" onClick={startAisleEditing}>Edit Aisles</Button>}
+          {!aislesEditing && (
+            <Button variant="outline" onClick={startAisleEditing}>
+              Edit Aisles
+            </Button>
+          )}
         </CardHeader>
         <CardContent>
           {!aislesEditing ? (
             store.storeAisles.length === 0 ? (
-              <p className="text-sm text-muted-foreground">No aisles configured.</p>
+              <p className="text-sm text-muted-foreground">
+                No aisles configured.
+              </p>
             ) : (
               <div className="space-y-2">
                 {[...store.storeAisles]
-                  .sort((a, b) => a.sortOrder - b.sortOrder)
+                  .toSorted((a, b) => a.sortOrder - b.sortOrder)
                   .map((aisle) => {
-                    const section = sections.find((s) => s.id === aisle.storeSectionId)
+                    const section = sections.find(
+                      (s) => s.id === aisle.storeSectionId,
+                    )
                     return (
-                      <div key={aisle.id} className="flex items-center gap-3 rounded-md border p-3">
-                        <span className="text-sm font-medium text-muted-foreground w-6">{aisle.sortOrder + 1}</span>
-                        <span className="font-medium">{aisle.customName ?? section?.name ?? 'Unknown'}</span>
+                      <div
+                        key={aisle.id}
+                        className="flex items-center gap-3 rounded-md border p-3"
+                      >
+                        <span className="text-sm font-medium text-muted-foreground w-6">
+                          {aisle.sortOrder + 1}
+                        </span>
+                        <span className="font-medium">
+                          {aisle.customName ?? section?.name ?? 'Unknown'}
+                        </span>
                         {aisle.customName && section && (
-                          <span className="text-sm text-muted-foreground">({section.name})</span>
+                          <span className="text-sm text-muted-foreground">
+                            ({section.name})
+                          </span>
                         )}
                       </div>
                     )
@@ -406,12 +464,25 @@ function StoreDetailPage() {
                 </SortableContext>
               </DndContext>
               <div className="flex gap-2">
-                <Button variant="outline" onClick={addAisle}>Add Aisle</Button>
-                <Button variant="outline" onClick={loadDefaultAisles} disabled={loadingDefaults}>
+                <Button variant="outline" onClick={addAisle}>
+                  Add Aisle
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={loadDefaultAisles}
+                  disabled={loadingDefaults}
+                >
                   {loadingDefaults ? 'Loading...' : 'Load Default Aisles'}
                 </Button>
-                <Button onClick={saveAisles} disabled={updateAisles.isPending}>Save</Button>
-                <Button variant="outline" onClick={() => setAislesEditing(false)}>Cancel</Button>
+                <Button onClick={saveAisles} disabled={updateAisles.isPending}>
+                  Save
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => setAislesEditing(false)}
+                >
+                  Cancel
+                </Button>
               </div>
             </div>
           )}
@@ -423,7 +494,8 @@ function StoreDetailPage() {
           <AlertDialogHeader>
             <AlertDialogTitle>Delete Store</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete "{store.name}"? This action cannot be undone.
+              Are you sure you want to delete "{store.name}"? This action cannot
+              be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

@@ -41,11 +41,7 @@ interface UseSwipePanelReturn {
 export function useSwipePanel(
   options: UseSwipePanelOptions = {},
 ): UseSwipePanelReturn {
-  const {
-    widthPercent = 85,
-    edgeZone = 30,
-    enabled = true,
-  } = options
+  const { widthPercent = 85, edgeZone = 30, enabled = true } = options
 
   const [isOpen, setIsOpen] = useState(false)
   const panelRef = useRef<HTMLDivElement>(null)
@@ -149,9 +145,7 @@ export function useSwipePanel(
       if (!state.locked || !state.isHorizontal) return
 
       const width = panelWidthPx()
-      const translateX = isOpen
-        ? Math.max(0, dx)
-        : Math.max(0, width + dx)
+      const translateX = isOpen ? Math.max(0, dx) : Math.max(0, width + dx)
 
       setTranslate(translateX, false)
     },

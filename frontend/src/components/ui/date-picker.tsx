@@ -1,7 +1,7 @@
-"use client"
+'use client'
 
-import { Calendar03Icon } from "@hugeicons/core-free-icons"
-import { HugeiconsIcon } from "@hugeicons/react"
+import { Calendar03Icon } from '@hugeicons/core-free-icons'
+import { HugeiconsIcon } from '@hugeicons/react'
 import {
   DatePicker as AriaDatePicker,
   DateRangePicker as AriaDateRangePicker,
@@ -12,11 +12,11 @@ import {
   type DateRangePickerProps as AriaDateRangePickerProps,
   type DateValue as AriaDateValue,
   type ValidationResult as AriaValidationResult,
-} from "react-aria-components"
+} from 'react-aria-components'
 
-import { cn } from "@/lib/utils"
+import { cn } from '@/lib/utils'
 
-import { Button } from "@/components/ui/button"
+import { Button } from '@/components/ui/button'
 import {
   Calendar,
   CalendarCell,
@@ -26,17 +26,22 @@ import {
   CalendarHeaderCell,
   CalendarHeading,
   RangeCalendar,
-} from "@/components/ui/calendar"
-import { DateInput } from "@/components/ui/datefield"
-import { Label } from "@/components/ui/label"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+} from '@/components/ui/calendar'
+import { DateInput } from '@/components/ui/datefield'
+import { Label } from '@/components/ui/label'
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover'
 
 const DatePicker = AriaDatePicker
 
 const DateRangePicker = AriaDateRangePicker
 
-interface JollyDatePickerProps<T extends AriaDateValue>
-  extends AriaDatePickerProps<T> {
+interface JollyDatePickerProps<
+  T extends AriaDateValue,
+> extends AriaDatePickerProps<T> {
   label?: string
   description?: string
   errorMessage?: string | ((validation: AriaValidationResult) => string)
@@ -52,7 +57,7 @@ function JollyDatePicker<T extends AriaDateValue>({
   return (
     <DatePicker
       className={composeRenderProps(className, (className) =>
-        cn("group flex flex-col gap-2", className)
+        cn('group flex flex-col gap-2', className),
       )}
       {...props}
     >
@@ -71,7 +76,11 @@ function JollyDatePicker<T extends AriaDateValue>({
                   />
                 }
               >
-                <HugeiconsIcon icon={Calendar03Icon} aria-hidden className="size-4" />
+                <HugeiconsIcon
+                  icon={Calendar03Icon}
+                  aria-hidden
+                  className="size-4"
+                />
               </PopoverTrigger>
             </Group>
             <PopoverContent className="w-auto p-3">
@@ -95,7 +104,7 @@ function JollyDatePicker<T extends AriaDateValue>({
           )}
           {errorMessage && (
             <Text className="text-sm text-destructive" slot="errorMessage">
-              {typeof errorMessage === "function" ? "" : errorMessage}
+              {typeof errorMessage === 'function' ? '' : errorMessage}
             </Text>
           )}
         </>
@@ -104,8 +113,9 @@ function JollyDatePicker<T extends AriaDateValue>({
   )
 }
 
-interface JollyDateRangePickerProps<T extends AriaDateValue>
-  extends AriaDateRangePickerProps<T> {
+interface JollyDateRangePickerProps<
+  T extends AriaDateValue,
+> extends AriaDateRangePickerProps<T> {
   label?: string
   description?: string
   errorMessage?: string | ((validation: AriaValidationResult) => string)
@@ -121,7 +131,7 @@ function JollyDateRangePicker<T extends AriaDateValue>({
   return (
     <DateRangePicker
       className={composeRenderProps(className, (className) =>
-        cn("group flex flex-col gap-2", className)
+        cn('group flex flex-col gap-2', className),
       )}
       {...props}
     >
@@ -144,7 +154,11 @@ function JollyDateRangePicker<T extends AriaDateValue>({
                   />
                 }
               >
-                <HugeiconsIcon icon={Calendar03Icon} aria-hidden className="size-4" />
+                <HugeiconsIcon
+                  icon={Calendar03Icon}
+                  aria-hidden
+                  className="size-4"
+                />
               </PopoverTrigger>
             </Group>
             <PopoverContent className="w-auto p-3">
@@ -168,7 +182,7 @@ function JollyDateRangePicker<T extends AriaDateValue>({
           )}
           {errorMessage && (
             <Text className="text-sm text-destructive" slot="errorMessage">
-              {typeof errorMessage === "function" ? "" : errorMessage}
+              {typeof errorMessage === 'function' ? '' : errorMessage}
             </Text>
           )}
         </>
@@ -177,10 +191,5 @@ function JollyDateRangePicker<T extends AriaDateValue>({
   )
 }
 
-export {
-  DatePicker,
-  DateRangePicker,
-  JollyDatePicker,
-  JollyDateRangePicker,
-}
+export { DatePicker, DateRangePicker, JollyDatePicker, JollyDateRangePicker }
 export type { JollyDatePickerProps, JollyDateRangePickerProps }

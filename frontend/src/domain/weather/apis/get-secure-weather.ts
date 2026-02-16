@@ -6,8 +6,12 @@ import { WeatherKeys } from './weather.keys'
 /**
  * Fetch secure weather forecast data (requires authentication)
  */
-export async function getSecureWeatherForecasts(): Promise<SecureWeatherForecast[]> {
-  const response = await apiClient.get<SecureWeatherForecast[]>('/api/v1/weather/secure')
+export async function getSecureWeatherForecasts(): Promise<
+  SecureWeatherForecast[]
+> {
+  const response = await apiClient.get<SecureWeatherForecast[]>(
+    '/api/v1/weather/secure',
+  )
   return response.data
 }
 

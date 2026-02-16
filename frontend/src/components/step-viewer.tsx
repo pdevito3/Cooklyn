@@ -64,25 +64,30 @@ export function StepViewer({ steps }: StepViewerProps) {
                   'flex h-8 w-8 shrink-0 items-center justify-center rounded-full border-2 text-sm font-semibold transition-colors',
                   isActive
                     ? 'border-primary bg-primary text-primary-foreground'
-                    : 'border-muted-foreground/30 bg-background text-muted-foreground group-hover:border-primary/50'
+                    : 'border-muted-foreground/30 bg-background text-muted-foreground group-hover:border-primary/50',
                 )}
               >
                 {index + 1}
               </div>
               {/* Connecting line */}
-              {!isLast && (
-                <div className="w-0.5 grow bg-muted-foreground/20" />
-              )}
+              {!isLast && <div className="w-0.5 grow bg-muted-foreground/20" />}
             </div>
 
             {/* Step content */}
             <div
               className={cn(
                 'pb-6 pt-1 transition-colors',
-                isActive ? 'text-foreground' : 'text-muted-foreground group-hover:text-foreground/80'
+                isActive
+                  ? 'text-foreground'
+                  : 'text-muted-foreground group-hover:text-foreground/80',
               )}
             >
-              <p className={cn('whitespace-pre-wrap text-sm leading-relaxed', isActive && 'font-medium')}>
+              <p
+                className={cn(
+                  'whitespace-pre-wrap text-sm leading-relaxed',
+                  isActive && 'font-medium',
+                )}
+              >
                 {stripLeadingNumber(step)}
               </p>
             </div>

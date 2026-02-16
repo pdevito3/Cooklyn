@@ -1,7 +1,12 @@
 import { useRef, useState, useEffect, useMemo, useCallback } from 'react'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useHotkeys } from 'react-hotkeys-hook'
-import { Add01Icon, RotateClockwiseIcon, Search01Icon, Loading03Icon } from '@hugeicons/core-free-icons'
+import {
+  Add01Icon,
+  RotateClockwiseIcon,
+  Search01Icon,
+  Loading03Icon,
+} from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
 import { useQueryClient } from '@tanstack/react-query'
 
@@ -53,9 +58,7 @@ function RecipesIndexPage() {
 
   const debouncedSearch = useDebouncedValue(searchQuery, 300)
 
-  const filters = debouncedSearch
-    ? `title @=* "${debouncedSearch}"`
-    : undefined
+  const filters = debouncedSearch ? `title @=* "${debouncedSearch}"` : undefined
 
   const {
     data,
@@ -71,7 +74,7 @@ function RecipesIndexPage() {
 
   const allRecipes = useMemo(
     () => data?.pages.flatMap((p) => p.items) ?? [],
-    [data]
+    [data],
   )
 
   const totalCount = data?.pages[0]?.pagination.totalCount ?? 0
@@ -87,7 +90,7 @@ function RecipesIndexPage() {
           fetchNextPage()
         }
       },
-      { rootMargin: '300px' }
+      { rootMargin: '300px' },
     )
     observer.observe(el)
     return () => observer.disconnect()
@@ -101,12 +104,23 @@ function RecipesIndexPage() {
     navigate({ to: '/recipes/new' })
   }
 
-  useHotkeys('mod+f', () => { searchInputRef.current?.focus() }, { preventDefault: true })
-  useHotkeys('c', () => { handleCreateRecipe() })
+  useHotkeys(
+    'mod+f',
+    () => {
+      searchInputRef.current?.focus()
+    },
+    { preventDefault: true },
+  )
+  useHotkeys('c', () => {
+    handleCreateRecipe()
+  })
 
-  const handleEditRecipe = useCallback((id: string) => {
-    navigate({ to: '/recipes/$id/edit', params: { id } })
-  }, [navigate])
+  const handleEditRecipe = useCallback(
+    (id: string) => {
+      navigate({ to: '/recipes/$id/edit', params: { id } })
+    },
+    [navigate],
+  )
 
   const handleDeleteRecipe = useCallback((id: string) => {
     setRecipeToDelete(id)
@@ -135,9 +149,7 @@ function RecipesIndexPage() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Recipes</h1>
-          <p className="text-muted-foreground">
-            Manage your recipe collection
-          </p>
+          <p className="text-muted-foreground">Manage your recipe collection</p>
         </div>
         <Button onClick={handleCreateRecipe}>
           <HugeiconsIcon icon={Add01Icon} className="mr-2 h-4 w-4" />
@@ -162,11 +174,7 @@ function RecipesIndexPage() {
             autoFocus
           />
         </div>
-        <Button
-          variant="outline"
-          onClick={handleRefresh}
-          disabled={isFetching}
-        >
+        <Button variant="outline" onClick={handleRefresh} disabled={isFetching}>
           <HugeiconsIcon
             icon={RotateClockwiseIcon}
             className={`mr-2 h-4 w-4 ${isFetching ? 'animate-spin' : ''}`}
@@ -225,8 +233,13 @@ function RecipesIndexPage() {
           {/* Loading more indicator */}
           {isFetchingNextPage && (
             <div className="flex items-center justify-center py-6">
-              <HugeiconsIcon icon={Loading03Icon} className="h-6 w-6 animate-spin text-muted-foreground" />
-              <span className="ml-2 text-sm text-muted-foreground">Loading more recipes...</span>
+              <HugeiconsIcon
+                icon={Loading03Icon}
+                className="h-6 w-6 animate-spin text-muted-foreground"
+              />
+              <span className="ml-2 text-sm text-muted-foreground">
+                Loading more recipes...
+              </span>
             </div>
           )}
         </div>
@@ -241,7 +254,9 @@ function RecipesIndexPage() {
                 icon={Search01Icon}
                 className="mb-4 h-12 w-12 text-muted-foreground"
               />
-              <p className="text-muted-foreground">No recipes match your search</p>
+              <p className="text-muted-foreground">
+                No recipes match your search
+              </p>
               <Button
                 variant="outline"
                 className="mt-4"
@@ -286,7 +301,8 @@ function RecipesIndexPage() {
           <AlertDialogHeader>
             <AlertDialogTitle>Delete Recipe</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete this recipe? This action cannot be undone.
+              Are you sure you want to delete this recipe? This action cannot be
+              undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

@@ -32,10 +32,10 @@ export function MultiSelectFilter({
 }: MultiSelectFilterProps) {
   const [searchTerm, setSearchTerm] = useState('')
   const [selected, setSelected] = useState<string[]>(
-    (initialFilter?.value as string[]) || []
+    (initialFilter?.value as string[]) || [],
   )
   const [operator, setOperator] = useState<OperatorType>(
-    initialFilter?.operator || Operators.IN
+    initialFilter?.operator || Operators.IN,
   )
   const [matchAll, setMatchAll] = useState(initialFilter?.matchAll || false)
 
@@ -45,17 +45,22 @@ export function MultiSelectFilter({
     return options.filter(
       (opt) =>
         opt.label.toLowerCase().includes(lower) ||
-        opt.value.toLowerCase().includes(lower)
+        opt.value.toLowerCase().includes(lower),
     )
   }, [options, searchTerm])
 
   // Only consider root-level (non-nested) options for "Select All"
-  const rootOptions = useMemo(() => options.filter(opt => !opt.isNested), [options])
-  const allRootSelected = rootOptions.length > 0 && rootOptions.every(opt => selected.includes(opt.value))
+  const rootOptions = useMemo(
+    () => options.filter((opt) => !opt.isNested),
+    [options],
+  )
+  const allRootSelected =
+    rootOptions.length > 0 &&
+    rootOptions.every((opt) => selected.includes(opt.value))
 
   const toggleOption = (value: string) => {
     setSelected((prev) =>
-      prev.includes(value) ? prev.filter((v) => v !== value) : [...prev, value]
+      prev.includes(value) ? prev.filter((v) => v !== value) : [...prev, value],
     )
   }
 
@@ -66,12 +71,14 @@ export function MultiSelectFilter({
   const toggleAll = () => {
     if (allRootSelected) {
       // Deselect all root options, but keep any nested options that were selected
-      const nestedValues = options.filter(opt => opt.isNested).map(opt => opt.value)
-      setSelected(selected.filter(v => nestedValues.includes(v)))
+      const nestedValues = options
+        .filter((opt) => opt.isNested)
+        .map((opt) => opt.value)
+      setSelected(selected.filter((v) => nestedValues.includes(v)))
     } else {
       // Select all root options, keeping any already-selected nested options
-      const rootValues = rootOptions.map(opt => opt.value)
-      const nestedSelected = selected.filter(v => !rootValues.includes(v))
+      const rootValues = rootOptions.map((opt) => opt.value)
+      const nestedSelected = selected.filter((v) => !rootValues.includes(v))
       setSelected([...rootValues, ...nestedSelected])
     }
   }
@@ -105,10 +112,19 @@ export function MultiSelectFilter({
         <label className="text-xs font-medium">Operator</label>
         <DropdownMenu>
           <DropdownMenuTrigger
-            render={<Button variant="outline" size="sm" className="w-full justify-between" />}
+            render={
+              <Button
+                variant="outline"
+                size="sm"
+                className="w-full justify-between"
+              />
+            }
           >
             {getOperatorLabel(operator)}
-            <HugeiconsIcon icon={ArrowDown01Icon} className="size-4 opacity-50" />
+            <HugeiconsIcon
+              icon={ArrowDown01Icon}
+              className="size-4 opacity-50"
+            />
           </DropdownMenuTrigger>
           <DropdownMenuContent>
             {allowedOperators.map((op) => (
@@ -121,10 +137,7 @@ export function MultiSelectFilter({
       </div>
 
       {/* Match all toggle */}
-      <Checkbox
-        isSelected={matchAll}
-        onChange={setMatchAll}
-      >
+      <Checkbox isSelected={matchAll} onChange={setMatchAll}>
         <span className="text-sm">All must match</span>
       </Checkbox>
 
@@ -174,7 +187,11 @@ export function MultiSelectFilter({
         <Button variant="outline" size="sm" onClick={toggleAll}>
           {allRootSelected ? 'Deselect All' : 'Select All'}
         </Button>
-        <Button size="sm" onClick={handleSubmit} disabled={selected.length === 0}>
+        <Button
+          size="sm"
+          onClick={handleSubmit}
+          disabled={selected.length === 0}
+        >
           {initialFilter ? 'Update' : 'Add'} ({selected.length})
         </Button>
       </div>

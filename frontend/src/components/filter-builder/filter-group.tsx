@@ -65,7 +65,7 @@ export function FilterGroup({
         'border-l-4 transition-all p-0',
         borderColor,
         bgColor,
-        isSelected && 'ring-2 ring-primary'
+        isSelected && 'ring-2 ring-primary',
       )}
     >
       <div className="p-2">

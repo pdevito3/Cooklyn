@@ -10,11 +10,12 @@ export interface StoreSectionListResponse {
 }
 
 export async function getStoreSections(
-  params?: StoreSectionParametersDto
+  params?: StoreSectionParametersDto,
 ): Promise<StoreSectionListResponse> {
   const queryParams = new URLSearchParams()
 
-  if (params?.pageNumber) queryParams.set('pageNumber', params.pageNumber.toString())
+  if (params?.pageNumber)
+    queryParams.set('pageNumber', params.pageNumber.toString())
   if (params?.pageSize) queryParams.set('pageSize', params.pageSize.toString())
   if (params?.filters) queryParams.set('filters', params.filters)
   if (params?.sortOrder) queryParams.set('sortOrder', params.sortOrder)

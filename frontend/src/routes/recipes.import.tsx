@@ -1,44 +1,47 @@
-import { ArrowLeft02Icon, Loading03Icon } from "@hugeicons/core-free-icons";
-import { HugeiconsIcon } from "@hugeicons/react";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { ArrowLeft02Icon, Loading03Icon } from '@hugeicons/core-free-icons'
+import { HugeiconsIcon } from '@hugeicons/react'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { useState } from 'react'
 
-import { RecipeForm, type RecipeFormValues } from "@/components/recipe-form";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { useCreateRecipe, useImportRecipePreview } from "@/domain/recipes/apis/recipe-mutations";
-import type { ImportRecipePreviewDto } from "@/domain/recipes/types";
-import { cn } from "@/lib/utils";
+import { RecipeForm, type RecipeFormValues } from '@/components/recipe-form'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import {
+  useCreateRecipe,
+  useImportRecipePreview,
+} from '@/domain/recipes/apis/recipe-mutations'
+import type { ImportRecipePreviewDto } from '@/domain/recipes/types'
+import { cn } from '@/lib/utils'
 
-export const Route = createFileRoute("/recipes/import")({
+export const Route = createFileRoute('/recipes/import')({
   component: ImportRecipePage,
-});
+})
 
 function ImportRecipePage() {
-  const navigate = useNavigate();
-  const [url, setUrl] = useState("");
-  const [preview, setPreview] = useState<ImportRecipePreviewDto | null>(null);
-  const [selectedImageUrl, setSelectedImageUrl] = useState<string | null>(null);
+  const navigate = useNavigate()
+  const [url, setUrl] = useState('')
+  const [preview, setPreview] = useState<ImportRecipePreviewDto | null>(null)
+  const [selectedImageUrl, setSelectedImageUrl] = useState<string | null>(null)
 
-  const importPreview = useImportRecipePreview();
-  const createRecipe = useCreateRecipe();
+  const importPreview = useImportRecipePreview()
+  const createRecipe = useCreateRecipe()
 
-  const isCreating = createRecipe.isPending;
+  const isCreating = createRecipe.isPending
 
   const handleImport = () => {
-    if (!url.trim()) return;
+    if (!url.trim()) return
     importPreview.mutate(url.trim(), {
       onSuccess: (data) => {
-        setPreview(data);
+        setPreview(data)
         // Auto-select the first image if available
         if (data.images.length > 0) {
-          setSelectedImageUrl(data.images[0].url);
+          setSelectedImageUrl(data.images[0].url)
         }
       },
-    });
-  };
+    })
+  }
 
   const handleSubmit = (values: RecipeFormValues) => {
     createRecipe.mutate(
@@ -60,19 +63,19 @@ function ImportRecipePage() {
       },
       {
         onSuccess: (recipe) => {
-          navigate({ to: "/recipes/$id", params: { id: recipe.id } });
+          navigate({ to: '/recipes/$id', params: { id: recipe.id } })
         },
       },
-    );
-  };
+    )
+  }
 
   const handleBack = () => {
-    navigate({ to: "/recipes" });
-  };
+    navigate({ to: '/recipes' })
+  }
 
   const defaultValues: Partial<RecipeFormValues> | undefined = preview
     ? {
-        title: preview.title ?? "",
+        title: preview.title ?? '',
         description: preview.description ?? null,
         source: preview.source ?? null,
         servings: preview.servings ?? null,
@@ -80,7 +83,7 @@ function ImportRecipePage() {
         flags: [],
         ingredients: preview.ingredients,
       }
-    : undefined;
+    : undefined
 
   return (
     <div className="space-y-6">
@@ -117,9 +120,9 @@ function ImportRecipePage() {
                   value={url}
                   onChange={(e) => setUrl(e.target.value)}
                   onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      e.preventDefault();
-                      handleImport();
+                    if (e.key === 'Enter') {
+                      e.preventDefault()
+                      handleImport()
                     }
                   }}
                   disabled={importPreview.isPending}
@@ -138,7 +141,7 @@ function ImportRecipePage() {
                     Importing...
                   </>
                 ) : (
-                  "Import"
+                  'Import'
                 )}
               </Button>
             </div>
@@ -147,7 +150,7 @@ function ImportRecipePage() {
               <p className="mt-3 text-sm font-medium text-destructive">
                 {importPreview.error instanceof Error
                   ? importPreview.error.message
-                  : "Failed to import recipe. The site may not include structured recipe data."}
+                  : 'Failed to import recipe. The site may not include structured recipe data.'}
               </p>
             )}
           </CardContent>
@@ -171,19 +174,19 @@ function ImportRecipePage() {
                       )
                     }
                     className={cn(
-                      "relative aspect-video overflow-hidden rounded-lg border-2 transition-all",
+                      'relative aspect-video overflow-hidden rounded-lg border-2 transition-all',
                       selectedImageUrl === image.url
-                        ? "border-primary ring-2 ring-primary/20"
-                        : "border-border hover:border-primary/50",
+                        ? 'border-primary ring-2 ring-primary/20'
+                        : 'border-border hover:border-primary/50',
                     )}
                   >
                     <img
                       src={image.url}
-                      alt={image.alt ?? "Recipe image"}
+                      alt={image.alt ?? 'Recipe image'}
                       className="h-full w-full object-cover"
                       loading="lazy"
                       onError={(e) => {
-                        (e.target as HTMLImageElement).style.display = "none";
+                        ;(e.target as HTMLImageElement).style.display = 'none'
                       }}
                     />
                     {selectedImageUrl === image.url && (
@@ -218,7 +221,7 @@ function ImportRecipePage() {
                 <p className="mt-1 text-sm">
                   {createRecipe.error instanceof Error
                     ? createRecipe.error.message
-                    : "An unexpected error occurred"}
+                    : 'An unexpected error occurred'}
                 </p>
               </div>
             )}
@@ -226,5 +229,5 @@ function ImportRecipePage() {
         )}
       </div>
     </div>
-  );
+  )
 }

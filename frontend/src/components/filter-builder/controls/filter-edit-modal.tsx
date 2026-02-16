@@ -48,14 +48,16 @@ export function FilterEditModal({
   // For other types, wrap them in a Dialog
   // Find the filter config to get options for multiselect
   const filterConfig = filterOptions.find(
-    (opt) => opt.propertyKey === filter.propertyKey
+    (opt) => opt.propertyKey === filter.propertyKey,
   )
 
   return (
     <ResponsiveDialog open={isOpen} onOpenChange={onClose}>
       <ResponsiveDialogContent className="md:w-auto md:max-w-fit">
         <ResponsiveDialogHeader>
-          <ResponsiveDialogTitle>Edit {filter.propertyLabel} Filter</ResponsiveDialogTitle>
+          <ResponsiveDialogTitle>
+            Edit {filter.propertyLabel} Filter
+          </ResponsiveDialogTitle>
         </ResponsiveDialogHeader>
 
         {filter.controlType === 'boolean' && (

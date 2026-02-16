@@ -1,8 +1,8 @@
-import type { Table } from "@tanstack/react-table"
-import { Settings01Icon } from "@hugeicons/core-free-icons"
-import { HugeiconsIcon } from "@hugeicons/react"
+import type { Table } from '@tanstack/react-table'
+import { Settings01Icon } from '@hugeicons/core-free-icons'
+import { HugeiconsIcon } from '@hugeicons/react'
 
-import { Button } from "@/components/ui/button"
+import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -10,7 +10,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from '@/components/ui/dropdown-menu'
 
 interface DataTableViewOptionsProps<TData> {
   table: Table<TData>
@@ -40,7 +40,7 @@ function DataTableViewOptions<TData>({
           .getAllColumns()
           .filter(
             (column) =>
-              typeof column.accessorFn !== "undefined" && column.getCanHide()
+              typeof column.accessorFn !== 'undefined' && column.getCanHide(),
           )
           .map((column) => {
             return (

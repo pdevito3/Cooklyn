@@ -1,8 +1,15 @@
 import { useState } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
 import { useQueryClient } from '@tanstack/react-query'
-import { RotateClockwiseIcon, CloudIcon, SquareLock02Icon, SquareUnlock02Icon, Login01Icon, Logout01Icon } from "@hugeicons/core-free-icons"
-import { HugeiconsIcon } from "@hugeicons/react"
+import {
+  RotateClockwiseIcon,
+  CloudIcon,
+  SquareLock02Icon,
+  SquareUnlock02Icon,
+  Login01Icon,
+  Logout01Icon,
+} from '@hugeicons/core-free-icons'
+import { HugeiconsIcon } from '@hugeicons/react'
 
 import { useWeatherForecast } from '@/domain/weather/apis/get-weather'
 import { useSecureWeatherForecast } from '@/domain/weather/apis/get-secure-weather'
@@ -13,7 +20,11 @@ import { Button } from '@/components/ui/button'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
-import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip'
+import {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+} from '@/components/ui/tooltip'
 
 export const Route = createFileRoute('/')({
   component: Index,
@@ -44,9 +55,12 @@ function Index() {
     queryClient.invalidateQueries({ queryKey: WeatherKeys.all })
   }
 
-  const isCurrentlyFetching = showSecure && auth.isLoggedIn ? secureFetching : isFetching
-  const displayData = showSecure && auth.isLoggedIn ? secureWeatherData : weatherData
-  const isSecureData = showSecure && auth.isLoggedIn && secureWeatherData.length > 0
+  const isCurrentlyFetching =
+    showSecure && auth.isLoggedIn ? secureFetching : isFetching
+  const displayData =
+    showSecure && auth.isLoggedIn ? secureWeatherData : weatherData
+  const isSecureData =
+    showSecure && auth.isLoggedIn && secureWeatherData.length > 0
   const currentError = showSecure && auth.isLoggedIn ? secureError : error
   const isLoading = showSecure && auth.isLoggedIn ? secureLoading : loading
 
@@ -67,7 +81,9 @@ function Index() {
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">Weather Forecast</h1>
+            <h1 className="text-3xl font-bold tracking-tight">
+              Weather Forecast
+            </h1>
             <p className="text-muted-foreground mt-1">
               .NET Aspire + React with Duende BFF
             </p>
@@ -109,9 +125,15 @@ function Index() {
                     onClick={() => setShowSecure(!showSecure)}
                   >
                     {showSecure ? (
-                      <HugeiconsIcon icon={SquareLock02Icon} className="w-4 h-4 mr-2" />
+                      <HugeiconsIcon
+                        icon={SquareLock02Icon}
+                        className="w-4 h-4 mr-2"
+                      />
                     ) : (
-                      <HugeiconsIcon icon={SquareUnlock02Icon} className="w-4 h-4 mr-2" />
+                      <HugeiconsIcon
+                        icon={SquareUnlock02Icon}
+                        className="w-4 h-4 mr-2"
+                      />
                     )}
                     {showSecure ? 'Secure API' : 'Public API'}
                   </Button>
@@ -171,7 +193,9 @@ function Index() {
           <div className="bg-destructive/10 border border-destructive/20 text-destructive rounded-lg p-4 mb-6">
             <p className="font-medium">Error loading weather data</p>
             <p className="text-sm mt-1">
-              {currentError instanceof Error ? currentError.message : 'Failed to fetch weather data'}
+              {currentError instanceof Error
+                ? currentError.message
+                : 'Failed to fetch weather data'}
             </p>
           </div>
         )}
@@ -209,7 +233,10 @@ function Index() {
         {/* Empty State */}
         {!isLoading && !currentError && displayData.length === 0 && (
           <div className="text-center py-12">
-            <HugeiconsIcon icon={CloudIcon} className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
+            <HugeiconsIcon
+              icon={CloudIcon}
+              className="w-12 h-12 mx-auto text-muted-foreground mb-4"
+            />
             <p className="text-muted-foreground">No weather data available</p>
             <Button variant="outline" className="mt-4" onClick={handleRefresh}>
               Try Again
@@ -234,9 +261,16 @@ interface WeatherCardProps {
   formatDate: (date: string) => string
 }
 
-function WeatherCard({ forecast, useCelsius, isSecure, formatDate }: WeatherCardProps) {
+function WeatherCard({
+  forecast,
+  useCelsius,
+  isSecure,
+  formatDate,
+}: WeatherCardProps) {
   return (
-    <Card className={`transition-shadow hover:shadow-md ${isSecure ? 'border-green-500/30' : ''}`}>
+    <Card
+      className={`transition-shadow hover:shadow-md ${isSecure ? 'border-green-500/30' : ''}`}
+    >
       <CardHeader className="pb-2">
         <div className="flex items-start justify-between">
           <div>
@@ -245,7 +279,10 @@ function WeatherCard({ forecast, useCelsius, isSecure, formatDate }: WeatherCard
             </p>
             <CardTitle className="mt-1">{forecast.summary}</CardTitle>
           </div>
-          <HugeiconsIcon icon={CloudIcon} className="w-6 h-6 text-muted-foreground" />
+          <HugeiconsIcon
+            icon={CloudIcon}
+            className="w-6 h-6 text-muted-foreground"
+          />
         </div>
       </CardHeader>
       <CardContent>

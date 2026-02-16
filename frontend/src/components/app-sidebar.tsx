@@ -1,5 +1,5 @@
-import { Link, useNavigate, useRouterState } from "@tanstack/react-router"
-import { useState, useEffect, useRef } from "react"
+import { Link, useNavigate, useRouterState } from '@tanstack/react-router'
+import { useState, useEffect, useRef } from 'react'
 import {
   Home01Icon,
   InformationCircleIcon,
@@ -10,14 +10,14 @@ import {
   ShoppingCart01Icon,
   Add01Icon,
   Settings01Icon,
-} from "@hugeicons/core-free-icons"
-import { HugeiconsIcon } from "@hugeicons/react"
+} from '@hugeicons/core-free-icons'
+import { HugeiconsIcon } from '@hugeicons/react'
 
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from "@/components/ui/collapsible"
+} from '@/components/ui/collapsible'
 import {
   Sidebar,
   SidebarContent,
@@ -33,72 +33,72 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
   SidebarRail,
-} from "@/components/ui/sidebar"
-import { ThemeToggle } from "@/components/theme-toggle"
-import { Kbd } from "@/components/ui/kbd"
-import { QuickAddDialog } from "@/components/quick-add-dialog"
+} from '@/components/ui/sidebar'
+import { ThemeToggle } from '@/components/theme-toggle'
+import { Kbd } from '@/components/ui/kbd'
+import { QuickAddDialog } from '@/components/quick-add-dialog'
 
 const navItems = [
   {
-    title: "Home",
-    url: "/",
+    title: 'Home',
+    url: '/',
     icon: Home01Icon,
-    hotkey: "H",
+    hotkey: 'H',
   },
   {
-    title: "Shopping Lists",
-    url: "/shopping-lists",
+    title: 'Shopping Lists',
+    url: '/shopping-lists',
     icon: ShoppingCart01Icon,
-    hotkey: "L",
+    hotkey: 'L',
   },
   {
-    title: "Recipes",
-    url: "/recipes",
+    title: 'Recipes',
+    url: '/recipes',
     icon: RestaurantIcon,
-    hotkey: "R",
+    hotkey: 'R',
   },
   {
-    title: "About",
-    url: "/about",
+    title: 'About',
+    url: '/about',
     icon: InformationCircleIcon,
-    hotkey: "A",
+    hotkey: 'A',
   },
 ]
 
 const settingsItems = [
   {
-    title: "Stores",
-    url: "/stores",
-    hotkey: "S",
+    title: 'Stores',
+    url: '/stores',
+    hotkey: 'S',
   },
   {
-    title: "Collections",
-    url: "/collections",
-    hotkey: "C",
+    title: 'Collections',
+    url: '/collections',
+    hotkey: 'C',
   },
 ]
 
 const importItems = [
   {
-    title: "From URL",
-    url: "/recipes/import",
-    hotkey: "I",
+    title: 'From URL',
+    url: '/recipes/import',
+    hotkey: 'I',
   },
   {
-    title: "From Copy Me That",
-    url: "/recipes/import-cmt",
-    hotkey: "M",
+    title: 'From Copy Me That',
+    url: '/recipes/import-cmt',
+    hotkey: 'M',
   },
 ]
 
 const demoItems = [
   {
-    title: "Components",
-    url: "/components",
+    title: 'Components',
+    url: '/components',
   },
   {
-    title: "Filter Builder",
-    url: "/filter-demo",
+    title: 'Filter Builder',
+    url: '/filter-demo',
   },
 ]
 
@@ -117,13 +117,20 @@ export function AppSidebar() {
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
       const target = e.target as HTMLElement
-      if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.tagName === 'SELECT' || target.isContentEditable) {
+      if (
+        target.tagName === 'INPUT' ||
+        target.tagName === 'TEXTAREA' ||
+        target.tagName === 'SELECT' ||
+        target.isContentEditable
+      ) {
         return
       }
 
       if (e.key === 'g' && !e.metaKey && !e.ctrlKey && !e.altKey) {
         gPressedRef.current = true
-        setTimeout(() => { gPressedRef.current = false }, 1000)
+        setTimeout(() => {
+          gPressedRef.current = false
+        }, 1000)
         return
       }
 
@@ -147,13 +154,22 @@ export function AppSidebar() {
   }, [navigate])
 
   // Check if any import item is active
-  const isImportActive = importItems.some((item) => currentPath === item.url || currentPath.startsWith(item.url + "/"))
+  const isImportActive = importItems.some(
+    (item) =>
+      currentPath === item.url || currentPath.startsWith(item.url + '/'),
+  )
 
   // Check if any settings item is active
-  const isSettingsActive = settingsItems.some((item) => currentPath === item.url || currentPath.startsWith(item.url + "/"))
+  const isSettingsActive = settingsItems.some(
+    (item) =>
+      currentPath === item.url || currentPath.startsWith(item.url + '/'),
+  )
 
   // Check if any demo item is active
-  const isDemoActive = demoItems.some((item) => currentPath === item.url || currentPath.startsWith(item.url + "/"))
+  const isDemoActive = demoItems.some(
+    (item) =>
+      currentPath === item.url || currentPath.startsWith(item.url + '/'),
+  )
 
   return (
     <Sidebar variant="inset" collapsible="icon">
@@ -166,7 +182,9 @@ export function AppSidebar() {
               </div>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-semibold">Fullstack</span>
-                <span className="truncate text-xs text-muted-foreground">Template</span>
+                <span className="truncate text-xs text-muted-foreground">
+                  Template
+                </span>
               </div>
             </SidebarMenuButton>
           </SidebarMenuItem>
@@ -195,9 +213,7 @@ export function AppSidebar() {
 
               {/* Quick Add */}
               <SidebarMenuItem>
-                <SidebarMenuButton
-                  onClick={() => setQuickAddOpen(true)}
-                >
+                <SidebarMenuButton onClick={() => setQuickAddOpen(true)}>
                   <HugeiconsIcon icon={Add01Icon} />
                   <span>Add Item</span>
                   <Kbd>G N</Kbd>
@@ -205,9 +221,15 @@ export function AppSidebar() {
               </SidebarMenuItem>
 
               {/* Import submenu */}
-              <Collapsible defaultOpen={isImportActive} className="group/collapsible">
+              <Collapsible
+                defaultOpen={isImportActive}
+                className="group/collapsible"
+              >
                 <SidebarMenuItem>
-                  <CollapsibleTrigger className="ring-sidebar-ring hover:bg-sidebar-accent hover:text-sidebar-accent-foreground active:bg-sidebar-accent active:text-sidebar-accent-foreground data-[state=open]:hover:bg-sidebar-accent data-[state=open]:hover:text-sidebar-accent-foreground gap-2 rounded-md p-2 text-left text-sm transition-[width,height,padding] group-has-data-[sidebar=menu-action]/menu-item:pr-8 group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-2! focus-visible:ring-2 peer/menu-button flex w-full items-center overflow-hidden outline-hidden [&>span:last-child]:truncate [&_svg]:size-4 [&_svg]:shrink-0 h-8 data-[active]:bg-sidebar-accent data-[active]:text-sidebar-accent-foreground data-[active]:font-medium" data-active={isImportActive || undefined}>
+                  <CollapsibleTrigger
+                    className="ring-sidebar-ring hover:bg-sidebar-accent hover:text-sidebar-accent-foreground active:bg-sidebar-accent active:text-sidebar-accent-foreground data-[state=open]:hover:bg-sidebar-accent data-[state=open]:hover:text-sidebar-accent-foreground gap-2 rounded-md p-2 text-left text-sm transition-[width,height,padding] group-has-data-[sidebar=menu-action]/menu-item:pr-8 group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-2! focus-visible:ring-2 peer/menu-button flex w-full items-center overflow-hidden outline-hidden [&>span:last-child]:truncate [&_svg]:size-4 [&_svg]:shrink-0 h-8 data-[active]:bg-sidebar-accent data-[active]:text-sidebar-accent-foreground data-[active]:font-medium"
+                    data-active={isImportActive || undefined}
+                  >
                     <HugeiconsIcon icon={FileImportIcon} />
                     <span>Import</span>
                     <HugeiconsIcon
@@ -220,7 +242,10 @@ export function AppSidebar() {
                       {importItems.map((item) => {
                         const isActive = currentPath === item.url
                         return (
-                            <SidebarMenuSubItem key={item.title} isActive={isActive}>
+                          <SidebarMenuSubItem
+                            key={item.title}
+                            isActive={isActive}
+                          >
                             <SidebarMenuSubButton
                               render={<Link to={item.url} />}
                               isActive={isActive}
@@ -237,9 +262,15 @@ export function AppSidebar() {
               </Collapsible>
 
               {/* Settings submenu */}
-              <Collapsible defaultOpen={isSettingsActive} className="group/collapsible">
+              <Collapsible
+                defaultOpen={isSettingsActive}
+                className="group/collapsible"
+              >
                 <SidebarMenuItem>
-                  <CollapsibleTrigger className="ring-sidebar-ring hover:bg-sidebar-accent hover:text-sidebar-accent-foreground active:bg-sidebar-accent active:text-sidebar-accent-foreground data-[state=open]:hover:bg-sidebar-accent data-[state=open]:hover:text-sidebar-accent-foreground gap-2 rounded-md p-2 text-left text-sm transition-[width,height,padding] group-has-data-[sidebar=menu-action]/menu-item:pr-8 group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-2! focus-visible:ring-2 peer/menu-button flex w-full items-center overflow-hidden outline-hidden [&>span:last-child]:truncate [&_svg]:size-4 [&_svg]:shrink-0 h-8 data-[active]:bg-sidebar-accent data-[active]:text-sidebar-accent-foreground data-[active]:font-medium" data-active={isSettingsActive || undefined}>
+                  <CollapsibleTrigger
+                    className="ring-sidebar-ring hover:bg-sidebar-accent hover:text-sidebar-accent-foreground active:bg-sidebar-accent active:text-sidebar-accent-foreground data-[state=open]:hover:bg-sidebar-accent data-[state=open]:hover:text-sidebar-accent-foreground gap-2 rounded-md p-2 text-left text-sm transition-[width,height,padding] group-has-data-[sidebar=menu-action]/menu-item:pr-8 group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-2! focus-visible:ring-2 peer/menu-button flex w-full items-center overflow-hidden outline-hidden [&>span:last-child]:truncate [&_svg]:size-4 [&_svg]:shrink-0 h-8 data-[active]:bg-sidebar-accent data-[active]:text-sidebar-accent-foreground data-[active]:font-medium"
+                    data-active={isSettingsActive || undefined}
+                  >
                     <HugeiconsIcon icon={Settings01Icon} />
                     <span>Settings</span>
                     <HugeiconsIcon
@@ -250,9 +281,14 @@ export function AppSidebar() {
                   <CollapsibleContent>
                     <SidebarMenuSub>
                       {settingsItems.map((item) => {
-                        const isActive = currentPath === item.url || currentPath.startsWith(item.url + "/")
+                        const isActive =
+                          currentPath === item.url ||
+                          currentPath.startsWith(item.url + '/')
                         return (
-                            <SidebarMenuSubItem key={item.title} isActive={isActive}>
+                          <SidebarMenuSubItem
+                            key={item.title}
+                            isActive={isActive}
+                          >
                             <SidebarMenuSubButton
                               render={<Link to={item.url} />}
                               isActive={isActive}
@@ -269,9 +305,15 @@ export function AppSidebar() {
               </Collapsible>
 
               {/* Demos submenu */}
-              <Collapsible defaultOpen={isDemoActive} className="group/collapsible">
+              <Collapsible
+                defaultOpen={isDemoActive}
+                className="group/collapsible"
+              >
                 <SidebarMenuItem>
-                  <CollapsibleTrigger className="ring-sidebar-ring hover:bg-sidebar-accent hover:text-sidebar-accent-foreground active:bg-sidebar-accent active:text-sidebar-accent-foreground data-[state=open]:hover:bg-sidebar-accent data-[state=open]:hover:text-sidebar-accent-foreground gap-2 rounded-md p-2 text-left text-sm transition-[width,height,padding] group-has-data-[sidebar=menu-action]/menu-item:pr-8 group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-2! focus-visible:ring-2 peer/menu-button flex w-full items-center overflow-hidden outline-hidden [&>span:last-child]:truncate [&_svg]:size-4 [&_svg]:shrink-0 h-8 data-[active]:bg-sidebar-accent data-[active]:text-sidebar-accent-foreground data-[active]:font-medium" data-active={isDemoActive || undefined}>
+                  <CollapsibleTrigger
+                    className="ring-sidebar-ring hover:bg-sidebar-accent hover:text-sidebar-accent-foreground active:bg-sidebar-accent active:text-sidebar-accent-foreground data-[state=open]:hover:bg-sidebar-accent data-[state=open]:hover:text-sidebar-accent-foreground gap-2 rounded-md p-2 text-left text-sm transition-[width,height,padding] group-has-data-[sidebar=menu-action]/menu-item:pr-8 group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-2! focus-visible:ring-2 peer/menu-button flex w-full items-center overflow-hidden outline-hidden [&>span:last-child]:truncate [&_svg]:size-4 [&_svg]:shrink-0 h-8 data-[active]:bg-sidebar-accent data-[active]:text-sidebar-accent-foreground data-[active]:font-medium"
+                    data-active={isDemoActive || undefined}
+                  >
                     <HugeiconsIcon icon={DashboardSquare01Icon} />
                     <span>Demos</span>
                     <HugeiconsIcon
@@ -284,7 +326,10 @@ export function AppSidebar() {
                       {demoItems.map((item) => {
                         const isActive = currentPath === item.url
                         return (
-                            <SidebarMenuSubItem key={item.title} isActive={isActive}>
+                          <SidebarMenuSubItem
+                            key={item.title}
+                            isActive={isActive}
+                          >
                             <SidebarMenuSubButton
                               render={<Link to={item.url} />}
                               isActive={isActive}

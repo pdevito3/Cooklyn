@@ -17,7 +17,8 @@ export function toQueryKitString(state: FilterState): string {
   }
 
   const filterStrings = state.filters.map(convertFilterOrGroup)
-  const operator = state.rootLogicalOperator === LogicalOperators.AND ? ' && ' : ' || '
+  const operator =
+    state.rootLogicalOperator === LogicalOperators.AND ? ' && ' : ' || '
 
   return filterStrings.join(operator)
 }
@@ -45,7 +46,8 @@ function convertGroup(group: FilterGroup): string {
   }
 
   const filterStrings = group.filters.map(convertFilterOrGroup)
-  const operator = group.logicalOperator === LogicalOperators.AND ? ' && ' : ' || '
+  const operator =
+    group.logicalOperator === LogicalOperators.AND ? ' && ' : ' || '
 
   return `(${filterStrings.join(operator)})`
 }
@@ -61,7 +63,12 @@ function convertFilter(filter: Filter): string {
       return convertTextFilter(propertyKey, operator, value as string)
 
     case 'multiselect':
-      return convertMultiSelectFilter(propertyKey, operator, value as string[], matchAll)
+      return convertMultiSelectFilter(
+        propertyKey,
+        operator,
+        value as string[],
+        matchAll,
+      )
 
     case 'date':
       return convertDateFilter(propertyKey, operator, value as DateValue)
@@ -80,7 +87,11 @@ function convertFilter(filter: Filter): string {
 /**
  * Convert a text filter to QueryKit string
  */
-function convertTextFilter(propertyKey: string, operator: string, value: string): string {
+function convertTextFilter(
+  propertyKey: string,
+  operator: string,
+  value: string,
+): string {
   // For text values, wrap in quotes if they contain spaces
   const quotedValue = value.includes(' ') ? `"${value}"` : value
   return `${propertyKey} ${operator} ${quotedValue}`
@@ -93,14 +104,16 @@ function convertMultiSelectFilter(
   propertyKey: string,
   operator: string,
   value: string[],
-  matchAll?: boolean
+  matchAll?: boolean,
 ): string {
   if (value.length === 0) {
     return ''
   }
 
   // Format array values
-  const formattedValues = value.map((v) => (v.includes(' ') ? `"${v}"` : v)).join(', ')
+  const formattedValues = value
+    .map((v) => (v.includes(' ') ? `"${v}"` : v))
+    .join(', ')
 
   // Add % prefix to operator for "all must match" semantics
   const finalOperator = matchAll ? `%${operator}` : operator
@@ -114,7 +127,9 @@ function convertMultiSelectFilter(
 function getTimezoneOffset(date: Date): string {
   const offset = -date.getTimezoneOffset()
   const sign = offset >= 0 ? '+' : '-'
-  const hours = Math.floor(Math.abs(offset) / 60).toString().padStart(2, '0')
+  const hours = Math.floor(Math.abs(offset) / 60)
+    .toString()
+    .padStart(2, '0')
   const minutes = (Math.abs(offset) % 60).toString().padStart(2, '0')
   return `${sign}${hours}:${minutes}`
 }
@@ -122,7 +137,11 @@ function getTimezoneOffset(date: Date): string {
 /**
  * Convert a date filter to QueryKit string
  */
-function convertDateFilter(propertyKey: string, _operator: string, value: DateValue): string {
+function convertDateFilter(
+  propertyKey: string,
+  _operator: string,
+  value: DateValue,
+): string {
   const { mode, startDate, endDate, exclude, dateType = 'date' } = value
 
   // Format dates as ISO 8601 strings based on dateType:
@@ -185,14 +204,22 @@ function convertDateFilter(propertyKey: string, _operator: string, value: DateVa
 /**
  * Convert a number filter to QueryKit string
  */
-function convertNumberFilter(propertyKey: string, operator: string, value: number): string {
+function convertNumberFilter(
+  propertyKey: string,
+  operator: string,
+  value: number,
+): string {
   return `${propertyKey} ${operator} ${value}`
 }
 
 /**
  * Convert a boolean filter to QueryKit string
  */
-function convertBooleanFilter(propertyKey: string, operator: string, value: boolean): string {
+function convertBooleanFilter(
+  propertyKey: string,
+  operator: string,
+  value: boolean,
+): string {
   return `${propertyKey} ${operator} ${value}`
 }
 
@@ -205,7 +232,10 @@ export function validateFilterState(state: FilterState): {
 } {
   const errors: string[] = []
 
-  function validateItem(item: Filter | FilterGroup, path: string = 'root'): void {
+  function validateItem(
+    item: Filter | FilterGroup,
+    path: string = 'root',
+  ): void {
     if (isFilter(item)) {
       // Validate filter has required fields
       if (!item.propertyKey) {
@@ -231,7 +261,9 @@ export function validateFilterState(state: FilterState): {
           errors.push(`${path}: Date filter missing startDate`)
         }
         if (dateValue.mode === 'between' && !dateValue.endDate) {
-          errors.push(`${path}: Date filter with 'between' mode missing endDate`)
+          errors.push(
+            `${path}: Date filter with 'between' mode missing endDate`,
+          )
         }
       }
     } else {

@@ -1,5 +1,9 @@
 import { useState, useMemo } from 'react'
-import { Add01Icon, TextIcon, ArrowRight01Icon } from '@hugeicons/core-free-icons'
+import {
+  Add01Icon,
+  TextIcon,
+  ArrowRight01Icon,
+} from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -21,13 +25,19 @@ interface FilterPropertyMenuProps {
   onAddFilter: (filter: Omit<Filter, 'id'>) => void
 }
 
-export function FilterPropertyMenu({ options, onAddFilter }: FilterPropertyMenuProps) {
+export function FilterPropertyMenu({
+  options,
+  onAddFilter,
+}: FilterPropertyMenuProps) {
   const [searchTerm, setSearchTerm] = useState('')
   const [popoverOpen, setPopoverOpen] = useState(false)
   const [textFilterModalOpen, setTextFilterModalOpen] = useState(false)
-  const [selectedTextProperty, setSelectedTextProperty] = useState<FilterConfig | null>(null)
+  const [selectedTextProperty, setSelectedTextProperty] =
+    useState<FilterConfig | null>(null)
   // For submenu popover
-  const [selectedProperty, setSelectedProperty] = useState<FilterConfig | null>(null)
+  const [selectedProperty, setSelectedProperty] = useState<FilterConfig | null>(
+    null,
+  )
   const [submenuOpen, setSubmenuOpen] = useState(false)
 
   const filteredOptions = useMemo(() => {
@@ -36,7 +46,7 @@ export function FilterPropertyMenu({ options, onAddFilter }: FilterPropertyMenuP
     return options.filter(
       (opt) =>
         opt.propertyLabel.toLowerCase().includes(lower) ||
-        opt.propertyKey.toLowerCase().includes(lower)
+        opt.propertyKey.toLowerCase().includes(lower),
     )
   }, [options, searchTerm])
 
@@ -99,9 +109,7 @@ export function FilterPropertyMenu({ options, onAddFilter }: FilterPropertyMenuP
   return (
     <>
       <Popover open={popoverOpen} onOpenChange={handlePopoverOpenChange}>
-        <PopoverTrigger
-          render={<Button variant="outline" size="sm" />}
-        >
+        <PopoverTrigger render={<Button variant="outline" size="sm" />}>
           <HugeiconsIcon icon={Add01Icon} className="size-4 mr-2" />
           Add Filter
         </PopoverTrigger>
@@ -127,8 +135,13 @@ export function FilterPropertyMenu({ options, onAddFilter }: FilterPropertyMenuP
                 <PropertyMenuItem
                   key={config.propertyKey}
                   config={config}
-                  isSelected={selectedProperty?.propertyKey === config.propertyKey}
-                  submenuOpen={submenuOpen && selectedProperty?.propertyKey === config.propertyKey}
+                  isSelected={
+                    selectedProperty?.propertyKey === config.propertyKey
+                  }
+                  submenuOpen={
+                    submenuOpen &&
+                    selectedProperty?.propertyKey === config.propertyKey
+                  }
                   onSubmenuOpenChange={handleSubmenuOpenChange}
                   onClick={() => handlePropertyClick(config)}
                   onFilterSubmit={handleFilterSubmit}
@@ -180,30 +193,39 @@ function PropertyMenuItem({
       <button
         onClick={onClick}
         className={cn(
-          "w-full flex items-center gap-1.5 rounded-md px-2 py-1.5 text-sm text-left",
-          "hover:bg-accent hover:text-accent-foreground",
-          "focus:bg-accent focus:text-accent-foreground focus:outline-none"
+          'w-full flex items-center gap-1.5 rounded-md px-2 py-1.5 text-sm text-left',
+          'hover:bg-accent hover:text-accent-foreground',
+          'focus:bg-accent focus:text-accent-foreground focus:outline-none',
         )}
       >
         {config.propertyLabel}
-        <HugeiconsIcon icon={TextIcon} className="ml-auto size-4 text-muted-foreground" />
+        <HugeiconsIcon
+          icon={TextIcon}
+          className="ml-auto size-4 text-muted-foreground"
+        />
       </button>
     )
   }
 
   return (
-    <Popover open={submenuOpen && isSelected} onOpenChange={onSubmenuOpenChange}>
+    <Popover
+      open={submenuOpen && isSelected}
+      onOpenChange={onSubmenuOpenChange}
+    >
       <PopoverTrigger
         onClick={onClick}
         className={cn(
-          "w-full flex items-center gap-1.5 rounded-md px-2 py-1.5 text-sm text-left",
-          "hover:bg-accent hover:text-accent-foreground",
-          "focus:bg-accent focus:text-accent-foreground focus:outline-none",
-          isSelected && submenuOpen && "bg-accent text-accent-foreground"
+          'w-full flex items-center gap-1.5 rounded-md px-2 py-1.5 text-sm text-left',
+          'hover:bg-accent hover:text-accent-foreground',
+          'focus:bg-accent focus:text-accent-foreground focus:outline-none',
+          isSelected && submenuOpen && 'bg-accent text-accent-foreground',
         )}
       >
         {config.propertyLabel}
-        <HugeiconsIcon icon={ArrowRight01Icon} className="ml-auto size-4 text-muted-foreground" />
+        <HugeiconsIcon
+          icon={ArrowRight01Icon}
+          className="ml-auto size-4 text-muted-foreground"
+        />
       </PopoverTrigger>
       <PopoverContent
         className="w-auto p-0"

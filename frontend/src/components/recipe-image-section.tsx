@@ -1,5 +1,9 @@
 import { useRef, useState } from 'react'
-import { ImageUploadIcon, Delete02Icon, Image02Icon } from '@hugeicons/core-free-icons'
+import {
+  ImageUploadIcon,
+  Delete02Icon,
+  Image02Icon,
+} from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
 
 import { ImageCropDialog } from '@/components/image-crop-dialog'
@@ -23,7 +27,11 @@ interface RecipeImageSectionProps {
   source: string | null
 }
 
-export function RecipeImageSection({ recipeId, imageUrl, source }: RecipeImageSectionProps) {
+export function RecipeImageSection({
+  recipeId,
+  imageUrl,
+  source,
+}: RecipeImageSectionProps) {
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
   const [imagePickerOpen, setImagePickerOpen] = useState(false)
@@ -66,7 +74,7 @@ export function RecipeImageSection({ recipeId, imageUrl, source }: RecipeImageSe
           setPreviewUrl(null)
           URL.revokeObjectURL(objectUrl)
         },
-      }
+      },
     )
   }
 
@@ -102,7 +110,10 @@ export function RecipeImageSection({ recipeId, imageUrl, source }: RecipeImageSe
           ) : (
             <div className="flex aspect-square max-w-sm items-center justify-center rounded-lg border border-dashed">
               <div className="text-center text-muted-foreground">
-                <HugeiconsIcon icon={ImageUploadIcon} className="mx-auto size-10" />
+                <HugeiconsIcon
+                  icon={ImageUploadIcon}
+                  className="mx-auto size-10"
+                />
                 <p className="mt-2 text-sm">No image uploaded</p>
               </div>
             </div>

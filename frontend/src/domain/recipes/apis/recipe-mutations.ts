@@ -15,7 +15,9 @@ import { RecipeKeys } from './recipe.keys'
 /**
  * Create a new recipe
  */
-export async function createRecipe(dto: RecipeForCreationDto): Promise<RecipeDto> {
+export async function createRecipe(
+  dto: RecipeForCreationDto,
+): Promise<RecipeDto> {
   const response = await apiClient.post<RecipeDto>('/api/v1/recipes', dto)
   return response.data
 }
@@ -39,7 +41,7 @@ export function useCreateRecipe() {
  */
 export async function updateRecipe(
   id: string,
-  dto: RecipeForUpdateDto
+  dto: RecipeForUpdateDto,
 ): Promise<RecipeDto> {
   const response = await apiClient.put<RecipeDto>(`/api/v1/recipes/${id}`, dto)
   return response.data
@@ -87,7 +89,7 @@ export function useDeleteRecipe() {
  */
 export async function uploadRecipeImage(
   id: string,
-  file: File
+  file: File,
 ): Promise<RecipeImageDto> {
   const formData = new FormData()
   formData.append('file', file)
@@ -99,7 +101,7 @@ export async function uploadRecipeImage(
       headers: {
         'Content-Type': 'multipart/form-data',
       },
-    }
+    },
   )
   return response.data
 }
@@ -147,11 +149,11 @@ export function useDeleteRecipeImage() {
  */
 export async function updateRecipeIngredients(
   id: string,
-  ingredients: IngredientForCreationDto[]
+  ingredients: IngredientForCreationDto[],
 ): Promise<RecipeDto> {
   const response = await apiClient.put<RecipeDto>(
     `/api/v1/recipes/${id}/ingredients`,
-    { ingredients }
+    { ingredients },
   )
   return response.data
 }
@@ -181,11 +183,11 @@ export function useUpdateRecipeIngredients() {
  * Parse free-text ingredients into structured data
  */
 export async function parseIngredients(
-  text: string
+  text: string,
 ): Promise<IngredientForCreationDto[]> {
   const response = await apiClient.post<IngredientForCreationDto[]>(
     '/api/v1/recipes/parse-ingredients',
-    { text }
+    { text },
   )
   return response.data
 }
@@ -203,11 +205,11 @@ export function useParseIngredients() {
  * Import recipe preview from URL
  */
 export async function importRecipePreview(
-  url: string
+  url: string,
 ): Promise<ImportRecipePreviewDto> {
   const response = await apiClient.post<ImportRecipePreviewDto>(
     '/api/v1/recipes/import/preview',
-    { url }
+    { url },
   )
   return response.data
 }
@@ -226,11 +228,11 @@ export function useImportRecipePreview() {
  */
 export async function uploadRecipeImageFromUrl(
   id: string,
-  imageUrl: string
+  imageUrl: string,
 ): Promise<RecipeImageDto> {
   const response = await apiClient.post<RecipeImageDto>(
     `/api/v1/recipes/${id}/image-from-url`,
-    { imageUrl }
+    { imageUrl },
   )
   return response.data
 }
@@ -261,13 +263,15 @@ export function proxyImageUrl(url: string): string {
 /**
  * Preview a Copy Me That ZIP import
  */
-export async function previewCmtImport(file: File): Promise<CmtImportPreviewDto> {
+export async function previewCmtImport(
+  file: File,
+): Promise<CmtImportPreviewDto> {
   const formData = new FormData()
   formData.append('file', file)
   const response = await apiClient.post<CmtImportPreviewDto>(
     '/api/v1/recipes/import/cmt/preview',
     formData,
-    { headers: { 'Content-Type': 'multipart/form-data' } }
+    { headers: { 'Content-Type': 'multipart/form-data' } },
   )
   return response.data
 }
@@ -287,7 +291,7 @@ export function usePreviewCmtImport() {
 export async function importCmtRecipes(
   file: File,
   selectedIndices: number[],
-  importRatings: boolean
+  importRatings: boolean,
 ): Promise<CmtImportResultDto> {
   const formData = new FormData()
   formData.append('file', file)
@@ -296,7 +300,7 @@ export async function importCmtRecipes(
   const response = await apiClient.post<CmtImportResultDto>(
     '/api/v1/recipes/import/cmt',
     formData,
-    { headers: { 'Content-Type': 'multipart/form-data' } }
+    { headers: { 'Content-Type': 'multipart/form-data' } },
   )
   return response.data
 }
@@ -328,11 +332,11 @@ export function useImportCmtRecipes() {
  */
 export async function updateRecipeRating(
   id: string,
-  rating: string
+  rating: string,
 ): Promise<RecipeDto> {
   const response = await apiClient.put<RecipeDto>(
     `/api/v1/recipes/${id}/rating`,
-    { rating }
+    { rating },
   )
   return response.data
 }

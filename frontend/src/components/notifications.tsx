@@ -1,6 +1,12 @@
 import toast, { Toaster, type ToastOptions } from 'react-hot-toast'
 import { cn } from '@/lib/utils'
-import { Cancel01Icon, CheckmarkCircle02Icon, AlertCircleIcon, InformationCircleIcon, Alert02Icon } from '@hugeicons/core-free-icons'
+import {
+  Cancel01Icon,
+  CheckmarkCircle02Icon,
+  AlertCircleIcon,
+  InformationCircleIcon,
+  Alert02Icon,
+} from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
 
 /**
@@ -24,7 +30,7 @@ export function Notifications() {
         className: cn(
           'bg-card text-card-foreground border border-border',
           'shadow-lg rounded-lg px-4 py-3',
-          'flex items-start gap-3 min-w-[300px] max-w-[500px]'
+          'flex items-start gap-3 min-w-[300px] max-w-[500px]',
         ),
       }}
     />
@@ -61,7 +67,10 @@ function ToastContent({ message, type, description }: ToastContentProps) {
 
   return (
     <div className="flex items-start gap-3 flex-1">
-      <HugeiconsIcon icon={icon} className={cn('size-5 shrink-0 mt-0.5', iconColor)} />
+      <HugeiconsIcon
+        icon={icon}
+        className={cn('size-5 shrink-0 mt-0.5', iconColor)}
+      />
       <div className="flex-1 min-w-0">
         <p className="text-sm font-medium text-foreground">{message}</p>
         {description && (
@@ -79,7 +88,7 @@ type NotificationOptions = ToastOptions & {
 function createToast(
   message: string,
   type: ToastType,
-  options?: NotificationOptions
+  options?: NotificationOptions,
 ) {
   const { description, ...toastOptions } = options || {}
 
@@ -91,7 +100,9 @@ function createToast(
           'shadow-lg rounded-lg px-4 py-3',
           'flex items-start gap-3 min-w-[300px] max-w-[500px]',
           'transform transition-all duration-200',
-          t.visible ? 'animate-in fade-in-0 slide-in-from-top-2' : 'animate-out fade-out-0 slide-out-to-top-2'
+          t.visible
+            ? 'animate-in fade-in-0 slide-in-from-top-2'
+            : 'animate-out fade-out-0 slide-out-to-top-2',
         )}
       >
         <ToastContent message={message} type={type} description={description} />
@@ -101,7 +112,7 @@ function createToast(
             'shrink-0 rounded-md p-1 -m-1',
             'text-muted-foreground hover:text-foreground',
             'hover:bg-muted transition-colors',
-            'focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background'
+            'focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background',
           )}
         >
           <HugeiconsIcon icon={Cancel01Icon} className="size-4" />
@@ -111,7 +122,7 @@ function createToast(
     {
       duration: type === 'error' ? 6000 : 4000,
       ...toastOptions,
-    }
+    },
   )
 }
 
@@ -159,7 +170,7 @@ export const Notification = {
       success: string | ((data: T) => string)
       error: string | ((err: unknown) => string)
     },
-    options?: NotificationOptions
+    options?: NotificationOptions,
   ) =>
     toast.promise(
       promise,
@@ -171,6 +182,6 @@ export const Notification = {
       {
         duration: 4000,
         ...options,
-      }
+      },
     ),
 }

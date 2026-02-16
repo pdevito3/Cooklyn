@@ -101,8 +101,10 @@ function ShoppingListDetailPage() {
   const [checkedOpen, setCheckedOpen] = useState(true)
   const [addFromRecipeOpen, setAddFromRecipeOpen] = useState(false)
   const [addFromCollectionOpen, setAddFromCollectionOpen] = useState(false)
-  const [categorizeItem, setCategorizeItem] = useState<ShoppingListItemDto | null>(null)
-  const [categorizeSection, setCategorizeSection] = useState<StoreSectionDto | null>(null)
+  const [categorizeItem, setCategorizeItem] =
+    useState<ShoppingListItemDto | null>(null)
+  const [categorizeSection, setCategorizeSection] =
+    useState<StoreSectionDto | null>(null)
 
   const stores = storesData?.items ?? []
   const sectionItems = sectionsData?.items
@@ -115,8 +117,9 @@ function ShoppingListDetailPage() {
     const unchecked = list.items.filter((i) => !i.isChecked)
     const checked = list.items
       .filter((i) => i.isChecked)
-      .sort((a, b) => {
-        if (a.checkedOn && b.checkedOn) return b.checkedOn.localeCompare(a.checkedOn)
+      .toSorted((a, b) => {
+        if (a.checkedOn && b.checkedOn)
+          return b.checkedOn.localeCompare(a.checkedOn)
         return 0
       })
 
@@ -130,12 +133,16 @@ function ShoppingListDetailPage() {
 
     // Sort groups by store aisle order if we have a store
     const storeAisles = store?.storeAisles ?? []
-    const groupEntries = Array.from(groups.entries()).sort(([a], [b]) => {
+    const groupEntries = Array.from(groups.entries()).toSorted(([a], [b]) => {
       if (a === null && b === null) return 0
       if (a === null) return 1
       if (b === null) return -1
-      const aOrder = storeAisles.find((aisle) => aisle.storeSectionId === a)?.sortOrder ?? 999
-      const bOrder = storeAisles.find((aisle) => aisle.storeSectionId === b)?.sortOrder ?? 999
+      const aOrder =
+        storeAisles.find((aisle) => aisle.storeSectionId === a)?.sortOrder ??
+        999
+      const bOrder =
+        storeAisles.find((aisle) => aisle.storeSectionId === b)?.sortOrder ??
+        999
       return aOrder - bOrder
     })
 
@@ -147,12 +154,13 @@ function ShoppingListDetailPage() {
     return {
       uncheckedGroups: groupEntries.map(([sectionId, items]) => ({
         sectionId,
-        sectionName: sectionId ? (
-          // Use custom aisle name if available, otherwise section name
-          storeAisles.find((a) => a.storeSectionId === sectionId)?.customName ??
-          sections.find((s) => s.id === sectionId)?.name ??
-          'Unknown'
-        ) : 'Uncategorized',
+        sectionName: sectionId
+          ? // Use custom aisle name if available, otherwise section name
+            (storeAisles.find((a) => a.storeSectionId === sectionId)
+              ?.customName ??
+            sections.find((s) => s.id === sectionId)?.name ??
+            'Unknown')
+          : 'Uncategorized',
         items,
       })),
       checkedItems: checked,
@@ -186,7 +194,7 @@ function ShoppingListDetailPage() {
     if (items.length === 0) return
     addItems.mutate(
       { shoppingListId: id, items },
-      { onSuccess: () => setQuickAddText('') }
+      { onSuccess: () => setQuickAddText('') },
     )
   }
 
@@ -208,14 +216,17 @@ function ShoppingListDetailPage() {
     deleteItem.mutate({ shoppingListId: id, itemId })
   }
 
-  const openCategorize = useCallback((e: React.MouseEvent, item: ShoppingListItemDto) => {
-    e.stopPropagation()
-    const currentSection = item.storeSectionId
-      ? sections.find((s) => s.id === item.storeSectionId) ?? null
-      : null
-    setCategorizeSection(currentSection)
-    setCategorizeItem(item)
-  }, [sections])
+  const openCategorize = useCallback(
+    (e: React.MouseEvent, item: ShoppingListItemDto) => {
+      e.stopPropagation()
+      const currentSection = item.storeSectionId
+        ? (sections.find((s) => s.id === item.storeSectionId) ?? null)
+        : null
+      setCategorizeSection(currentSection)
+      setCategorizeItem(item)
+    },
+    [sections],
+  )
 
   const handleCategorizeSubmit = () => {
     if (!categorizeItem) return
@@ -233,7 +244,7 @@ function ShoppingListDetailPage() {
       },
       {
         onSuccess: () => setCategorizeItem(null),
-      }
+      },
     )
   }
 
@@ -256,7 +267,11 @@ function ShoppingListDetailPage() {
     <div className="max-w-5xl space-y-6">
       {/* Header */}
       <div className="flex items-center gap-4">
-        <Button variant="ghost" size="icon" onClick={() => navigate({ to: '/shopping-lists' })}>
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => navigate({ to: '/shopping-lists' })}
+        >
           <HugeiconsIcon icon={ArrowLeft02Icon} className="h-4 w-4" />
         </Button>
         <div className="flex-1">
@@ -268,16 +283,29 @@ function ShoppingListDetailPage() {
         </div>
         <div className="flex gap-2">
           {isCompleted ? (
-            <Button variant="outline" onClick={() => reopenList.mutate(id)} disabled={reopenList.isPending}>
+            <Button
+              variant="outline"
+              onClick={() => reopenList.mutate(id)}
+              disabled={reopenList.isPending}
+            >
               Reopen
             </Button>
           ) : (
-            <Button variant="outline" onClick={() => completeList.mutate(id)} disabled={completeList.isPending}>
+            <Button
+              variant="outline"
+              onClick={() => completeList.mutate(id)}
+              disabled={completeList.isPending}
+            >
               <HugeiconsIcon icon={Tick02Icon} className="mr-2 h-4 w-4" />
               Complete
             </Button>
           )}
-          <Button variant="outline" onClick={() => navigate({ to: '/shopping-lists/$id/edit', params: { id } })}>
+          <Button
+            variant="outline"
+            onClick={() =>
+              navigate({ to: '/shopping-lists/$id/edit', params: { id } })
+            }
+          >
             Edit
             <Kbd>E</Kbd>
           </Button>
@@ -294,27 +322,45 @@ function ShoppingListDetailPage() {
           <div className="flex gap-2">
             <Textarea
               ref={textareaRef}
-              placeholder={"Add items, one per line...\ne.g. 1 bag flour, 2 Tbsp salt"}
+              placeholder={
+                'Add items, one per line...\ne.g. 1 bag flour, 2 Tbsp salt'
+              }
               value={quickAddText}
               onChange={(e) => setQuickAddText(e.target.value)}
               onKeyDown={(e) => {
-                if (e.key === 'Enter' && !e.shiftKey && !quickAddText.includes('\n')) {
+                if (
+                  e.key === 'Enter' &&
+                  !e.shiftKey &&
+                  !quickAddText.includes('\n')
+                ) {
                   e.preventDefault()
                   handleQuickAdd()
                 }
               }}
               className="min-h-10"
             />
-            <Button onClick={handleQuickAdd} disabled={!quickAddText.trim() || addItems.isPending} className="self-end">
+            <Button
+              onClick={handleQuickAdd}
+              disabled={!quickAddText.trim() || addItems.isPending}
+              className="self-end"
+            >
               <HugeiconsIcon icon={Add01Icon} className="h-4 w-4" />
             </Button>
           </div>
           <div className="flex gap-2">
-            <Button variant="outline" size="sm" onClick={() => setAddFromRecipeOpen(true)}>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setAddFromRecipeOpen(true)}
+            >
               <HugeiconsIcon icon={RestaurantIcon} className="mr-2 h-4 w-4" />
               Recipe
             </Button>
-            <Button variant="outline" size="sm" onClick={() => setAddFromCollectionOpen(true)}>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setAddFromCollectionOpen(true)}
+            >
               <HugeiconsIcon icon={Layers01Icon} className="mr-2 h-4 w-4" />
               Collection
             </Button>
@@ -353,7 +399,9 @@ function ShoppingListDetailPage() {
                           <span className="font-medium">{item.name}</span>
                         </div>
                         {item.notes && (
-                          <p className="text-xs text-muted-foreground">{item.notes}</p>
+                          <p className="text-xs text-muted-foreground">
+                            {item.notes}
+                          </p>
                         )}
                       </div>
                     </Checkbox>
@@ -364,7 +412,10 @@ function ShoppingListDetailPage() {
                         className="md:opacity-0 md:group-hover:opacity-100 h-7 w-7"
                         onClick={(e) => openCategorize(e, item)}
                       >
-                        <HugeiconsIcon icon={Tag01Icon} className="h-3.5 w-3.5" />
+                        <HugeiconsIcon
+                          icon={Tag01Icon}
+                          className="h-3.5 w-3.5"
+                        />
                       </Button>
                     )}
                   </div>
@@ -374,9 +425,12 @@ function ShoppingListDetailPage() {
           ))}
         </div>
       ) : (
-        !isCompleted && checkedItems.length === 0 && (
+        !isCompleted &&
+        checkedItems.length === 0 && (
           <div className="flex flex-col items-center justify-center rounded-lg border border-dashed py-12">
-            <p className="text-muted-foreground">No items yet. Add some above!</p>
+            <p className="text-muted-foreground">
+              No items yet. Add some above!
+            </p>
           </div>
         )
       )}
@@ -426,7 +480,9 @@ function ShoppingListDetailPage() {
                             {formatQuantity(item)}
                           </span>
                         )}
-                        <span className="text-muted-foreground line-through">{item.name}</span>
+                        <span className="text-muted-foreground line-through">
+                          {item.name}
+                        </span>
                       </div>
                     </Checkbox>
                     {!isCompleted && (
@@ -436,7 +492,10 @@ function ShoppingListDetailPage() {
                         className="opacity-0 group-hover:opacity-100 h-7 w-7"
                         onClick={() => handleDeleteItem(item.id)}
                       >
-                        <HugeiconsIcon icon={Delete02Icon} className="h-3.5 w-3.5" />
+                        <HugeiconsIcon
+                          icon={Delete02Icon}
+                          className="h-3.5 w-3.5"
+                        />
                       </Button>
                     )}
                   </div>
@@ -453,7 +512,8 @@ function ShoppingListDetailPage() {
           <AlertDialogHeader>
             <AlertDialogTitle>Delete Shopping List</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete "{list.name}"? This action cannot be undone.
+              Are you sure you want to delete "{list.name}"? This action cannot
+              be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -469,20 +529,34 @@ function ShoppingListDetailPage() {
       </AlertDialog>
 
       {/* Categorize Item Dialog */}
-      <Dialog open={categorizeItem !== null} onOpenChange={(open) => !open && setCategorizeItem(null)}>
+      <Dialog
+        open={categorizeItem !== null}
+        onOpenChange={(open) => !open && setCategorizeItem(null)}
+      >
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Categorize "{categorizeItem?.name}"</DialogTitle>
           </DialogHeader>
-          <form onSubmit={(e) => { e.preventDefault(); handleCategorizeSubmit() }}>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault()
+              handleCategorizeSubmit()
+            }}
+          >
             <div className="space-y-2">
               <Combobox
                 items={sections}
                 value={categorizeSection}
-                onValueChange={(section: StoreSectionDto | null) => setCategorizeSection(section)}
+                onValueChange={(section: StoreSectionDto | null) =>
+                  setCategorizeSection(section)
+                }
                 itemToStringLabel={(section) => section?.name ?? ''}
               >
-                <ComboboxInput placeholder="Search sections..." className="w-full" autoFocus />
+                <ComboboxInput
+                  placeholder="Search sections..."
+                  className="w-full"
+                  autoFocus
+                />
                 <ComboboxContent emptyMessage="No sections found.">
                   {(section: StoreSectionDto) => (
                     <ComboboxItem key={section.id} value={section}>
@@ -494,7 +568,11 @@ function ShoppingListDetailPage() {
               </Combobox>
             </div>
             <DialogFooter className="mt-4">
-              <Button type="button" variant="outline" onClick={() => setCategorizeItem(null)}>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setCategorizeItem(null)}
+              >
                 Cancel
               </Button>
               <Button type="submit" disabled={updateItem.isPending}>

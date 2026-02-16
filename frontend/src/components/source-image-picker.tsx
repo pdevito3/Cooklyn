@@ -104,11 +104,13 @@ export function SourceImagePicker({
                 Failed to load images from source.
               </p>
             )}
-            {!importPreview.isPending && sourceImages.length === 0 && !importPreview.isError && (
-              <p className="py-8 text-center text-sm text-muted-foreground">
-                No images found on the source page.
-              </p>
-            )}
+            {!importPreview.isPending &&
+              sourceImages.length === 0 &&
+              !importPreview.isError && (
+                <p className="py-8 text-center text-sm text-muted-foreground">
+                  No images found on the source page.
+                </p>
+              )}
             {sourceImages.length > 0 && (
               <div className="grid grid-cols-2 gap-3">
                 {sourceImages.slice(0, 12).map((image) => (
@@ -133,7 +135,7 @@ export function SourceImagePicker({
                       className="h-full w-full object-cover"
                       loading="lazy"
                       onError={(e) => {
-                        (e.target as HTMLImageElement).style.display = 'none'
+                        ;(e.target as HTMLImageElement).style.display = 'none'
                       }}
                     />
                     {selectedImageUrl === image.url && (
@@ -151,9 +153,15 @@ export function SourceImagePicker({
           <SheetFooter>
             <Button
               onClick={handleConfirm}
-              disabled={!selectedImageUrl || uploadImage.isPending || isFetchingImage}
+              disabled={
+                !selectedImageUrl || uploadImage.isPending || isFetchingImage
+              }
             >
-              {isFetchingImage ? 'Loading...' : uploadImage.isPending ? 'Uploading...' : 'Use This Image'}
+              {isFetchingImage
+                ? 'Loading...'
+                : uploadImage.isPending
+                  ? 'Uploading...'
+                  : 'Use This Image'}
             </Button>
           </SheetFooter>
         </SheetContent>

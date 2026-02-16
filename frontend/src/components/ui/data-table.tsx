@@ -1,4 +1,4 @@
-import * as React from "react"
+import * as React from 'react'
 import {
   type ColumnDef,
   type ColumnFiltersState,
@@ -10,7 +10,7 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
-} from "@tanstack/react-table"
+} from '@tanstack/react-table'
 
 import {
   Table,
@@ -19,10 +19,10 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { DataTableViewOptions } from "@/components/ui/data-table-view-options"
+} from '@/components/ui/table'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { DataTableViewOptions } from '@/components/ui/data-table-view-options'
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -35,11 +35,14 @@ function DataTable<TData, TValue>({
   columns,
   data,
   searchKey,
-  searchPlaceholder = "Filter...",
+  searchPlaceholder = 'Filter...',
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([])
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
-  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
+    [],
+  )
+  const [columnVisibility, setColumnVisibility] =
+    React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = React.useState({})
 
   const table = useReactTable({
@@ -67,7 +70,9 @@ function DataTable<TData, TValue>({
         {searchKey && (
           <Input
             placeholder={searchPlaceholder}
-            value={(table.getColumn(searchKey)?.getFilterValue() as string) ?? ""}
+            value={
+              (table.getColumn(searchKey)?.getFilterValue() as string) ?? ''
+            }
             onChange={(event) =>
               table.getColumn(searchKey)?.setFilterValue(event.target.value)
             }
@@ -88,7 +93,7 @@ function DataTable<TData, TValue>({
                         ? null
                         : flexRender(
                             header.column.columnDef.header,
-                            header.getContext()
+                            header.getContext(),
                           )}
                     </TableHead>
                   )
@@ -101,13 +106,13 @@ function DataTable<TData, TValue>({
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
+                  data-state={row.getIsSelected() && 'selected'}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
                       {flexRender(
                         cell.column.columnDef.cell,
-                        cell.getContext()
+                        cell.getContext(),
                       )}
                     </TableCell>
                   ))}
@@ -128,7 +133,7 @@ function DataTable<TData, TValue>({
       </div>
       <div className="flex items-center justify-end space-x-2 py-4">
         <div className="flex-1 text-sm text-muted-foreground">
-          {table.getFilteredSelectedRowModel().rows.length} of{" "}
+          {table.getFilteredSelectedRowModel().rows.length} of{' '}
           {table.getFilteredRowModel().rows.length} row(s) selected.
         </div>
         <div className="space-x-2">

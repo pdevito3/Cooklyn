@@ -3,7 +3,7 @@ import type { ItemCollectionItemForCreationDto } from '../types'
 
 export function ingredientsToCollectionItems(
   ingredients: IngredientForCreationDto[],
-  startSortOrder = 0
+  startSortOrder = 0,
 ): ItemCollectionItemForCreationDto[] {
   return ingredients.map((ingredient, index) => ({
     name: ingredient.name ?? ingredient.rawText,
