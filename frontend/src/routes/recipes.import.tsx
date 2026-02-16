@@ -8,11 +8,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  useCreateRecipe,
-  useImportRecipePreview,
-  type ImportRecipePreviewDto,
-} from "@/domain/recipes";
+import { useCreateRecipe, useImportRecipePreview } from "@/domain/recipes/apis/recipe-mutations";
+import type { ImportRecipePreviewDto } from "@/domain/recipes/types";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/recipes/import")({

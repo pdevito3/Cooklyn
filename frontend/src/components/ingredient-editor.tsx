@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { formatUnit, type IngredientForCreationDto } from '@/domain/recipes'
+import { formatUnit, type IngredientForCreationDto } from '@/domain/recipes/types'
 import { parseText, ingredientsToText } from '@/domain/recipes/utils/ingredient-parser'
 import { cn } from '@/lib/utils'
 

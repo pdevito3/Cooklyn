@@ -15,7 +15,7 @@ import { SourceImagePicker } from '@/components/source-image-picker'
 import {
   useUploadRecipeImage,
   useDeleteRecipeImage,
-} from '@/domain/recipes'
+} from '@/domain/recipes/apis/recipe-mutations'
 
 interface RecipeImageSectionProps {
   recipeId: string

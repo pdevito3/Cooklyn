@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { apiClient } from '@/lib/api-client'
 import type { StoreSectionDto, StoreSectionParametersDto } from '../types'
 import { StoreSectionKeys } from './store-section.keys'
-import type { PaginationInfo } from '@/domain/recipes'
+import type { PaginationInfo } from '@/domain/recipes/apis/get-recipes'
 
 export interface StoreSectionListResponse {
   items: StoreSectionDto[]

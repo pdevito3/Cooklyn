@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { apiClient } from '@/lib/api-client'
 import type { ShoppingListSummaryDto, ShoppingListParametersDto } from '../types'
 import { ShoppingListKeys } from './shopping-list.keys'
-import type { PaginationInfo } from '@/domain/recipes'
+import type { PaginationInfo } from '@/domain/recipes/apis/get-recipes'
 
 export interface ShoppingListListResponse {
   items: ShoppingListSummaryDto[]

@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 
 import { apiClient } from '@/lib/api-client'
-import { useAddItemsFromCollection } from '@/domain/shopping-lists'
+import { useAddItemsFromCollection } from '@/domain/shopping-lists/apis/shopping-list-mutations'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,

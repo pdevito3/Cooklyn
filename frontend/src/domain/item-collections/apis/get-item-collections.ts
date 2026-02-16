@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { apiClient } from '@/lib/api-client'
 import type { ItemCollectionDto, ItemCollectionParametersDto } from '../types'
 import { ItemCollectionKeys } from './item-collection.keys'
-import type { PaginationInfo } from '@/domain/recipes'
+import type { PaginationInfo } from '@/domain/recipes/apis/get-recipes'
 
 export interface ItemCollectionListResponse {
   items: ItemCollectionDto[]

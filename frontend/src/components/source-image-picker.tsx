@@ -15,9 +15,9 @@ import {
   useImportRecipePreview,
   useUploadRecipeImage,
   proxyImageUrl,
-} from '@/domain/recipes'
+} from '@/domain/recipes/apis/recipe-mutations'
 import { apiClient } from '@/lib/api-client'
-import type { ImportImageDto } from '@/domain/recipes'
+import type { ImportImageDto } from '@/domain/recipes/types'
 import { cn } from '@/lib/utils'
 
 interface SourceImagePickerProps {

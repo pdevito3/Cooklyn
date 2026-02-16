@@ -14,8 +14,8 @@ import {
 } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
 
+import { useShoppingList } from '@/domain/shopping-lists/apis/get-shopping-list'
 import {
-  useShoppingList,
   useToggleShoppingListItemCheck,
   useRemoveCheckedItems,
   useDeleteShoppingList,
@@ -24,11 +24,11 @@ import {
   useAddMultipleShoppingListItems,
   useDeleteShoppingListItem,
   useUpdateShoppingListItem,
-} from '@/domain/shopping-lists'
-import type { ShoppingListItemDto } from '@/domain/shopping-lists'
-import type { StoreSectionDto } from '@/domain/store-sections'
-import { useStores } from '@/domain/stores'
-import { useStoreSections } from '@/domain/store-sections'
+} from '@/domain/shopping-lists/apis/shopping-list-mutations'
+import type { ShoppingListItemDto } from '@/domain/shopping-lists/types'
+import type { StoreSectionDto } from '@/domain/store-sections/types'
+import { useStores } from '@/domain/stores/apis/get-stores'
+import { useStoreSections } from '@/domain/store-sections/apis/get-store-sections'
 import { parseText } from '@/domain/recipes/utils/ingredient-parser'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
