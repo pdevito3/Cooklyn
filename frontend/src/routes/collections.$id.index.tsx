@@ -55,6 +55,9 @@ function CollectionDetailPage() {
   useHotkeys('delete', () => {
     if (collection && !isEditingName) setDeleteOpen(true)
   })
+  useHotkeys('mod+enter', () => {
+    if (collection && itemsSynced) saveItems()
+  })
 
   // Sync items from collection data when it loads
   useEffect(() => {
@@ -168,6 +171,7 @@ function CollectionDetailPage() {
           )}
           <Button onClick={saveItems} disabled={updateItems.isPending}>
             {updateItems.isPending ? 'Saving...' : 'Save'}
+            <Kbd>⌘↵</Kbd>
           </Button>
         </CardContent>
       </Card>
