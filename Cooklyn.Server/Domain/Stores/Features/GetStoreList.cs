@@ -20,7 +20,9 @@ public static class GetStoreList
 
             IQueryable<Store> query = dbContext.Stores
                 .AsNoTracking()
-                .Include(s => s.StoreAisles);
+                .Include(s => s.StoreAisles)
+                .Include(s => s.StoreDefaultCollections)
+                    .ThenInclude(sdc => sdc.ItemCollection);
 
             if (!string.IsNullOrWhiteSpace(request.Parameters.Filters))
                 query = query.ApplyQueryKitFilter(request.Parameters.Filters, queryKitConfig);

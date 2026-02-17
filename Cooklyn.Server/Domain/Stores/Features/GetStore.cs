@@ -16,6 +16,8 @@ public static class GetStore
         {
             var store = await dbContext.Stores
                 .Include(s => s.StoreAisles)
+                .Include(s => s.StoreDefaultCollections)
+                    .ThenInclude(sdc => sdc.ItemCollection)
                 .GetById(request.Id, cancellationToken);
 
             return store.ToStoreDto();

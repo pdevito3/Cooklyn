@@ -17,19 +17,26 @@ public static class UpdateStoreDefaultCollections
             var store = await dbContext.Stores
                 .Include(s => s.StoreAisles)
                 .Include(s => s.StoreDefaultCollections)
+                    .ThenInclude(sdc => sdc.ItemCollection)
                 .GetById(request.Id, cancellationToken);
 
-            // Remove existing default collections
+            // Phase 1: Remove all existing default collections and flush to DB
             dbContext.StoreDefaultCollections.RemoveRange(store.StoreDefaultCollections);
+            await dbContext.SaveChangesAsync(cancellationToken);
 
-            // Add new default collections
+            // Phase 2: Add new default collections
             var newCollections = request.ItemCollectionIds
                 .Select(collectionId => StoreDefaultCollection.Create(store.Id, collectionId))
                 .ToList();
 
             store.SetDefaultCollections(newCollections);
-
             await dbContext.SaveChangesAsync(cancellationToken);
+
+            // Load ItemCollection nav properties for the DTO
+            foreach (var sdc in store.StoreDefaultCollections)
+            {
+                await dbContext.Entry(sdc).Reference(x => x.ItemCollection).LoadAsync(cancellationToken);
+            }
 
             return store.ToStoreDto();
         }

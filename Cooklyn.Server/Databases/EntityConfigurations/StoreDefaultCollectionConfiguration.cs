@@ -23,9 +23,10 @@ public sealed class StoreDefaultCollectionConfiguration : IEntityTypeConfigurati
             .HasForeignKey(e => e.ItemCollectionId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        // Unique collection per store
+        // Unique collection per store (filtered for soft delete)
         builder.HasIndex(e => new { e.StoreId, e.ItemCollectionId })
-            .IsUnique();
+            .IsUnique()
+            .HasFilter("is_deleted = false");
 
         builder.HasIndex(e => e.StoreId);
     }

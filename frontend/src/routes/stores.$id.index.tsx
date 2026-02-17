@@ -3,6 +3,7 @@ import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useHotkeys } from 'react-hotkeys-hook'
 import {
   ArrowLeft02Icon,
+  ArrowRight01Icon,
   Delete02Icon,
   DragDropIcon,
 } from '@hugeicons/core-free-icons'
@@ -24,18 +25,21 @@ import {
   arrayMove,
 } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
+import { AnimatePresence, motion } from 'motion/react'
 
 import { useStore } from '@/domain/stores/apis/get-store'
 import {
   useUpdateStore,
   useDeleteStore,
   useUpdateStoreAisles,
+  useUpdateStoreDefaultCollections,
 } from '@/domain/stores/apis/store-mutations'
 import type { StoreAisleForUpdateDto } from '@/domain/stores/types'
 import { DEFAULT_STORE_AISLES } from '@/domain/stores/constants'
 import { useStoreSections } from '@/domain/store-sections/apis/get-store-sections'
 import { createStoreSection } from '@/domain/store-sections/apis/store-section-mutations'
 import type { StoreSectionDto } from '@/domain/store-sections/types'
+import { useItemCollections } from '@/domain/item-collections/apis/get-item-collections'
 import { useMyDefaultStore } from '@/domain/users/apis/get-my-default-store'
 import { useUpdateMyDefaultStore } from '@/domain/users/apis/user-mutations'
 import { Button } from '@/components/ui/button'
@@ -44,6 +48,14 @@ import { Kbd } from '@/components/ui/kbd'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
+import {
+  Collapsible,
+  CollapsibleTrigger,
+} from '@/components/ui/collapsible'
+import {
+  MultiSelect,
+  type MultiSelectOption,
+} from '@/components/ui/multi-select'
 import {
   Combobox,
   ComboboxInput,
@@ -155,6 +167,8 @@ function StoreDetailPage() {
   const updateStore = useUpdateStore()
   const deleteStoreMutation = useDeleteStore()
   const updateAisles = useUpdateStoreAisles()
+  const updateDefaultCollections = useUpdateStoreDefaultCollections()
+  const { data: collectionsData } = useItemCollections({ pageSize: 100 })
   const { data: defaultStoreId } = useMyDefaultStore()
   const updateDefaultStore = useUpdateMyDefaultStore()
   const [deleteOpen, setDeleteOpen] = useState(false)
@@ -164,6 +178,13 @@ function StoreDetailPage() {
   const [aisles, setAisles] = useState<StoreAisleForUpdateDto[]>([])
   const [aislesEditing, setAislesEditing] = useState(false)
   const [loadingDefaults, setLoadingDefaults] = useState(false)
+  const [collectionsEditing, setCollectionsEditing] = useState(false)
+  const [selectedCollections, setSelectedCollections] = useState<
+    MultiSelectOption[]
+  >([])
+  const [openCollections, setOpenCollections] = useState<Set<string>>(
+    new Set(),
+  )
 
   const sectionItems = sectionsData?.items
   const sections = sectionItems ?? []
@@ -295,6 +316,39 @@ function StoreDetailPage() {
       prev.map((a, i) =>
         i === index ? { ...a, customName: value || null } : a,
       ),
+    )
+  }
+
+  const toggleCollection = (collectionId: string) => {
+    setOpenCollections((prev) => {
+      const next = new Set(prev)
+      if (next.has(collectionId)) next.delete(collectionId)
+      else next.add(collectionId)
+      return next
+    })
+  }
+
+  const collectionOptions: MultiSelectOption[] =
+    collectionsData?.items.map((c) => ({ value: c.id, label: c.name })) ?? []
+
+  const startCollectionsEditing = () => {
+    if (!store) return
+    setSelectedCollections(
+      (store.storeDefaultCollections ?? []).map((sdc) => ({
+        value: sdc.itemCollectionId,
+        label: sdc.itemCollectionName,
+      })),
+    )
+    setCollectionsEditing(true)
+  }
+
+  const saveCollections = () => {
+    updateDefaultCollections.mutate(
+      {
+        id,
+        itemCollectionIds: selectedCollections.map((c) => c.value),
+      },
+      { onSuccess: () => setCollectionsEditing(false) },
     )
   }
 
@@ -480,6 +534,130 @@ function StoreDetailPage() {
                 <Button
                   variant="outline"
                   onClick={() => setAislesEditing(false)}
+                >
+                  Cancel
+                </Button>
+              </div>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between">
+          <CardTitle>Default Collections</CardTitle>
+          {!collectionsEditing && (
+            <Button variant="outline" onClick={startCollectionsEditing}>
+              Edit Collections
+            </Button>
+          )}
+        </CardHeader>
+        <CardContent>
+          {!collectionsEditing ? (
+            (store.storeDefaultCollections ?? []).length === 0 ? (
+              <p className="text-sm text-muted-foreground">
+                No default collections assigned.
+              </p>
+            ) : (
+              <div className="space-y-2">
+                {(store.storeDefaultCollections ?? []).map((sdc) => {
+                  const collection = collectionsData?.items.find(
+                    (c) => c.id === sdc.itemCollectionId,
+                  )
+                  const isOpen = openCollections.has(sdc.id)
+                  return (
+                    <Collapsible
+                      key={sdc.id}
+                      open={isOpen}
+                      onOpenChange={() => toggleCollection(sdc.id)}
+                    >
+                      <CollapsibleTrigger className="flex w-full items-center gap-2 rounded-md border p-3 text-left hover:bg-accent">
+                        <motion.div
+                          animate={{ rotate: isOpen ? 90 : 0 }}
+                          transition={{ duration: 0.15 }}
+                        >
+                          <HugeiconsIcon
+                            icon={ArrowRight01Icon}
+                            className="h-4 w-4 shrink-0"
+                          />
+                        </motion.div>
+                        <span className="font-medium">
+                          {sdc.itemCollectionName}
+                        </span>
+                        {collection && (
+                          <span className="text-sm text-muted-foreground ml-auto">
+                            {collection.items.length} item
+                            {collection.items.length !== 1 ? 's' : ''}
+                          </span>
+                        )}
+                      </CollapsibleTrigger>
+                      <AnimatePresence initial={false}>
+                        {isOpen && (
+                          <motion.div
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: 'auto', opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            transition={{ duration: 0.2, ease: 'easeInOut' }}
+                            style={{ overflow: 'hidden' }}
+                          >
+                            {collection && collection.items.length > 0 ? (
+                              <div className="ml-6 mt-1 space-y-1 pb-1">
+                                {[...collection.items]
+                                  .toSorted(
+                                    (a, b) => a.sortOrder - b.sortOrder,
+                                  )
+                                  .map((item) => (
+                                    <div
+                                      key={item.id}
+                                      className="flex items-center gap-2 rounded px-3 py-1.5 text-sm text-muted-foreground"
+                                    >
+                                      <span className="flex-1">
+                                        {item.name}
+                                      </span>
+                                      {item.quantity != null && (
+                                        <span>
+                                          {item.quantity}
+                                          {item.unit ? ` ${item.unit}` : ''}
+                                        </span>
+                                      )}
+                                    </div>
+                                  ))}
+                              </div>
+                            ) : (
+                              <p className="ml-6 mt-1 pb-1 text-sm text-muted-foreground">
+                                No items in this collection.
+                              </p>
+                            )}
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </Collapsible>
+                  )
+                })}
+              </div>
+            )
+          ) : (
+            <div className="space-y-3">
+              <div className="space-y-2">
+                <Label>Collections</Label>
+                <MultiSelect
+                  options={collectionOptions}
+                  value={selectedCollections}
+                  onValueChange={setSelectedCollections}
+                  placeholder="Select collections..."
+                  emptyMessage="No collections found."
+                />
+              </div>
+              <div className="flex gap-2">
+                <Button
+                  onClick={saveCollections}
+                  disabled={updateDefaultCollections.isPending}
+                >
+                  Save
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => setCollectionsEditing(false)}
                 >
                   Cancel
                 </Button>

@@ -7,4 +7,5 @@ public sealed record StoreDto
     public string Name { get; init; } = default!;
     public string? Address { get; init; }
     public IReadOnlyList<StoreAisleDto> StoreAisles { get; init; } = [];
+    public IReadOnlyList<StoreDefaultCollectionDto> StoreDefaultCollections { get; init; } = [];
 }

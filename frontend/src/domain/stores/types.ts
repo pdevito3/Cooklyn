@@ -12,12 +12,19 @@ export interface StoreAisleForUpdateDto {
   customName: string | null
 }
 
+export interface StoreDefaultCollectionDto {
+  id: string
+  itemCollectionId: string
+  itemCollectionName: string
+}
+
 export interface StoreDto {
   id: string
   tenantId: string
   name: string
   address: string | null
   storeAisles: StoreAisleDto[]
+  storeDefaultCollections: StoreDefaultCollectionDto[]
 }
 
 export interface StoreForCreationDto {
