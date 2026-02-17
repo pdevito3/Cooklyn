@@ -46,7 +46,6 @@ const routeNames: Record<string, string> = {
   '/': 'Home',
   '/recipes': 'Recipes',
   '/recipes/new': 'New Recipe',
-  '/about': 'About',
   '/components': 'Components',
   '/filter-demo': 'Filter Builder',
 }

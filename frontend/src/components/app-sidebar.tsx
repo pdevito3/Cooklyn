@@ -2,7 +2,6 @@ import { Link, useNavigate, useRouterState } from '@tanstack/react-router'
 import { useState, useEffect, useRef } from 'react'
 import {
   Home01Icon,
-  InformationCircleIcon,
   DashboardSquare01Icon,
   ArrowRight01Icon,
   RestaurantIcon,
@@ -56,12 +55,6 @@ const navItems = [
     url: '/recipes',
     icon: RestaurantIcon,
     hotkey: 'R',
-  },
-  {
-    title: 'About',
-    url: '/about',
-    icon: InformationCircleIcon,
-    hotkey: 'A',
   },
 ]
 
