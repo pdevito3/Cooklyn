@@ -13,7 +13,23 @@ import { useQueryClient } from '@tanstack/react-query'
 import { useInfiniteRecipes } from '@/domain/recipes/apis/get-recipes'
 import { RecipeKeys } from '@/domain/recipes/apis/recipe.keys'
 import { useDeleteRecipe } from '@/domain/recipes/apis/recipe-mutations'
+import {
+  transformCollectionFilters,
+  FLAG_FILTER_OPTIONS,
+  RATING_FILTER_OPTIONS,
+} from '@/domain/recipes/utils/recipe-filter-helpers'
+import { useTags } from '@/domain/tags/apis/get-tags'
 import { RecipeCard } from '@/components/recipe-card'
+import {
+  FilterBuilder,
+  toQueryKitString,
+} from '@/components/filter-builder/filter-builder'
+import type {
+  FilterConfig,
+  FilterPreset,
+  FilterState,
+} from '@/components/filter-builder/types'
+import { Operators } from '@/components/filter-builder/utils/operators'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Kbd } from '@/components/ui/kbd'
@@ -45,12 +61,185 @@ function RecipesIndexPage() {
   const [recipeToDelete, setRecipeToDelete] = useState<string | null>(null)
   const [addToListDialogOpen, setAddToListDialogOpen] = useState(false)
   const [recipeForList, setRecipeForList] = useState<string | null>(null)
+  const [filterBuilderState, setFilterBuilderState] = useState<FilterState>({
+    filters: [],
+    rootLogicalOperator: 'AND',
+  })
+  const [filterBuilderKey, setFilterBuilderKey] = useState(0)
   const searchInputRef = useRef<HTMLInputElement>(null)
   const sentinelRef = useRef<HTMLDivElement>(null)
 
   const debouncedSearch = useDebouncedValue(searchQuery, 300)
 
-  const filters = debouncedSearch ? `title @=* "${debouncedSearch}"` : undefined
+  // Fetch tags for filter options
+  const { data: tagsData } = useTags({ pageSize: 200, sortOrder: 'Name' })
+
+  const tagOptions = useMemo(
+    () =>
+      tagsData?.items.map((t) => ({ value: t.name, label: t.name })) ?? [],
+    [tagsData],
+  )
+
+  // Build filter configuration
+  const filterOptions: FilterConfig[] = useMemo(
+    () => [
+      {
+        propertyKey: 'title',
+        propertyLabel: 'Title',
+        controlType: 'text',
+      },
+      {
+        propertyKey: 'description',
+        propertyLabel: 'Description',
+        controlType: 'text',
+      },
+      {
+        propertyKey: 'rating',
+        propertyLabel: 'Rating',
+        controlType: 'multiselect',
+        options: RATING_FILTER_OPTIONS,
+      },
+      {
+        propertyKey: 'flags',
+        propertyLabel: 'Dietary Flags',
+        controlType: 'multiselect',
+        options: FLAG_FILTER_OPTIONS,
+      },
+      {
+        propertyKey: 'tags',
+        propertyLabel: 'Tags',
+        controlType: 'multiselect',
+        options: tagOptions,
+      },
+      {
+        propertyKey: 'Servings',
+        propertyLabel: 'Servings',
+        controlType: 'number',
+      },
+      {
+        propertyKey: 'Ingredients',
+        propertyLabel: 'Ingredient Count',
+        controlType: 'number',
+        operators: [
+          Operators.COUNT_EQUALS,
+          Operators.COUNT_NOT_EQUALS,
+          Operators.COUNT_GREATER_THAN,
+          Operators.COUNT_LESS_THAN,
+          Operators.COUNT_GREATER_THAN_OR_EQUAL,
+          Operators.COUNT_LESS_THAN_OR_EQUAL,
+        ],
+        defaultOperator: Operators.COUNT_GREATER_THAN_OR_EQUAL,
+      },
+      {
+        propertyKey: 'CreatedOn',
+        propertyLabel: 'Created Date',
+        controlType: 'date',
+        dateType: 'datetimeOffset',
+      },
+    ],
+    [tagOptions],
+  )
+
+  // Build filter presets
+  const presets: FilterPreset[] = useMemo(
+    () => [
+      {
+        label: 'Quick & Easy',
+        filter: {
+          filters: [
+            {
+              id: crypto.randomUUID(),
+              propertyKey: 'flags',
+              propertyLabel: 'Dietary Flags',
+              controlType: 'multiselect',
+              operator: Operators.IN,
+              value: ['QuickAndEasy'],
+              selectedLabels: ['Quick & Easy'],
+            },
+          ],
+          rootLogicalOperator: 'AND',
+        },
+      },
+      {
+        label: 'Top Rated',
+        filter: {
+          filters: [
+            {
+              id: crypto.randomUUID(),
+              propertyKey: 'rating',
+              propertyLabel: 'Rating',
+              controlType: 'multiselect',
+              operator: Operators.IN,
+              value: ['Loved It', 'Liked It'],
+              selectedLabels: ['Loved It', 'Liked It'],
+            },
+          ],
+          rootLogicalOperator: 'AND',
+        },
+      },
+      {
+        label: 'Recently Added',
+        filter: {
+          filters: [
+            {
+              id: crypto.randomUUID(),
+              propertyKey: 'CreatedOn',
+              propertyLabel: 'Created Date',
+              controlType: 'date',
+              operator: Operators.GREATER_THAN,
+              value: {
+                mode: 'after' as const,
+                startDate: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+                dateType: 'datetimeOffset' as const,
+              },
+            },
+          ],
+          rootLogicalOperator: 'AND',
+        },
+      },
+      {
+        label: 'Vegan & Gluten-Free',
+        filter: {
+          filters: [
+            {
+              id: crypto.randomUUID(),
+              propertyKey: 'flags',
+              propertyLabel: 'Dietary Flags',
+              controlType: 'multiselect',
+              operator: Operators.IN,
+              value: ['Vegan', 'GlutenFree'],
+              selectedLabels: ['Vegan', 'Gluten-Free'],
+              matchAll: true,
+            },
+          ],
+          rootLogicalOperator: 'AND',
+        },
+      },
+    ],
+    [],
+  )
+
+  // Convert filter builder state to QueryKit string with collection post-processing
+  const advancedFilterString = useMemo(() => {
+    const raw = toQueryKitString(filterBuilderState)
+    if (!raw) return ''
+    return transformCollectionFilters(raw)
+  }, [filterBuilderState])
+
+  // Combine search bar + filter builder into unified filter string
+  const filters = useMemo(() => {
+    const parts: string[] = []
+    if (debouncedSearch) {
+      parts.push(`title @=* "${debouncedSearch}"`)
+    }
+    if (advancedFilterString) {
+      parts.push(advancedFilterString)
+    }
+    return parts.length > 0 ? parts.join(' && ') : undefined
+  }, [debouncedSearch, advancedFilterString])
+
+  const hasActiveFilters =
+    searchQuery.length > 0 || filterBuilderState.filters.length > 0
 
   const {
     data,
@@ -94,6 +283,16 @@ function RecipesIndexPage() {
 
   const handleCreateRecipe = () => {
     navigate({ to: '/recipes/new' })
+  }
+
+  const handleFilterChange = useCallback((state: FilterState) => {
+    setFilterBuilderState(state)
+  }, [])
+
+  const handleClearAll = () => {
+    setSearchQuery('')
+    setFilterBuilderState({ filters: [], rootLogicalOperator: 'AND' })
+    setFilterBuilderKey((prev) => prev + 1)
   }
 
   useHotkeys(
@@ -166,14 +365,33 @@ function RecipesIndexPage() {
             autoFocus
           />
         </div>
-        <Button variant="outline" onClick={handleRefresh} disabled={isFetching}>
-          <HugeiconsIcon
-            icon={RotateClockwiseIcon}
-            className={`mr-2 h-4 w-4 ${isFetching ? 'animate-spin' : ''}`}
-          />
-          Refresh
-        </Button>
+        <div className="flex items-center gap-2">
+          {hasActiveFilters && (
+            <Button variant="outline" size="sm" onClick={handleClearAll}>
+              Clear all
+            </Button>
+          )}
+          <Button
+            variant="outline"
+            onClick={handleRefresh}
+            disabled={isFetching}
+          >
+            <HugeiconsIcon
+              icon={RotateClockwiseIcon}
+              className={`mr-2 h-4 w-4 ${isFetching ? 'animate-spin' : ''}`}
+            />
+            Refresh
+          </Button>
+        </div>
       </div>
+
+      {/* Advanced Filters */}
+      <FilterBuilder
+        key={filterBuilderKey}
+        filterOptions={filterOptions}
+        presets={presets}
+        onChange={handleFilterChange}
+      />
 
       {/* Error State */}
       {error && (
@@ -240,21 +458,21 @@ function RecipesIndexPage() {
       {/* Empty State */}
       {!isLoading && !error && allRecipes.length === 0 && (
         <div className="flex flex-col items-center justify-center rounded-lg border border-dashed py-12">
-          {searchQuery ? (
+          {hasActiveFilters ? (
             <>
               <HugeiconsIcon
                 icon={Search01Icon}
                 className="mb-4 h-12 w-12 text-muted-foreground"
               />
               <p className="text-muted-foreground">
-                No recipes match your search
+                No recipes match your filters
               </p>
               <Button
                 variant="outline"
                 className="mt-4"
-                onClick={() => setSearchQuery('')}
+                onClick={handleClearAll}
               >
-                Clear search
+                Clear all filters
               </Button>
             </>
           ) : (
