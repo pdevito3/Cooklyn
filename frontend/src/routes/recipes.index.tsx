@@ -18,6 +18,16 @@ import {
   FLAG_FILTER_OPTIONS,
   RATING_FILTER_OPTIONS,
 } from '@/domain/recipes/utils/recipe-filter-helpers'
+import { useSavedFilters } from '@/domain/saved-filters/apis/get-saved-filters'
+import {
+  useCreateSavedFilter,
+  useDeleteSavedFilter as useDeleteSavedFilterMutation,
+  useUpdateSavedFilter,
+} from '@/domain/saved-filters/apis/saved-filter-mutations'
+import {
+  serializeFilterState,
+  deserializeFilterState,
+} from '@/domain/saved-filters/utils/filter-state-serialization'
 import { useTags } from '@/domain/tags/apis/get-tags'
 import { RecipeCard } from '@/components/recipe-card'
 import {
@@ -28,6 +38,7 @@ import type {
   FilterConfig,
   FilterPreset,
   FilterState,
+  SavedFilterItem,
 } from '@/components/filter-builder/types'
 import { Operators } from '@/components/filter-builder/utils/operators'
 import { Button } from '@/components/ui/button'
@@ -70,6 +81,54 @@ function RecipesIndexPage() {
   const sentinelRef = useRef<HTMLDivElement>(null)
 
   const debouncedSearch = useDebouncedValue(searchQuery, 300)
+
+  // Fetch saved filters for recipes context
+  const { data: savedFiltersData } = useSavedFilters('recipes')
+  const createSavedFilter = useCreateSavedFilter()
+  const deleteSavedFilterMutation = useDeleteSavedFilterMutation()
+  const updateSavedFilterMutation = useUpdateSavedFilter()
+
+  const savedFilterItems: SavedFilterItem[] = useMemo(
+    () =>
+      savedFiltersData?.items.map((sf) => ({
+        id: sf.id,
+        name: sf.name,
+        filterState: deserializeFilterState(sf.filterStateJson),
+      })) ?? [],
+    [savedFiltersData],
+  )
+
+  const handleSaveFilter = useCallback(
+    (name: string) => {
+      createSavedFilter.mutate({
+        name,
+        context: 'recipes',
+        filterStateJson: serializeFilterState(filterBuilderState),
+      })
+    },
+    [createSavedFilter, filterBuilderState],
+  )
+
+  const handleDeleteSavedFilter = useCallback(
+    (id: string) => {
+      deleteSavedFilterMutation.mutate(id)
+    },
+    [deleteSavedFilterMutation],
+  )
+
+  const handleUpdateSavedFilter = useCallback(
+    (id: string) => {
+      updateSavedFilterMutation.mutate({
+        id,
+        dto: {
+          name:
+            savedFilterItems.find((sf) => sf.id === id)?.name ?? 'Untitled',
+          filterStateJson: serializeFilterState(filterBuilderState),
+        },
+      })
+    },
+    [updateSavedFilterMutation, savedFilterItems, filterBuilderState],
+  )
 
   // Fetch tags for filter options
   const { data: tagsData } = useTags({ pageSize: 200, sortOrder: 'Name' })
@@ -361,9 +420,12 @@ function RecipesIndexPage() {
             placeholder="Search recipes..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-9"
+            className="pl-9 pr-16"
             autoFocus
           />
+          <div className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2">
+            <Kbd>&#8984;F</Kbd>
+          </div>
         </div>
         <div className="flex items-center gap-2">
           {hasActiveFilters && (
@@ -390,6 +452,10 @@ function RecipesIndexPage() {
         key={filterBuilderKey}
         filterOptions={filterOptions}
         presets={presets}
+        savedFilters={savedFilterItems}
+        onSaveFilter={handleSaveFilter}
+        onDeleteSavedFilter={handleDeleteSavedFilter}
+        onUpdateSavedFilter={handleUpdateSavedFilter}
         onChange={handleFilterChange}
       />
 

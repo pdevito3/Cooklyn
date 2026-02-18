@@ -4,6 +4,7 @@ using Domain;
 using Domain.ItemCategoryMappings;
 using Domain.ItemCollections;
 using Domain.Recipes;
+using Domain.SavedFilters;
 using Domain.ShoppingLists;
 using Domain.StoreSections;
 using Domain.Stores;
@@ -46,6 +47,8 @@ public class AppDbContext(
     public DbSet<StoreDefaultCollection> StoreDefaultCollections => Set<StoreDefaultCollection>();
 
     public DbSet<ItemCategoryMapping> ItemCategoryMappings => Set<ItemCategoryMapping>();
+
+    public DbSet<SavedFilter> SavedFilters => Set<SavedFilter>();
     #endregion
 
     /// <summary>

@@ -109,9 +109,19 @@ export interface FilterPreset {
   filter: FilterState
 }
 
+export interface SavedFilterItem {
+  id: string
+  name: string
+  filterState: FilterState
+}
+
 export interface FilterBuilderProps {
   filterOptions: FilterConfig[]
   presets?: FilterPreset[]
+  savedFilters?: SavedFilterItem[]
+  onSaveFilter?: (name: string) => void
+  onDeleteSavedFilter?: (id: string) => void
+  onUpdateSavedFilter?: (id: string) => void
   onChange?: (state: FilterState) => void
   initialState?: FilterState
   className?: string

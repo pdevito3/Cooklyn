@@ -218,6 +218,28 @@ function ComboboxValue({ ...props }: ComboboxPrimitive.Value.Props) {
   return <ComboboxPrimitive.Value {...props} />
 }
 
+function ComboboxClear({
+  className,
+  children,
+  ...props
+}: ComboboxPrimitive.Clear.Props) {
+  return (
+    <ComboboxPrimitive.Clear
+      data-slot="combobox-clear"
+      className={cn(
+        'rounded-sm p-0.5 text-muted-foreground opacity-70',
+        'hover:opacity-100 focus:opacity-100',
+        'outline-none focus-visible:ring-1 focus-visible:ring-ring',
+        className,
+      )}
+      {...props}
+    >
+      {children ?? <HugeiconsIcon icon={Cancel01Icon} className="size-4" />}
+    </ComboboxPrimitive.Clear>
+  )
+}
+
+/** @deprecated Use ComboboxClear instead */
 function ComboboxClearButton({
   className,
   ...props
@@ -281,6 +303,7 @@ export {
   ComboboxChip,
   ComboboxChipRemove,
   ComboboxValue,
+  ComboboxClear,
   ComboboxClearButton,
   ComboboxContent,
   useComboboxFilter,
