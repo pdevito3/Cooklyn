@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react'
 import {
   createRootRouteWithContext,
   Outlet,
@@ -5,11 +6,13 @@ import {
 } from '@tanstack/react-router'
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
 import type { QueryClient } from '@tanstack/react-query'
+import { useHotkeys } from 'react-hotkeys-hook'
 import {
   SidebarInset,
   SidebarProvider,
   SidebarTrigger,
 } from '@/components/ui/sidebar'
+import { useIsMobile } from '@/hooks/use-mobile'
 import { AppSidebar } from '@/components/app-sidebar'
 import { Separator } from '@/components/ui/separator'
 import {
@@ -18,6 +21,7 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
 } from '@/components/ui/breadcrumb'
+import { CommandMenu } from '@/components/command-menu'
 import { getUser } from '@/domain/auth/apis/get-user'
 import { AuthKeys } from '@/domain/auth/apis/auth.keys'
 
@@ -68,6 +72,61 @@ function RootComponent() {
   const routerState = useRouterState()
   const currentPath = routerState.location.pathname
   const pageName = getPageName(currentPath)
+  const isMobile = useIsMobile()
+  const [commandMenuOpen, setCommandMenuOpen] = useState(false)
+
+  useHotkeys(
+    'mod+k',
+    (e) => {
+      e.preventDefault()
+      setCommandMenuOpen((prev) => !prev)
+    },
+    { enableOnFormTags: ['INPUT', 'TEXTAREA', 'SELECT'] },
+  )
+
+  useEffect(() => {
+    function handleOpenCommandMenu() {
+      setCommandMenuOpen(true)
+    }
+    window.addEventListener('open-command-menu', handleOpenCommandMenu)
+    return () =>
+      window.removeEventListener('open-command-menu', handleOpenCommandMenu)
+  }, [])
+
+  // Mobile: swipe-up from bottom edge opens command menu
+  useEffect(() => {
+    if (!isMobile) return
+
+    let startY = 0
+    let isEdgeSwipe = false
+
+    function handleTouchStart(e: TouchEvent) {
+      const touch = e.touches[0]
+      if (touch.clientY >= window.innerHeight - 30) {
+        startY = touch.clientY
+        isEdgeSwipe = true
+      } else {
+        isEdgeSwipe = false
+      }
+    }
+
+    function handleTouchEnd(e: TouchEvent) {
+      if (!isEdgeSwipe) return
+      const touch = e.changedTouches[0]
+      const deltaY = startY - touch.clientY
+      if (deltaY >= 60) {
+        setCommandMenuOpen(true)
+      }
+      isEdgeSwipe = false
+    }
+
+    document.addEventListener('touchstart', handleTouchStart, { passive: true })
+    document.addEventListener('touchend', handleTouchEnd, { passive: true })
+    return () => {
+      document.removeEventListener('touchstart', handleTouchStart)
+      document.removeEventListener('touchend', handleTouchEnd)
+    }
+  }, [isMobile])
 
   return (
     <SidebarProvider>
@@ -93,6 +152,7 @@ function RootComponent() {
           <Outlet />
         </div>
       </SidebarInset>
+      <CommandMenu open={commandMenuOpen} onOpenChange={setCommandMenuOpen} />
       <TanStackRouterDevtools />
     </SidebarProvider>
   )

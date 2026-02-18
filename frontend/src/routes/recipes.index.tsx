@@ -29,21 +29,13 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
 import { AddRecipeToShoppingListDialog } from '@/components/add-recipe-to-shopping-list-dialog'
+import { useDebouncedValue } from '@/hooks/use-debounced-value'
 
 const PAGE_SIZE = 24
 
 export const Route = createFileRoute('/recipes/')({
   component: RecipesIndexPage,
 })
-
-function useDebouncedValue<T>(value: T, delay: number): T {
-  const [debounced, setDebounced] = useState(value)
-  useEffect(() => {
-    const timer = setTimeout(() => setDebounced(value), delay)
-    return () => clearTimeout(timer)
-  }, [value, delay])
-  return debounced
-}
 
 function RecipesIndexPage() {
   const navigate = useNavigate()

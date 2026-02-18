@@ -9,6 +9,7 @@ import {
   ShoppingCart01Icon,
   Add01Icon,
   Settings01Icon,
+  Search01Icon,
 } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
 
@@ -142,8 +143,16 @@ export function AppSidebar() {
       }
     }
 
+    function handleOpenQuickAdd() {
+      setQuickAddOpen(true)
+    }
+
     window.addEventListener('keydown', handleKeyDown)
-    return () => window.removeEventListener('keydown', handleKeyDown)
+    window.addEventListener('open-quick-add', handleOpenQuickAdd)
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown)
+      window.removeEventListener('open-quick-add', handleOpenQuickAdd)
+    }
   }, [navigate])
 
   // Check if any import item is active
@@ -188,6 +197,19 @@ export function AppSidebar() {
           <SidebarGroupLabel>Navigation</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
+              {/* Search */}
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  onClick={() =>
+                    window.dispatchEvent(new CustomEvent('open-command-menu'))
+                  }
+                >
+                  <HugeiconsIcon icon={Search01Icon} />
+                  <span>Search</span>
+                  <Kbd>⌘K</Kbd>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+
               {navItems.map((item) => {
                 const isActive = currentPath === item.url
                 return (
