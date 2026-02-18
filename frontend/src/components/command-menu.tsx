@@ -197,7 +197,7 @@ export function CommandMenu({ open, onOpenChange }: CommandMenuProps) {
               >
                 <HugeiconsIcon icon={RestaurantIcon} />
                 <span>Recipes</span>
-                <CommandShortcut>G R</CommandShortcut>
+                <CommandShortcut>G+R</CommandShortcut>
               </CommandItem>
               <CommandItem
                 value="nav:/shopping-lists"
@@ -205,7 +205,7 @@ export function CommandMenu({ open, onOpenChange }: CommandMenuProps) {
               >
                 <HugeiconsIcon icon={ShoppingCart01Icon} />
                 <span>Shopping Lists</span>
-                <CommandShortcut>G L</CommandShortcut>
+                <CommandShortcut>G+L</CommandShortcut>
               </CommandItem>
               <CommandItem
                 value="nav:/stores"
@@ -213,7 +213,7 @@ export function CommandMenu({ open, onOpenChange }: CommandMenuProps) {
               >
                 <HugeiconsIcon icon={Store01Icon} />
                 <span>Stores</span>
-                <CommandShortcut>G S</CommandShortcut>
+                <CommandShortcut>G+S</CommandShortcut>
               </CommandItem>
               <CommandItem
                 value="nav:/collections"
@@ -221,7 +221,7 @@ export function CommandMenu({ open, onOpenChange }: CommandMenuProps) {
               >
                 <HugeiconsIcon icon={Layers01Icon} />
                 <span>Collections</span>
-                <CommandShortcut>G C</CommandShortcut>
+                <CommandShortcut>G+C</CommandShortcut>
               </CommandItem>
             </CommandGroup>
             <CommandGroup heading="Actions">
@@ -259,10 +259,17 @@ export function CommandMenu({ open, onOpenChange }: CommandMenuProps) {
                 value={`recipe:${recipe.id}`}
                 onSelect={handleSelect}
               >
-                <HugeiconsIcon
-                  icon={RestaurantIcon}
-                  className="shrink-0"
-                />
+                {recipe.imageUrl ? (
+                  <img
+                    src={recipe.imageUrl}
+                    alt=""
+                    className="size-8 shrink-0 rounded object-cover"
+                  />
+                ) : (
+                  <div className="flex size-8 shrink-0 items-center justify-center">
+                    <HugeiconsIcon icon={RestaurantIcon} />
+                  </div>
+                )}
                 <div className="min-w-0 flex-1">
                   <span>{recipe.title}</span>
                   {recipe.description && (

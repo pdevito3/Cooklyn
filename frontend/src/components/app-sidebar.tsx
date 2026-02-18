@@ -189,6 +189,15 @@ export function AppSidebar() {
                 </span>
               </div>
             </SidebarMenuButton>
+            <button
+              type="button"
+              onClick={() =>
+                window.dispatchEvent(new CustomEvent('open-command-menu'))
+              }
+              className="text-muted-foreground hover:text-foreground hover:bg-sidebar-accent absolute right-2 top-1/2 -translate-y-1/2 flex size-6 items-center justify-center rounded-md transition-colors group-data-[collapsible=icon]:hidden"
+            >
+              <HugeiconsIcon icon={Search01Icon} className="size-4" />
+            </button>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
@@ -220,7 +229,7 @@ export function AppSidebar() {
                     >
                       <HugeiconsIcon icon={item.icon} />
                       <span>{item.title}</span>
-                      <Kbd>G {item.hotkey}</Kbd>
+                      <Kbd>G+{item.hotkey}</Kbd>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 )
@@ -231,7 +240,7 @@ export function AppSidebar() {
                 <SidebarMenuButton onClick={() => setQuickAddOpen(true)}>
                   <HugeiconsIcon icon={Add01Icon} />
                   <span>Add Item</span>
-                  <Kbd>G N</Kbd>
+                  <Kbd>G+N</Kbd>
                 </SidebarMenuButton>
               </SidebarMenuItem>
 
@@ -266,7 +275,7 @@ export function AppSidebar() {
                               isActive={isActive}
                             >
                               <span>{item.title}</span>
-                              <Kbd>G {item.hotkey}</Kbd>
+                              <Kbd>G+{item.hotkey}</Kbd>
                             </SidebarMenuSubButton>
                           </SidebarMenuSubItem>
                         )
@@ -309,7 +318,7 @@ export function AppSidebar() {
                               isActive={isActive}
                             >
                               <span>{item.title}</span>
-                              <Kbd>G {item.hotkey}</Kbd>
+                              <Kbd>G+{item.hotkey}</Kbd>
                             </SidebarMenuSubButton>
                           </SidebarMenuSubItem>
                         )
