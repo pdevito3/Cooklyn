@@ -207,30 +207,14 @@ export function CommandMenu({ open, onOpenChange }: CommandMenuProps) {
                 <span>Shopping Lists</span>
                 <CommandShortcut>G+L</CommandShortcut>
               </CommandItem>
-              <CommandItem
-                value="nav:/stores"
-                onSelect={handleSelect}
-              >
-                <HugeiconsIcon icon={Store01Icon} />
-                <span>Stores</span>
-                <CommandShortcut>G+S</CommandShortcut>
-              </CommandItem>
-              <CommandItem
-                value="nav:/collections"
-                onSelect={handleSelect}
-              >
-                <HugeiconsIcon icon={Layers01Icon} />
-                <span>Collections</span>
-                <CommandShortcut>G+C</CommandShortcut>
-              </CommandItem>
             </CommandGroup>
             <CommandGroup heading="Actions">
               <CommandItem
-                value="action:new-recipe"
+                value="action:quick-add"
                 onSelect={handleSelect}
               >
-                <HugeiconsIcon icon={RestaurantIcon} />
-                <span>Create New Recipe</span>
+                <HugeiconsIcon icon={Add01Icon} />
+                <span>Quick Add Items</span>
               </CommandItem>
               <CommandItem
                 value="action:import-url"
@@ -238,13 +222,6 @@ export function CommandMenu({ open, onOpenChange }: CommandMenuProps) {
               >
                 <HugeiconsIcon icon={FileImportIcon} />
                 <span>Import from URL</span>
-              </CommandItem>
-              <CommandItem
-                value="action:quick-add"
-                onSelect={handleSelect}
-              >
-                <HugeiconsIcon icon={Add01Icon} />
-                <span>Quick Add Items</span>
               </CommandItem>
             </CommandGroup>
           </>
