@@ -13,8 +13,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Cooklyn.Server.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260216022110_AddItemCategoryMapping")]
-    partial class AddItemCategoryMapping
+    [Migration("20260218030730_InitialMigration")]
+    partial class InitialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -1056,7 +1056,8 @@ namespace Cooklyn.Server.Migrations
 
                     b.HasIndex("StoreId", "ItemCollectionId")
                         .IsUnique()
-                        .HasDatabaseName("ix_store_default_collections_store_id_item_collection_id");
+                        .HasDatabaseName("ix_store_default_collections_store_id_item_collection_id")
+                        .HasFilter("is_deleted = false");
 
                     b.ToTable("store_default_collections", (string)null);
                 });
