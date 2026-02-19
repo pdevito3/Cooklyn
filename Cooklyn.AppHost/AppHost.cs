@@ -78,7 +78,6 @@ try
     if (authProvider.AuthResource is not null)
     {
         server.WaitFor(authProvider.AuthResource);
-        bff.WaitFor(authProvider.AuthResource);
     }
 
     webfrontend
