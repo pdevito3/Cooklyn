@@ -154,7 +154,7 @@ function RootComponent() {
         </div>
       </SidebarInset>
       <CommandMenu open={commandMenuOpen} onOpenChange={setCommandMenuOpen} />
-      <TanStackRouterDevtools />
+      {!isMobile && <TanStackRouterDevtools position="bottom-right" />}
     </SidebarProvider>
   )
 }
