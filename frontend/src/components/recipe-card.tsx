@@ -1,29 +1,30 @@
-import { Button } from '@/components/ui/button'
+import { RatingIcon } from "@/components/rating-icon";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import type { RecipeSummaryDto } from '@/domain/recipes/types'
+} from "@/components/ui/dropdown-menu";
+import type { RecipeSummaryDto } from "@/domain/recipes/types";
 import {
+  Calendar03Icon,
   Delete01Icon,
   Edit01Icon,
   MoreVerticalIcon,
   ShoppingCart01Icon,
-  Calendar03Icon,
-} from '@hugeicons/core-free-icons'
-import { HugeiconsIcon } from '@hugeicons/react'
-import { Link } from '@tanstack/react-router'
-import { RatingIcon } from '@/components/rating-icon'
+  SpoonAndForkIcon,
+} from "@hugeicons/core-free-icons";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { Link } from "@tanstack/react-router";
 
 interface RecipeCardProps {
-  recipe: RecipeSummaryDto
-  onEdit?: (id: string) => void
-  onDelete?: (id: string) => void
-  onAddToShoppingList?: (id: string) => void
-  onAddToMealPlan?: (id: string) => void
+  recipe: RecipeSummaryDto;
+  onEdit?: (id: string) => void;
+  onDelete?: (id: string) => void;
+  onAddToShoppingList?: (id: string) => void;
+  onAddToMealPlan?: (id: string) => void;
 }
 
 export function RecipeCard({
@@ -33,9 +34,6 @@ export function RecipeCard({
   onAddToShoppingList,
   onAddToMealPlan,
 }: RecipeCardProps) {
-  const placeholderImage =
-    'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300"%3E%3Crect fill="%23374151" width="400" height="300"/%3E%3Ctext fill="%239ca3af" font-family="system-ui" font-size="20" x="50%25" y="50%25" text-anchor="middle" dominant-baseline="middle"%3ENo Image%3C/text%3E%3C/svg%3E'
-
   return (
     <div className="group relative aspect-[4/3] overflow-hidden rounded-xl shadow-md transition-all hover:shadow-xl">
       {/* Full card background image */}
@@ -44,11 +42,21 @@ export function RecipeCard({
         params={{ id: recipe.id }}
         className="absolute inset-0"
       >
-        <img
-          src={recipe.imageUrl ?? placeholderImage}
-          alt={recipe.title}
-          className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-        />
+        {recipe.imageUrl ? (
+          <img
+            src={recipe.imageUrl}
+            alt={recipe.title}
+            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+          />
+        ) : (
+          <div className="flex h-full w-full items-center justify-center bg-muted">
+            <HugeiconsIcon
+              // icon={CookBookIcon}
+              icon={SpoonAndForkIcon}
+              className="size-12 text-muted-foreground"
+            />
+          </div>
+        )}
       </Link>
 
       {/* Gradient overlay for text readability */}
@@ -57,7 +65,7 @@ export function RecipeCard({
       {/* Top right actions */}
       <div className="absolute right-2 top-2 z-10 flex items-center gap-1">
         {/* Rating indicator */}
-        {recipe.rating && recipe.rating !== 'Not Rated' && (
+        {recipe.rating && recipe.rating !== "Not Rated" && (
           <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white/90 shadow-sm">
             <RatingIcon rating={recipe.rating} size="sm" />
           </span>
@@ -99,10 +107,7 @@ export function RecipeCard({
             )}
             {onAddToMealPlan && (
               <DropdownMenuItem onClick={() => onAddToMealPlan(recipe.id)}>
-                <HugeiconsIcon
-                  icon={Calendar03Icon}
-                  className="mr-2 h-4 w-4"
-                />
+                <HugeiconsIcon icon={Calendar03Icon} className="mr-2 h-4 w-4" />
                 Add to Meal Plan
               </DropdownMenuItem>
             )}
@@ -138,5 +143,5 @@ export function RecipeCard({
         )}
       </div>
     </div>
-  )
+  );
 }
