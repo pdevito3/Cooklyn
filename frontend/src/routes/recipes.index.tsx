@@ -56,6 +56,7 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
 import { AddRecipeToShoppingListDialog } from '@/components/add-recipe-to-shopping-list-dialog'
+import { AddToMealPlanPopover } from '@/components/meal-plan/add-to-meal-plan-popover'
 import { useDebouncedValue } from '@/hooks/use-debounced-value'
 
 const PAGE_SIZE = 24
@@ -72,6 +73,8 @@ function RecipesIndexPage() {
   const [recipeToDelete, setRecipeToDelete] = useState<string | null>(null)
   const [addToListDialogOpen, setAddToListDialogOpen] = useState(false)
   const [recipeForList, setRecipeForList] = useState<string | null>(null)
+  const [mealPlanDialogOpen, setMealPlanDialogOpen] = useState(false)
+  const [recipeForMealPlan, setRecipeForMealPlan] = useState<string | null>(null)
   const [filterBuilderState, setFilterBuilderState] = useState<FilterState>({
     filters: [],
     rootLogicalOperator: 'AND',
@@ -382,6 +385,11 @@ function RecipesIndexPage() {
     setAddToListDialogOpen(true)
   }, [])
 
+  const handleAddToMealPlan = useCallback((id: string) => {
+    setRecipeForMealPlan(id)
+    setMealPlanDialogOpen(true)
+  }, [])
+
   const confirmDelete = () => {
     if (recipeToDelete) {
       deleteRecipe.mutate(recipeToDelete, {
@@ -499,6 +507,7 @@ function RecipesIndexPage() {
                 onEdit={handleEditRecipe}
                 onDelete={handleDeleteRecipe}
                 onAddToShoppingList={handleAddToShoppingList}
+                onAddToMealPlan={handleAddToMealPlan}
               />
             ))}
           </div>
@@ -568,6 +577,18 @@ function RecipesIndexPage() {
           open={addToListDialogOpen}
           onOpenChange={setAddToListDialogOpen}
           recipeId={recipeForList}
+        />
+      )}
+
+      {/* Add to Meal Plan Dialog */}
+      {recipeForMealPlan && (
+        <AddToMealPlanPopover
+          open={mealPlanDialogOpen}
+          onOpenChange={setMealPlanDialogOpen}
+          recipeId={recipeForMealPlan}
+          recipeTitle={
+            allRecipes.find((r) => r.id === recipeForMealPlan)?.title ?? ''
+          }
         />
       )}
 

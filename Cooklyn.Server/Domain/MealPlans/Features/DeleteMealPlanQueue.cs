@@ -1,0 +1,25 @@
+namespace Cooklyn.Server.Domain.MealPlans.Features;
+
+using Databases;
+using Exceptions;
+using MediatR;
+
+public static class DeleteMealPlanQueue
+{
+    public sealed record Command(string Id) : IRequest;
+
+    public sealed class Handler(AppDbContext dbContext) : IRequestHandler<Command>
+    {
+        public async Task Handle(Command request, CancellationToken cancellationToken)
+        {
+            var queue = await dbContext.MealPlanQueues.FindAsync([request.Id], cancellationToken)
+                ?? throw new NotFoundException($"Meal plan queue {request.Id} not found.");
+
+            if (queue.IsDefault)
+                throw new Exceptions.ValidationException(nameof(MealPlanQueue), "Cannot delete the default queue.");
+
+            dbContext.MealPlanQueues.Remove(queue);
+            await dbContext.SaveChangesAsync(cancellationToken);
+        }
+    }
+}

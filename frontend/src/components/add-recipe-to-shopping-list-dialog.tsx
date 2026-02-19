@@ -1,11 +1,16 @@
 import { useState, useEffect } from 'react'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 
 import { useRecipe } from '@/domain/recipes/apis/get-recipe'
 import type { IngredientDto } from '@/domain/recipes/types'
-import { useShoppingLists } from '@/domain/shopping-lists/apis/get-shopping-lists'
-import { useAddItemsFromRecipe } from '@/domain/shopping-lists/apis/shopping-list-mutations'
+import { createShoppingList } from '@/domain/shopping-lists/apis/shopping-list-mutations'
+import {
+  useAddItemsFromRecipe,
+} from '@/domain/shopping-lists/apis/shopping-list-mutations'
+import { ShoppingListKeys } from '@/domain/shopping-lists/apis/shopping-list.keys'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
+import { Kbd } from '@/components/ui/kbd'
 import {
   Dialog,
   DialogContent,
@@ -14,13 +19,10 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog'
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectItemText,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
+  ShoppingListPicker,
+  type ShoppingListPickerMode,
+} from '@/components/shopping-list-picker'
+import { Notification } from '@/components/notifications'
 
 interface AddRecipeToShoppingListDialogProps {
   open: boolean
@@ -34,16 +36,16 @@ export function AddRecipeToShoppingListDialog({
   recipeId,
 }: AddRecipeToShoppingListDialogProps) {
   const { data: recipe } = useRecipe(recipeId)
-  const { data: listsData } = useShoppingLists({ pageSize: 100 })
   const addFromRecipe = useAddItemsFromRecipe()
+  const queryClient = useQueryClient()
 
+  const [listMode, setListMode] = useState<ShoppingListPickerMode>('existing')
   const [selectedListId, setSelectedListId] = useState<string | null>(null)
+  const [newListName, setNewListName] = useState('')
   const [selectedIngredientIds, setSelectedIngredientIds] = useState<string[]>(
     [],
   )
 
-  const activeLists =
-    listsData?.items.filter((l) => l.status === 'Active') ?? []
   const ingredients = recipe?.ingredients ?? []
   const allSelected =
     ingredients.length > 0 &&
@@ -55,14 +57,6 @@ export function AddRecipeToShoppingListDialog({
       setSelectedIngredientIds(recipe.ingredients.map((i) => i.id))
     }
   }, [recipe])
-
-  // Auto-select first active list
-  const firstActiveListId = activeLists[0]?.id ?? null
-  useEffect(() => {
-    if (firstActiveListId && !selectedListId) {
-      setSelectedListId(firstActiveListId)
-    }
-  }, [firstActiveListId, selectedListId])
 
   const toggleIngredient = (ingredientId: string) => {
     setSelectedIngredientIds((prev) =>
@@ -80,25 +74,44 @@ export function AddRecipeToShoppingListDialog({
     }
   }
 
-  const handleAdd = () => {
-    if (!selectedListId || selectedIngredientIds.length === 0) return
-    addFromRecipe.mutate(
-      {
-        shoppingListId: selectedListId,
+  // Combined mutation: create list if needed, then add items
+  const addToList = useMutation({
+    mutationFn: async () => {
+      let targetListId: string
+
+      if (listMode === 'new') {
+        const newList = await createShoppingList({
+          name: newListName || `${recipe?.title ?? 'Recipe'} ingredients`,
+          storeId: null,
+        })
+        targetListId = newList.id
+      } else {
+        if (!selectedListId) throw new Error('No list selected')
+        targetListId = selectedListId
+      }
+
+      return addFromRecipe.mutateAsync({
+        shoppingListId: targetListId,
         dto: {
           recipeId,
           ingredientIds: selectedIngredientIds,
         },
-      },
-      {
-        onSuccess: () => {
-          onOpenChange(false)
-          setSelectedListId(null)
-          setSelectedIngredientIds([])
-        },
-      },
-    )
-  }
+      })
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ShoppingListKeys.lists() })
+      onOpenChange(false)
+      Notification.success('Items added to shopping list!')
+      setSelectedListId(null)
+      setNewListName('')
+      setSelectedIngredientIds([])
+    },
+  })
+
+  const canSubmit =
+    selectedIngredientIds.length > 0 &&
+    !addToList.isPending &&
+    (listMode === 'new' || selectedListId)
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -107,35 +120,15 @@ export function AddRecipeToShoppingListDialog({
           <DialogTitle>Add to Shopping List</DialogTitle>
         </DialogHeader>
         <div className="space-y-4">
-          <div className="space-y-2">
-            <Select
-              value={selectedListId ?? ''}
-              onValueChange={setSelectedListId}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select a shopping list">
-                  {(value: unknown) => {
-                    if (value === null || value === undefined) {
-                      return (
-                        <span className="text-muted-foreground">
-                          Select a shopping list
-                        </span>
-                      )
-                    }
-                    const list = activeLists.find((l) => l.id === value)
-                    return list?.name ?? String(value)
-                  }}
-                </SelectValue>
-              </SelectTrigger>
-              <SelectContent>
-                {activeLists.map((list) => (
-                  <SelectItem key={list.id} value={list.id}>
-                    <SelectItemText>{list.name}</SelectItemText>
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+          <ShoppingListPicker
+            mode={listMode}
+            onModeChange={setListMode}
+            selectedListId={selectedListId}
+            onSelectedListIdChange={setSelectedListId}
+            newListName={newListName}
+            onNewListNameChange={setNewListName}
+            newListPlaceholder={`${recipe?.title ?? 'Recipe'} ingredients`}
+          />
 
           {recipe && ingredients.length > 0 && (
             <div className="space-y-2 max-h-64 overflow-y-auto">
@@ -164,14 +157,11 @@ export function AddRecipeToShoppingListDialog({
             Cancel
           </Button>
           <Button
-            onClick={handleAdd}
-            disabled={
-              !selectedListId ||
-              selectedIngredientIds.length === 0 ||
-              addFromRecipe.isPending
-            }
+            onClick={() => addToList.mutate()}
+            disabled={!canSubmit}
           >
-            {addFromRecipe.isPending ? 'Adding...' : 'Add Items'}
+            {addToList.isPending ? 'Adding...' : 'Add Items'}
+            {!addToList.isPending && <Kbd>⌘↵</Kbd>}
           </Button>
         </DialogFooter>
       </DialogContent>

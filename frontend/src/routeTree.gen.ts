@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as StoresRouteImport } from './routes/stores'
 import { Route as ShoppingListsRouteImport } from './routes/shopping-lists'
 import { Route as RecipesRouteImport } from './routes/recipes'
+import { Route as MealPlanRouteImport } from './routes/meal-plan'
 import { Route as FilterDemoRouteImport } from './routes/filter-demo'
 import { Route as ComponentsRouteImport } from './routes/components'
 import { Route as CollectionsRouteImport } from './routes/collections'
@@ -19,6 +20,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as StoresIndexRouteImport } from './routes/stores.index'
 import { Route as ShoppingListsIndexRouteImport } from './routes/shopping-lists.index'
 import { Route as RecipesIndexRouteImport } from './routes/recipes.index'
+import { Route as MealPlanIndexRouteImport } from './routes/meal-plan.index'
 import { Route as CollectionsIndexRouteImport } from './routes/collections.index'
 import { Route as StoresIdRouteImport } from './routes/stores.$id'
 import { Route as ShoppingListsIdRouteImport } from './routes/shopping-lists.$id'
@@ -47,6 +49,11 @@ const ShoppingListsRoute = ShoppingListsRouteImport.update({
 const RecipesRoute = RecipesRouteImport.update({
   id: '/recipes',
   path: '/recipes',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MealPlanRoute = MealPlanRouteImport.update({
+  id: '/meal-plan',
+  path: '/meal-plan',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FilterDemoRoute = FilterDemoRouteImport.update({
@@ -83,6 +90,11 @@ const RecipesIndexRoute = RecipesIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => RecipesRoute,
+} as any)
+const MealPlanIndexRoute = MealPlanIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => MealPlanRoute,
 } as any)
 const CollectionsIndexRoute = CollectionsIndexRouteImport.update({
   id: '/',
@@ -160,6 +172,7 @@ export interface FileRoutesByFullPath {
   '/collections': typeof CollectionsRouteWithChildren
   '/components': typeof ComponentsRoute
   '/filter-demo': typeof FilterDemoRoute
+  '/meal-plan': typeof MealPlanRouteWithChildren
   '/recipes': typeof RecipesRouteWithChildren
   '/shopping-lists': typeof ShoppingListsRouteWithChildren
   '/stores': typeof StoresRouteWithChildren
@@ -171,6 +184,7 @@ export interface FileRoutesByFullPath {
   '/shopping-lists/$id': typeof ShoppingListsIdRouteWithChildren
   '/stores/$id': typeof StoresIdRouteWithChildren
   '/collections/': typeof CollectionsIndexRoute
+  '/meal-plan/': typeof MealPlanIndexRoute
   '/recipes/': typeof RecipesIndexRoute
   '/shopping-lists/': typeof ShoppingListsIndexRoute
   '/stores/': typeof StoresIndexRoute
@@ -189,6 +203,7 @@ export interface FileRoutesByTo {
   '/recipes/import-cmt': typeof RecipesImportCmtRoute
   '/recipes/new': typeof RecipesNewRoute
   '/collections': typeof CollectionsIndexRoute
+  '/meal-plan': typeof MealPlanIndexRoute
   '/recipes': typeof RecipesIndexRoute
   '/shopping-lists': typeof ShoppingListsIndexRoute
   '/stores': typeof StoresIndexRoute
@@ -205,6 +220,7 @@ export interface FileRoutesById {
   '/collections': typeof CollectionsRouteWithChildren
   '/components': typeof ComponentsRoute
   '/filter-demo': typeof FilterDemoRoute
+  '/meal-plan': typeof MealPlanRouteWithChildren
   '/recipes': typeof RecipesRouteWithChildren
   '/shopping-lists': typeof ShoppingListsRouteWithChildren
   '/stores': typeof StoresRouteWithChildren
@@ -216,6 +232,7 @@ export interface FileRoutesById {
   '/shopping-lists/$id': typeof ShoppingListsIdRouteWithChildren
   '/stores/$id': typeof StoresIdRouteWithChildren
   '/collections/': typeof CollectionsIndexRoute
+  '/meal-plan/': typeof MealPlanIndexRoute
   '/recipes/': typeof RecipesIndexRoute
   '/shopping-lists/': typeof ShoppingListsIndexRoute
   '/stores/': typeof StoresIndexRoute
@@ -233,6 +250,7 @@ export interface FileRouteTypes {
     | '/collections'
     | '/components'
     | '/filter-demo'
+    | '/meal-plan'
     | '/recipes'
     | '/shopping-lists'
     | '/stores'
@@ -244,6 +262,7 @@ export interface FileRouteTypes {
     | '/shopping-lists/$id'
     | '/stores/$id'
     | '/collections/'
+    | '/meal-plan/'
     | '/recipes/'
     | '/shopping-lists/'
     | '/stores/'
@@ -262,6 +281,7 @@ export interface FileRouteTypes {
     | '/recipes/import-cmt'
     | '/recipes/new'
     | '/collections'
+    | '/meal-plan'
     | '/recipes'
     | '/shopping-lists'
     | '/stores'
@@ -277,6 +297,7 @@ export interface FileRouteTypes {
     | '/collections'
     | '/components'
     | '/filter-demo'
+    | '/meal-plan'
     | '/recipes'
     | '/shopping-lists'
     | '/stores'
@@ -288,6 +309,7 @@ export interface FileRouteTypes {
     | '/shopping-lists/$id'
     | '/stores/$id'
     | '/collections/'
+    | '/meal-plan/'
     | '/recipes/'
     | '/shopping-lists/'
     | '/stores/'
@@ -304,6 +326,7 @@ export interface RootRouteChildren {
   CollectionsRoute: typeof CollectionsRouteWithChildren
   ComponentsRoute: typeof ComponentsRoute
   FilterDemoRoute: typeof FilterDemoRoute
+  MealPlanRoute: typeof MealPlanRouteWithChildren
   RecipesRoute: typeof RecipesRouteWithChildren
   ShoppingListsRoute: typeof ShoppingListsRouteWithChildren
   StoresRoute: typeof StoresRouteWithChildren
@@ -330,6 +353,13 @@ declare module '@tanstack/react-router' {
       path: '/recipes'
       fullPath: '/recipes'
       preLoaderRoute: typeof RecipesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/meal-plan': {
+      id: '/meal-plan'
+      path: '/meal-plan'
+      fullPath: '/meal-plan'
+      preLoaderRoute: typeof MealPlanRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/filter-demo': {
@@ -380,6 +410,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/recipes/'
       preLoaderRoute: typeof RecipesIndexRouteImport
       parentRoute: typeof RecipesRoute
+    }
+    '/meal-plan/': {
+      id: '/meal-plan/'
+      path: '/'
+      fullPath: '/meal-plan/'
+      preLoaderRoute: typeof MealPlanIndexRouteImport
+      parentRoute: typeof MealPlanRoute
     }
     '/collections/': {
       id: '/collections/'
@@ -508,6 +545,18 @@ const CollectionsRouteWithChildren = CollectionsRoute._addFileChildren(
   CollectionsRouteChildren,
 )
 
+interface MealPlanRouteChildren {
+  MealPlanIndexRoute: typeof MealPlanIndexRoute
+}
+
+const MealPlanRouteChildren: MealPlanRouteChildren = {
+  MealPlanIndexRoute: MealPlanIndexRoute,
+}
+
+const MealPlanRouteWithChildren = MealPlanRoute._addFileChildren(
+  MealPlanRouteChildren,
+)
+
 interface RecipesIdRouteChildren {
   RecipesIdEditRoute: typeof RecipesIdEditRoute
   RecipesIdIndexRoute: typeof RecipesIdIndexRoute
@@ -599,6 +648,7 @@ const rootRouteChildren: RootRouteChildren = {
   CollectionsRoute: CollectionsRouteWithChildren,
   ComponentsRoute: ComponentsRoute,
   FilterDemoRoute: FilterDemoRoute,
+  MealPlanRoute: MealPlanRouteWithChildren,
   RecipesRoute: RecipesRouteWithChildren,
   ShoppingListsRoute: ShoppingListsRouteWithChildren,
   StoresRoute: StoresRouteWithChildren,

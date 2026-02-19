@@ -5,6 +5,7 @@ using Domain.ItemCategoryMappings;
 using Domain.ItemCollections;
 using Domain.Recipes;
 using Domain.RecentSearches;
+using Domain.MealPlans;
 using Domain.SavedFilters;
 using Domain.ShoppingLists;
 using Domain.StoreSections;
@@ -48,6 +49,10 @@ public class AppDbContext(
     public DbSet<StoreDefaultCollection> StoreDefaultCollections => Set<StoreDefaultCollection>();
 
     public DbSet<ItemCategoryMapping> ItemCategoryMappings => Set<ItemCategoryMapping>();
+
+    public DbSet<MealPlanEntry> MealPlanEntries => Set<MealPlanEntry>();
+    public DbSet<MealPlanQueue> MealPlanQueues => Set<MealPlanQueue>();
+    public DbSet<MealPlanQueueItem> MealPlanQueueItems => Set<MealPlanQueueItem>();
 
     public DbSet<SavedFilter> SavedFilters => Set<SavedFilter>();
     public DbSet<RecentSearch> RecentSearches => Set<RecentSearch>();

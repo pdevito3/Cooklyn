@@ -55,9 +55,13 @@ function CollectionDetailPage() {
   useHotkeys('delete', () => {
     if (collection && !isEditingName) setDeleteOpen(true)
   })
-  useHotkeys('mod+enter', () => {
-    if (collection && itemsSynced) saveItems()
-  })
+  useHotkeys(
+    'mod+enter',
+    () => {
+      if (collection && itemsSynced) saveItems()
+    },
+    { enableOnFormTags: ['INPUT', 'TEXTAREA', 'SELECT'], preventDefault: true },
+  )
 
   // Sync items from collection data when it loads
   useEffect(() => {
@@ -144,6 +148,12 @@ function CollectionDetailPage() {
               <Input
                 value={editName}
                 onChange={(e) => setEditName(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
+                    e.preventDefault()
+                    saveNameEdit()
+                  }
+                }}
               />
             </div>
             <div className="flex gap-2">
@@ -152,6 +162,7 @@ function CollectionDetailPage() {
                 disabled={updateCollection.isPending}
               >
                 Save
+                <Kbd>⌘↵</Kbd>
               </Button>
               <Button variant="outline" onClick={() => setIsEditingName(false)}>
                 Cancel

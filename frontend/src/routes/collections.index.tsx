@@ -160,6 +160,16 @@ function CollectionsIndexPage() {
                   id="collection-name"
                   value={newName}
                   onChange={(e) => setNewName(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (
+                      e.key === 'Enter' &&
+                      (e.metaKey || e.ctrlKey) &&
+                      newName.trim()
+                    ) {
+                      e.preventDefault()
+                      handleCreate()
+                    }
+                  }}
                   placeholder="e.g. Weekly Staples"
                   autoFocus
                 />
@@ -178,6 +188,7 @@ function CollectionsIndexPage() {
                 disabled={!newName.trim() || createCollection.isPending}
               >
                 {createCollection.isPending ? 'Creating...' : 'Create'}
+                {!createCollection.isPending && <Kbd>⌘↵</Kbd>}
               </Button>
             </DialogFooter>
           </form>

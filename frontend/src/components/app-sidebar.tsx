@@ -5,6 +5,7 @@ import {
   DashboardSquare01Icon,
   ArrowRight01Icon,
   RestaurantIcon,
+  Calendar03Icon,
   FileImportIcon,
   ShoppingCart01Icon,
   Add01Icon,
@@ -56,6 +57,12 @@ const navItems = [
     url: '/recipes',
     icon: RestaurantIcon,
     hotkey: 'R',
+  },
+  {
+    title: 'Meal Plan',
+    url: '/meal-plan',
+    icon: Calendar03Icon,
+    hotkey: 'P',
   },
 ]
 

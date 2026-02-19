@@ -1,5 +1,6 @@
 import {
   ArrowLeft02Icon,
+  Calendar03Icon,
   Delete01Icon,
   Edit01Icon,
   Image02Icon,
@@ -10,6 +11,7 @@ import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useState } from 'react'
 import { useHotkeys } from 'react-hotkeys-hook'
 
+import { AddToMealPlanPopover } from '@/components/meal-plan/add-to-meal-plan-popover'
 import { CookingView } from '@/components/cooking-view'
 import { RatingIcon } from '@/components/rating-icon'
 import { ScaleInput, formatScaledAmount } from '@/components/scale-input'
@@ -45,6 +47,7 @@ function RecipeDetailPage() {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [imagePickerOpen, setImagePickerOpen] = useState(false)
   const [cookingViewOpen, setCookingViewOpen] = useState(false)
+  const [mealPlanDialogOpen, setMealPlanDialogOpen] = useState(false)
   const [scale, setScale] = useState(1)
 
   const { data: recipe, isLoading, error } = useRecipe(id)
@@ -165,6 +168,13 @@ function RecipeDetailPage() {
               <Kbd>C</Kbd>
             </Button>
           )}
+          <Button
+            variant="outline"
+            onClick={() => setMealPlanDialogOpen(true)}
+          >
+            <HugeiconsIcon icon={Calendar03Icon} className="w-4 h-4" />
+            Meal Plan
+          </Button>
           <Button variant="outline" onClick={handleEdit}>
             <HugeiconsIcon icon={Edit01Icon} className="w-4 h-4" />
             Edit
@@ -408,6 +418,14 @@ function RecipeDetailPage() {
           onOpenChange={setImagePickerOpen}
         />
       )}
+
+      {/* Add to Meal Plan Dialog */}
+      <AddToMealPlanPopover
+        open={mealPlanDialogOpen}
+        onOpenChange={setMealPlanDialogOpen}
+        recipeId={id}
+        recipeTitle={recipe.title}
+      />
 
       {/* Cooking View */}
       {cookingViewOpen && recipe.steps && (

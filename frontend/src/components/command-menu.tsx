@@ -4,6 +4,7 @@ import { useInfiniteQuery } from '@tanstack/react-query'
 import {
   RestaurantIcon,
   ShoppingCart01Icon,
+  Calendar03Icon,
   Store01Icon,
   Layers01Icon,
   FileImportIcon,
@@ -497,6 +498,14 @@ export function CommandMenu({ open, onOpenChange }: CommandMenuProps) {
                 <HugeiconsIcon icon={ShoppingCart01Icon} />
                 <span>Shopping Lists</span>
                 <CommandShortcut>G+L</CommandShortcut>
+              </CommandItem>
+              <CommandItem
+                value="nav:/meal-plan"
+                onSelect={handleSelect}
+              >
+                <HugeiconsIcon icon={Calendar03Icon} />
+                <span>Meal Plan</span>
+                <CommandShortcut>G+P</CommandShortcut>
               </CommandItem>
             </CommandGroup>
             <CommandGroup heading="Actions">

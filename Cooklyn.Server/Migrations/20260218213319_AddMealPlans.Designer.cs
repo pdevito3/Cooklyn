@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Cooklyn.Server.Databases;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -12,9 +13,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Cooklyn.Server.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260218213319_AddMealPlans")]
+    partial class AddMealPlans
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -215,6 +218,57 @@ namespace Cooklyn.Server.Migrations
                         .HasDatabaseName("ix_item_collection_items_store_section_id");
 
                     b.ToTable("item_collection_items", (string)null);
+                });
+
+            modelBuilder.Entity("Cooklyn.Server.Domain.MealPlans.MealPlanDayNote", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("text")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)")
+                        .HasColumnName("content");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text")
+                        .HasColumnName("created_by");
+
+                    b.Property<DateTimeOffset>("CreatedOn")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_on");
+
+                    b.Property<DateOnly>("Date")
+                        .HasColumnType("date")
+                        .HasColumnName("date");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("text")
+                        .HasColumnName("last_modified_by");
+
+                    b.Property<DateTimeOffset?>("LastModifiedOn")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("last_modified_on");
+
+                    b.Property<string>("TenantId")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("tenant_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_meal_plan_day_notes");
+
+                    b.HasIndex("TenantId", "Date")
+                        .IsUnique()
+                        .HasDatabaseName("ix_meal_plan_day_notes_tenant_id_date");
+
+                    b.ToTable("meal_plan_day_notes", (string)null);
                 });
 
             modelBuilder.Entity("Cooklyn.Server.Domain.MealPlans.MealPlanEntry", b =>
@@ -1663,6 +1717,16 @@ namespace Cooklyn.Server.Migrations
                         .HasForeignKey("StoreSectionId")
                         .OnDelete(DeleteBehavior.SetNull)
                         .HasConstraintName("fk_item_collection_items_store_sections_store_section_id");
+                });
+
+            modelBuilder.Entity("Cooklyn.Server.Domain.MealPlans.MealPlanDayNote", b =>
+                {
+                    b.HasOne("Cooklyn.Server.Domain.Tenants.Tenant", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_meal_plan_day_notes_tenants_tenant_id");
                 });
 
             modelBuilder.Entity("Cooklyn.Server.Domain.MealPlans.MealPlanEntry", b =>
