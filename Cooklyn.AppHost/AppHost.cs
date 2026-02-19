@@ -75,11 +75,6 @@ try
         .WithExternalHttpEndpoints()
         .WithParentRelationship(webfrontend);
 
-    if (authProvider.AuthResource is not null)
-    {
-        server.WaitFor(authProvider.AuthResource);
-    }
-
     webfrontend
         .WithReference(bff);
 
