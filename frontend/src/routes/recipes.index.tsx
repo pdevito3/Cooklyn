@@ -9,6 +9,7 @@ import {
 } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
 import { useQueryClient } from '@tanstack/react-query'
+import { AnimatePresence, motion } from 'motion/react'
 
 import { useInfiniteRecipes } from '@/domain/recipes/apis/get-recipes'
 import { RecipeKeys } from '@/domain/recipes/apis/recipe.keys'
@@ -30,6 +31,12 @@ import {
 } from '@/domain/saved-filters/utils/filter-state-serialization'
 import { useTags } from '@/domain/tags/apis/get-tags'
 import { RecipeCard } from '@/components/recipe-card'
+import { RecipeSmallCard } from '@/components/recipe-small-card'
+import { RecipeListItem } from '@/components/recipe-list-item'
+import {
+  RecipeViewToggle,
+  type RecipeViewMode,
+} from '@/components/recipe-view-toggle'
 import {
   FilterBuilder,
   toQueryKitString,
@@ -68,6 +75,12 @@ export const Route = createFileRoute('/recipes/')({
 function RecipesIndexPage() {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
+  const [viewMode, setViewMode] = useState<RecipeViewMode>(() => {
+    const stored = localStorage.getItem('recipe-view-mode')
+    if (stored === 'cards' || stored === 'small-cards' || stored === 'list')
+      return stored
+    return 'cards'
+  })
   const [searchQuery, setSearchQuery] = useState('')
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [recipeToDelete, setRecipeToDelete] = useState<string | null>(null)
@@ -339,6 +352,11 @@ function RecipesIndexPage() {
     return () => observer.disconnect()
   }, [hasNextPage, isFetchingNextPage, fetchNextPage])
 
+  const handleViewModeChange = useCallback((mode: RecipeViewMode) => {
+    setViewMode(mode)
+    localStorage.setItem('recipe-view-mode', mode)
+  }, [])
+
   const handleRefresh = () => {
     queryClient.invalidateQueries({ queryKey: RecipeKeys.all })
   }
@@ -441,6 +459,7 @@ function RecipesIndexPage() {
               Clear all
             </Button>
           )}
+          <RecipeViewToggle value={viewMode} onChange={handleViewModeChange} />
           <Button
             variant="outline"
             onClick={handleRefresh}
@@ -496,21 +515,63 @@ function RecipesIndexPage() {
         </div>
       )}
 
-      {/* Recipe Grid */}
+      {/* Recipe Grid / List */}
       {!isLoading && allRecipes.length > 0 && (
         <div>
-          <div className="grid grid-cols-[repeat(auto-fit,minmax(18rem,1fr))] gap-6">
-            {allRecipes.map((recipe) => (
-              <RecipeCard
-                key={recipe.id}
-                recipe={recipe}
-                onEdit={handleEditRecipe}
-                onDelete={handleDeleteRecipe}
-                onAddToShoppingList={handleAddToShoppingList}
-                onAddToMealPlan={handleAddToMealPlan}
-              />
-            ))}
-          </div>
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={viewMode}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.2, ease: 'easeInOut' }}
+            >
+              {viewMode === 'cards' && (
+                <div className="grid grid-cols-[repeat(auto-fit,minmax(18rem,1fr))] gap-6">
+                  {allRecipes.map((recipe) => (
+                    <RecipeCard
+                      key={recipe.id}
+                      recipe={recipe}
+                      onEdit={handleEditRecipe}
+                      onDelete={handleDeleteRecipe}
+                      onAddToShoppingList={handleAddToShoppingList}
+                      onAddToMealPlan={handleAddToMealPlan}
+                    />
+                  ))}
+                </div>
+              )}
+
+              {viewMode === 'small-cards' && (
+                <div className="grid grid-cols-[repeat(auto-fit,minmax(12rem,1fr))] gap-4">
+                  {allRecipes.map((recipe) => (
+                    <RecipeSmallCard
+                      key={recipe.id}
+                      recipe={recipe}
+                      onEdit={handleEditRecipe}
+                      onDelete={handleDeleteRecipe}
+                      onAddToShoppingList={handleAddToShoppingList}
+                      onAddToMealPlan={handleAddToMealPlan}
+                    />
+                  ))}
+                </div>
+              )}
+
+              {viewMode === 'list' && (
+                <div className="flex flex-col gap-2">
+                  {allRecipes.map((recipe) => (
+                    <RecipeListItem
+                      key={recipe.id}
+                      recipe={recipe}
+                      onEdit={handleEditRecipe}
+                      onDelete={handleDeleteRecipe}
+                      onAddToShoppingList={handleAddToShoppingList}
+                      onAddToMealPlan={handleAddToMealPlan}
+                    />
+                  ))}
+                </div>
+              )}
+            </motion.div>
+          </AnimatePresence>
 
           {/* Infinite scroll sentinel */}
           <div ref={sentinelRef} className="h-1" />
