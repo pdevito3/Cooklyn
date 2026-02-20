@@ -26,10 +26,14 @@ try
     var authProvider = AuthProviders.Keycloak(builder);
 
     var postgres = builder.AddPostgres("postgres")
-        .WithDataVolume("cooklyn-postgres");
+        .WithDataVolume("cooklyn-postgres")
+        .WithContainerName("cooklyn-postgres")
+        .WithContainerRuntimeArgs("--label", "com.docker.compose.project=cooklyn");
     var appDb = postgres.AddDatabase("appdb");
 
     var minio = builder.AddContainer("minio", "quay.io/minio/minio")
+        .WithContainerName("cooklyn-minio")
+        .WithContainerRuntimeArgs("--label", "com.docker.compose.project=cooklyn")
         .WithHttpEndpoint(port: 9000, targetPort: 9000, name: "http")
         .WithHttpEndpoint(port: 9001, targetPort: 9001, name: "console")
         .WithEnvironment("MINIO_ROOT_USER", "minioadmin")

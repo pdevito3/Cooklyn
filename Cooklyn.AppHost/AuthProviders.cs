@@ -153,10 +153,14 @@ public static class AuthProviders
         const string clientId = "aspire-app";
         
         var keycloakPostgres = builder.AddPostgres("keycloak-postgres")
-            .WithDataVolume("cooklyn-keycloak-postgres");
+            .WithDataVolume("cooklyn-keycloak-postgres")
+            .WithContainerName("cooklyn-keycloak-postgres")
+            .WithContainerRuntimeArgs("--label", "com.docker.compose.project=cooklyn");
         var keycloakDb = keycloakPostgres.AddDatabase("keycloakdb");
-        
+
         var keycloak = builder.AddContainer("keycloak", "quay.io/keycloak/keycloak", "26.0")
+            .WithContainerName("cooklyn-keycloak")
+            .WithContainerRuntimeArgs("--label", "com.docker.compose.project=cooklyn")
             .WithReference(keycloakDb)
             .WaitFor(keycloakDb)
             .WithHttpEndpoint(port: 8080, targetPort: 8080, name: "http")
