@@ -557,7 +557,7 @@ function RecipesIndexPage() {
               )}
 
               {viewMode === 'list' && (
-                <div className="flex flex-col gap-2">
+                <div className="grid grid-cols-1 gap-2">
                   {allRecipes.map((recipe) => (
                     <RecipeListItem
                       key={recipe.id}

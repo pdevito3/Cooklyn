@@ -35,7 +35,7 @@ export function RecipeListItem({
   onAddToMealPlan,
 }: RecipeListItemProps) {
   return (
-    <div className="group flex items-center gap-4 rounded-lg border bg-card p-3 transition-colors hover:bg-accent/50">
+    <div className="group relative flex items-center gap-4 overflow-hidden rounded-lg border bg-card p-3 transition-colors hover:bg-accent/50">
       {/* Thumbnail */}
       <Link
         to="/recipes/$id"
