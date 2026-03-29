@@ -196,7 +196,7 @@ export function MealPlanQueuePanel() {
       </div>
 
       {showNewQueue && (
-        <div className="flex gap-1">
+        <div className="flex gap-1 max-w-xs">
           <Input
             ref={newQueueRef}
             placeholder="Queue name"
@@ -222,6 +222,7 @@ export function MealPlanQueuePanel() {
         </div>
       )}
 
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
       {queues.map((queue) => (
         <Collapsible key={queue.id} defaultOpen className="group/queue">
           <div className="flex items-center gap-1">
@@ -412,6 +413,7 @@ export function MealPlanQueuePanel() {
           </CollapsibleContent>
         </Collapsible>
       ))}
+      </div>
 
       <AlertDialog
         open={deleteQueueId !== null}

@@ -128,8 +128,8 @@ function MealPlanPage() {
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
     >
-      <div className="flex flex-col md:flex-row gap-4 h-full">
-        <div className="flex-1 min-w-0">
+      <div className="flex flex-col gap-4">
+        <div className="min-w-0">
           <div className="flex flex-wrap items-center justify-end gap-2 mb-4">
             <Button
               variant="outline"
@@ -151,11 +151,7 @@ function MealPlanPage() {
           </div>
           <MealPlanCalendar />
         </div>
-        {queueOpen && (
-          <div className="w-full md:w-72 shrink-0 order-first md:order-last">
-            <MealPlanQueuePanel />
-          </div>
-        )}
+        {queueOpen && <MealPlanQueuePanel />}
         <GenerateShoppingListDialog
           open={shoppingListDialogOpen}
           onOpenChange={setShoppingListDialogOpen}
