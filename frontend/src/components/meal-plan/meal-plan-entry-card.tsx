@@ -65,17 +65,17 @@ export function MealPlanEntryCard({
         {...listeners}
         {...attributes}
         className={cn(
-          'group flex items-center gap-1 rounded px-1.5 py-0.5 text-xs cursor-grab active:cursor-grabbing',
+          'group flex gap-1 rounded px-1.5 py-0.5 text-xs cursor-grab active:cursor-grabbing',
           isFreeText
-            ? 'bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/30 dark:hover:bg-emerald-950/50'
-            : 'hover:bg-accent',
+            ? 'items-start bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/30 dark:hover:bg-emerald-950/50'
+            : 'items-center hover:bg-accent',
         )}
       >
         <HugeiconsIcon
           icon={isFreeText ? StickyNote01Icon : RestaurantIcon}
-          className="size-3 shrink-0 text-muted-foreground"
+          className={cn('size-3 shrink-0 text-muted-foreground', isFreeText && 'mt-0.5')}
         />
-        <span className="truncate">{entry.title}</span>
+        <span className={isFreeText ? 'whitespace-pre-line' : 'truncate'}>{entry.title}</span>
         {!isFreeText && entry.scale !== 1 && (
           <span className="text-muted-foreground shrink-0">
             {entry.scale}x
@@ -173,17 +173,17 @@ export function MealPlanEntryCard({
       {...listeners}
       {...attributes}
       className={cn(
-        'group flex items-center gap-1.5 rounded-md border shadow-sm hover:shadow cursor-grab active:cursor-grabbing',
+        'group flex gap-1.5 rounded-md border shadow-sm hover:shadow cursor-grab active:cursor-grabbing',
         isFreeText
-          ? 'bg-emerald-50 border-emerald-200 dark:bg-emerald-950/30 dark:border-emerald-900/50 px-2 py-1.5 text-sm'
-          : 'bg-card px-2 py-1.5 text-sm',
+          ? 'items-start bg-emerald-50 border-emerald-200 dark:bg-emerald-950/30 dark:border-emerald-900/50 px-2 py-1.5 text-sm'
+          : 'items-center bg-card px-2 py-1.5 text-sm',
       )}
     >
       <HugeiconsIcon
         icon={isFreeText ? StickyNote01Icon : RestaurantIcon}
-        className="size-3.5 shrink-0 text-muted-foreground"
+        className={cn('size-3.5 shrink-0 text-muted-foreground', isFreeText && 'mt-0.5')}
       />
-      <span className="flex-1 truncate">{entry.title}</span>
+      <span className={cn('flex-1', isFreeText ? 'whitespace-pre-line' : 'truncate')}>{entry.title}</span>
       {!isFreeText && entry.scale !== 1 && (
         <span className="text-xs text-muted-foreground shrink-0">
           {entry.scale}x
