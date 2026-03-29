@@ -39,7 +39,7 @@ import { ThemeToggle } from '@/components/theme-toggle'
 import { Kbd } from '@/components/ui/kbd'
 import { QuickAddDialog } from '@/components/quick-add-dialog'
 
-const navItems = [
+export const navItems = [
   {
     title: 'Home',
     url: '/',
@@ -66,7 +66,7 @@ const navItems = [
   },
 ]
 
-const settingsItems = [
+export const settingsItems = [
   {
     title: 'Stores',
     url: '/stores',
@@ -79,7 +79,7 @@ const settingsItems = [
   },
 ]
 
-const importItems = [
+export const importItems = [
   {
     title: 'From URL',
     url: '/recipes/import',
@@ -92,7 +92,7 @@ const importItems = [
   },
 ]
 
-const demoItems = [
+export const demoItems = [
   {
     title: 'Components',
     url: '/components',

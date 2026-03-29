@@ -7,6 +7,8 @@ import {
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
 import type { QueryClient } from '@tanstack/react-query'
 import { useHotkeys } from 'react-hotkeys-hook'
+import { Menu01Icon } from '@hugeicons/core-free-icons'
+import { HugeiconsIcon } from '@hugeicons/react'
 import {
   SidebarInset,
   SidebarProvider,
@@ -22,6 +24,7 @@ import {
   BreadcrumbPage,
 } from '@/components/ui/breadcrumb'
 import { CommandMenu } from '@/components/command-menu'
+import { MobileNavDrawer } from '@/components/mobile-nav-drawer'
 import { getUser } from '@/domain/auth/apis/get-user'
 import { AuthKeys } from '@/domain/auth/apis/auth.keys'
 
@@ -75,6 +78,7 @@ function RootComponent() {
   const pageName = getPageName(currentPath)
   const isMobile = useIsMobile()
   const [commandMenuOpen, setCommandMenuOpen] = useState(false)
+  const [mobileNavOpen, setMobileNavOpen] = useState(false)
 
   useHotkeys(
     'mod+k',
@@ -113,6 +117,7 @@ function RootComponent() {
 
     function handleTouchEnd(e: TouchEvent) {
       if (!isEdgeSwipe) return
+      if (mobileNavOpen) return
       const touch = e.changedTouches[0]
       const deltaY = startY - touch.clientY
       if (deltaY >= 60) {
@@ -127,33 +132,53 @@ function RootComponent() {
       document.removeEventListener('touchstart', handleTouchStart)
       document.removeEventListener('touchend', handleTouchEnd)
     }
-  }, [isMobile])
+  }, [isMobile, mobileNavOpen])
 
   return (
     <SidebarProvider>
       <AppSidebar />
       <SidebarInset>
-        <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
-          <div className="flex items-center gap-2 px-4">
-            <SidebarTrigger className="-ml-1" />
-            <Separator
-              orientation="vertical"
-              className="mr-2 data-[orientation=vertical]:h-4"
-            />
-            <Breadcrumb>
-              <BreadcrumbList>
-                <BreadcrumbItem>
-                  <BreadcrumbPage>{pageName}</BreadcrumbPage>
-                </BreadcrumbItem>
-              </BreadcrumbList>
-            </Breadcrumb>
-          </div>
-        </header>
-        <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
+        {!isMobile && (
+          <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
+            <div className="flex items-center gap-2 px-4">
+              <SidebarTrigger className="-ml-1" />
+              <Separator
+                orientation="vertical"
+                className="mr-2 data-[orientation=vertical]:h-4"
+              />
+              <Breadcrumb>
+                <BreadcrumbList>
+                  <BreadcrumbItem>
+                    <BreadcrumbPage>{pageName}</BreadcrumbPage>
+                  </BreadcrumbItem>
+                </BreadcrumbList>
+              </Breadcrumb>
+            </div>
+          </header>
+        )}
+        <div className="flex flex-1 flex-col gap-4 p-4 pt-0 max-md:pt-2">
           <Outlet />
         </div>
       </SidebarInset>
       <CommandMenu open={commandMenuOpen} onOpenChange={setCommandMenuOpen} />
+      {isMobile && (
+        <>
+          <MobileNavDrawer
+            open={mobileNavOpen}
+            onOpenChange={setMobileNavOpen}
+          />
+          {!mobileNavOpen && (
+            <button
+              type="button"
+              onClick={() => setMobileNavOpen(true)}
+              className="fixed bottom-6 right-6 z-40 flex size-14 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg active:scale-95 transition-transform"
+              aria-label="Open navigation menu"
+            >
+              <HugeiconsIcon icon={Menu01Icon} className="size-6" />
+            </button>
+          )}
+        </>
+      )}
       {!isMobile && <TanStackRouterDevtools position="bottom-right" />}
     </SidebarProvider>
   )
