@@ -1,153 +1,76 @@
-# Fullstack Aspire React Template
+# Cooklyn
 
-A production-ready .NET Aspire template featuring:
-- **React 19** frontend with TanStack Router and React Query
-- **Backend-For-Frontend (BFF)** pattern using Duende BFF
-- **Configurable authentication** (Keycloak, FusionAuth, or Duende Demo)
-- **Multi-tenant architecture** with data isolation
-- **OpenTelemetry** observability built-in
-- **.NET 10** with Aspire 13.1
+A recipe management app for organizing recipes, planning meals, and building shopping lists. Single-user, self-hosted with no authentication.
 
-## Installation
+Built with **.NET 10** and **React 19**, orchestrated by **.NET Aspire**.
 
-```bash
-dotnet new install Cooklyn
-```
-
-## Create a New Project
-
-### With Duende Demo (default)
-```bash
-dotnet new fullstack-aspire -n MyProject
-```
-
-### With Keycloak
-```bash
-dotnet new fullstack-aspire -n MyProject --AuthProvider Keycloak
-```
-
-### With FusionAuth
-```bash
-dotnet new fullstack-aspire -n MyProject --AuthProvider FusionAuth
-```
-
-## Template Parameters
-
-| Parameter | Default | Description |
-|-----------|---------|-------------|
-| `--name` / `-n` | (required) | Project name |
-| `--AuthProvider` | `DuendeDemo` | Auth provider: `DuendeDemo`, `Keycloak`, or `FusionAuth` |
-
-## What You Get
+## Architecture
 
 ```
-MyProject/
-├── MyProject.AppHost/     # Aspire orchestration (start here)
-├── MyProject.Server/      # Backend API (.NET 10, CQRS, MediatR)
-├── MyProject.Bff/         # BFF proxy (Duende BFF + YARP)
-├── frontend/              # React SPA (React 19, TanStack, Tailwind)
-├── tests/                 # Test projects
-└── CLAUDE.md              # Development guide & patterns
+┌─────────────────────────────────────────────────────────────┐
+│                    Aspire AppHost                           │
+│                 (Orchestration Layer)                       │
+└─────────────────────────────────────────────────────────────┘
+         │                    │                    │
+    ┌─────────┐         ┌──────────┐         ┌─────────┐
+    │ Server  │◄───────►│ Frontend │         │  MinIO  │
+    │  (API)  │ (REST)  │  (React) │         │  (S3)   │
+    └─────────┘         └──────────┘         └─────────┘
+         │
+    ┌──────────┐
+    │PostgreSQL│
+    └──────────┘
 ```
 
-### Backend Features
-- **CQRS with MediatR** - Vertical slice architecture
-- **Rich Domain Entities** - DDD patterns with value objects
-- **Multi-tenancy** - Automatic tenant isolation
-- **Soft Delete** - Audit fields and soft delete built-in
-- **API Versioning** - URL segment versioning (`/api/v1/...`)
-- **OpenTelemetry** - Distributed tracing and metrics
-- **PostgreSQL** - With EF Core and migrations
+### Projects
 
-### Frontend Features
-- **TanStack Router** - File-based routing with type safety
-- **TanStack Query** - Server state management
-- **TanStack Table** - Data tables with sorting/filtering
-- **40+ UI Components** - Based on shadcn/ui and Base UI
-- **Filter Builder** - Advanced filtering with QueryKit integration
-- **Theme System** - Light/dark/system mode
-- **React Hook Form + Zod** - Form handling with validation
+- **Cooklyn.AppHost** — Aspire orchestration, defines all resources
+- **Cooklyn.Server** — .NET 10 API (CQRS, MediatR, vertical slices)
+- **frontend** — React 19 SPA (TanStack Router, React Query, Tailwind v4)
+
+## Features
+
+- **Recipes** — create, edit, import from URL, image uploads via S3
+- **Collections** — organize recipes into groups
+- **Meal Plans** — weekly meal planning with drag-and-drop
+- **Shopping Lists** — auto-generated from meal plans or manual entry
+- **Stores & Sections** — map items to store aisles for organized shopping
+- **Saved Filters** — persist advanced filter/sort configurations
 
 ## Running the Application
 
 ```bash
-cd MyProject.AppHost
-dotnet run
-```
-
-Or use the Aspire CLI:
-```bash
-cd MyProject.AppHost
+cd Cooklyn.AppHost
 aspire run
 ```
 
-This starts:
-- **Aspire Dashboard** - View logs, traces, and metrics
-- **Backend API** - .NET API server
-- **BFF Proxy** - Handles auth and proxies to API
-- **React Dev Server** - Vite with hot reload
-- **Auth Provider** - Keycloak/FusionAuth (Docker) or Duende Demo (external)
+This starts the Aspire Dashboard, backend API, React dev server, PostgreSQL, and MinIO.
 
-## Test Users
+### Prerequisites
 
-### Keycloak / FusionAuth
-| Email | Password | Roles |
-|-------|----------|-------|
-| admin@example.com | password123! | admin, user |
-| user@example.com | password123! | user |
+- [.NET 10 SDK](https://dotnet.microsoft.com/download)
+- [Aspire CLI](https://learn.microsoft.com/en-us/dotnet/aspire/fundamentals/dotnet-aspire-cli)
+- [Node.js](https://nodejs.org/) with [pnpm](https://pnpm.io/)
+- [Docker](https://www.docker.com/) (for PostgreSQL and MinIO containers)
 
-### Duende Demo
-| Username | Password |
-|----------|----------|
-| bob | bob |
-| alice | alice |
+## Tech Stack
 
-## Authentication Flow
+### Backend
+- .NET 10, CQRS with MediatR, vertical slice architecture
+- PostgreSQL with EF Core, soft delete, audit fields
+- MinIO (S3-compatible) for image storage
+- Mapperly for compile-time DTO mapping
+- QueryKit for filtering/sorting
+- OpenTelemetry observability
+- API versioning (`/api/v1/...`)
 
-```
-┌──────────┐     ┌─────────┐     ┌───────────────────┐
-│  React   │────►│   BFF   │────►│   Auth Provider   │
-│   App    │◄────│ (OIDC)  │◄────│  (e.g. Keycloak)  │
-└──────────┘     └─────────┘     └───────────────────┘
-     │                │
-     │   Cookie       │  JWT Token
-     │                ▼
-     │          ┌─────────┐
-     └─────────►│  API    │
-       via BFF  │ Server  │
-                └─────────┘
-```
-
-1. User clicks Login → navigates to `/bff/login`
-2. BFF redirects to identity provider
-3. User authenticates with provider
-4. Provider redirects back to `/signin-oidc`
-5. BFF creates secure `__Host-bff` cookie
-6. React app calls `/bff/user` to get claims
-7. API calls go through BFF at `/api/v1/*`
-
-## Next Steps
-
-After creating your project:
-
-1. **Run the app** to see everything working
-2. **Read `CLAUDE.md`** for development patterns and guides
-3. **Add your first entity** using the patterns in `.claude/rules/`
-4. **Build your features** with the included CQRS patterns
-
-## Development with Claude Code
-
-This template includes comprehensive Claude Code integration:
-
-- **`CLAUDE.md`** - Main development guide with architecture and patterns
-- **`.claude/rules/`** - Detailed guides for backend patterns:
-  - `controllers.md` - API controller patterns
-  - `features-and-cqrs.md` - CQRS command/query patterns
-  - `working-with-domain-entities.md` - Rich domain entity patterns
-  - `dtos-and-mappings.md` - DTO and Mapperly patterns
-  - `entity-configurations.md` - EF Core configuration patterns
-  - `domain-events.md` - Domain event patterns
-- **`.claude/skills/`** - Automated scaffolding skills
+### Frontend
+- React 19, TypeScript, Tailwind CSS v4
+- TanStack Router (file-based), React Query, React Table
+- Base UI + React Aria components
+- React Hook Form + Zod validation
+- Motion for animations, dnd-kit for drag-and-drop
+- Keyboard shortcuts throughout
 
 ## License
 
