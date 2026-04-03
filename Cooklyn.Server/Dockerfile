@@ -5,7 +5,7 @@ RUN corepack enable && corepack prepare pnpm@latest --activate
 COPY frontend/package.json frontend/pnpm-lock.yaml ./
 RUN pnpm install --frozen-lockfile
 COPY frontend/ .
-RUN pnpm build
+RUN pnpm exec vite build
 
 # Build .NET application
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
@@ -13,9 +13,11 @@ WORKDIR /src
 
 COPY Directory.Packages.props .
 COPY Cooklyn.Server/*.csproj Cooklyn.Server/
+COPY Cooklyn.SourceGenerators/*.csproj Cooklyn.SourceGenerators/
 RUN dotnet restore Cooklyn.Server/Cooklyn.Server.csproj
 
 COPY Cooklyn.Server/ Cooklyn.Server/
+COPY Cooklyn.SourceGenerators/ Cooklyn.SourceGenerators/
 WORKDIR /src/Cooklyn.Server
 RUN dotnet publish -c Release -o /app/publish
 
