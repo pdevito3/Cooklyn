@@ -203,9 +203,10 @@ export function AppSidebar() {
               onClick={() =>
                 window.dispatchEvent(new CustomEvent('open-command-menu'))
               }
-              className="text-muted-foreground hover:text-foreground hover:bg-sidebar-accent absolute right-2 top-1/2 -translate-y-1/2 flex size-6 items-center justify-center rounded-md transition-colors group-data-[collapsible=icon]:hidden"
+              className="text-muted-foreground hover:text-foreground hover:bg-sidebar-accent absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1 rounded-md px-1 transition-colors group-data-[collapsible=icon]:hidden"
             >
               <HugeiconsIcon icon={Search01Icon} className="size-4" />
+              <Kbd>⌘K</Kbd>
             </button>
           </SidebarMenuItem>
         </SidebarMenu>
@@ -215,19 +216,6 @@ export function AppSidebar() {
           <SidebarGroupLabel>Navigation</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {/* Search */}
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  onClick={() =>
-                    window.dispatchEvent(new CustomEvent('open-command-menu'))
-                  }
-                >
-                  <HugeiconsIcon icon={Search01Icon} />
-                  <span>Search</span>
-                  <Kbd>⌘K</Kbd>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-
               {navItems.map((item) => {
                 const isActive = currentPath === item.url
                 return (
