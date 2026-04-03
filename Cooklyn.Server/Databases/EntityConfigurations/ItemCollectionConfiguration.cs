@@ -1,7 +1,6 @@
 namespace Cooklyn.Server.Databases.EntityConfigurations;
 
 using Domain.ItemCollections;
-using Domain.Tenants;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -16,14 +15,6 @@ public sealed class ItemCollectionConfiguration : IEntityTypeConfiguration<ItemC
             .IsRequired()
             .HasMaxLength(200);
 
-        builder.Property(e => e.TenantId)
-            .IsRequired();
-
-        builder.HasOne<Tenant>()
-            .WithMany()
-            .HasForeignKey(e => e.TenantId)
-            .OnDelete(DeleteBehavior.Cascade);
-
         builder.HasMany(e => e.Items)
             .WithOne()
             .HasForeignKey(i => i.ItemCollectionId)
@@ -32,11 +23,9 @@ public sealed class ItemCollectionConfiguration : IEntityTypeConfiguration<ItemC
         builder.Navigation(e => e.Items)
             .UsePropertyAccessMode(PropertyAccessMode.Field);
 
-        // Unique collection name per tenant (excluding soft-deleted records)
-        builder.HasIndex(e => new { e.TenantId, e.Name })
+        // Unique collection name (excluding soft-deleted records)
+        builder.HasIndex(e => e.Name)
             .IsUnique()
             .HasFilter("is_deleted = false");
-
-        builder.HasIndex(e => e.TenantId);
     }
 }

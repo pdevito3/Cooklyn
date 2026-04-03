@@ -4,7 +4,6 @@ using Asp.Versioning;
 using Dtos;
 using Features;
 using MediatR;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Resources;
 using Resources.Extensions;
@@ -17,7 +16,6 @@ public sealed class TagsController(IMediator mediator) : ControllerBase
     /// <summary>
     /// Gets a single Tag by ID.
     /// </summary>
-    [Authorize]
     [HttpGet("{id}", Name = "GetTag")]
     [ProducesResponseType(typeof(TagDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -31,7 +29,6 @@ public sealed class TagsController(IMediator mediator) : ControllerBase
     /// <summary>
     /// Gets a paginated list of Tags.
     /// </summary>
-    [Authorize]
     [HttpGet(Name = "GetTagList")]
     [ProducesResponseType(typeof(PagedList<TagDto>), StatusCodes.Status200OK)]
     public async Task<ActionResult<PagedList<TagDto>>> GetTagList(
@@ -48,7 +45,6 @@ public sealed class TagsController(IMediator mediator) : ControllerBase
     /// <summary>
     /// Creates a new Tag.
     /// </summary>
-    [Authorize]
     [HttpPost(Name = "AddTag")]
     [ProducesResponseType(typeof(TagDto), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -66,7 +62,6 @@ public sealed class TagsController(IMediator mediator) : ControllerBase
     /// <summary>
     /// Updates an existing Tag.
     /// </summary>
-    [Authorize]
     [HttpPut("{id}", Name = "UpdateTag")]
     [ProducesResponseType(typeof(TagDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -83,7 +78,6 @@ public sealed class TagsController(IMediator mediator) : ControllerBase
     /// <summary>
     /// Deletes a Tag.
     /// </summary>
-    [Authorize]
     [HttpDelete("{id}", Name = "DeleteTag")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]

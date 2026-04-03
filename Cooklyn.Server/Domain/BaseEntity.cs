@@ -8,9 +8,7 @@ public abstract class BaseEntity
     public string Id { get; private set; } = default!;
 
     public DateTimeOffset CreatedOn { get; private set; }
-    public string? CreatedBy { get; private set; }
     public DateTimeOffset? LastModifiedOn { get; private set; }
-    public string? LastModifiedBy { get; private set; }
 
     public bool IsDeleted { get; private set; }
 
@@ -28,23 +26,21 @@ public abstract class BaseEntity
         _domainEvents.Clear();
     }
 
-    public void UpdateCreationProperties(DateTimeOffset createdOn, string? createdBy)
+    public void UpdateCreationProperties(DateTimeOffset createdOn)
     {
         CreatedOn = createdOn;
-        CreatedBy = createdBy;
     }
 
-    public void UpdateModifiedProperties(DateTimeOffset? lastModifiedOn, string? lastModifiedBy)
+    public void UpdateModifiedProperties(DateTimeOffset? lastModifiedOn)
     {
         LastModifiedOn = lastModifiedOn;
-        LastModifiedBy = lastModifiedBy;
     }
-    
+
     public void UpdateIsDeleted(bool isDeleted)
     {
         IsDeleted = isDeleted;
     }
-    
+
     public void OverrideId(string id)
     {
         Id = id;

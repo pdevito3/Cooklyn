@@ -3,7 +3,6 @@ namespace Cooklyn.Server.Domain.Recipes.Dtos;
 public sealed record RecipeDto
 {
     public string Id { get; init; } = default!;
-    public string TenantId { get; init; } = default!;
     public string Title { get; init; } = default!;
     public string? Description { get; init; }
     /// <summary>

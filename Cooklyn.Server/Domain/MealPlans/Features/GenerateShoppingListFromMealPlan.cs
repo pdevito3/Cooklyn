@@ -8,9 +8,9 @@ using Domain.ShoppingLists.Mappings;
 using Domain.ShoppingLists.Models;
 using Dtos;
 using Exceptions;
+using Services;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Services;
 
 public static class GenerateShoppingListFromMealPlan
 {
@@ -18,15 +18,10 @@ public static class GenerateShoppingListFromMealPlan
 
     public sealed class Handler(
         AppDbContext dbContext,
-        ITenantIdProvider tenantIdProvider,
-        ICurrentUserService currentUserService,
         IItemCategoryResolver itemCategoryResolver) : IRequestHandler<Command, ShoppingListDto>
     {
         public async Task<ShoppingListDto> Handle(Command request, CancellationToken cancellationToken)
         {
-            var tenantId = await tenantIdProvider.GetTenantIdAsync(currentUserService.UserIdentifier!)
-                ?? throw new ValidationException(nameof(ShoppingList), "Unable to determine tenant.");
-
             // Load recipe entries in date range
             var entries = await dbContext.MealPlanEntries
                 .AsNoTracking()
@@ -81,7 +76,6 @@ public static class GenerateShoppingListFromMealPlan
 
                 shoppingList = ShoppingList.Create(new ShoppingListForCreation
                 {
-                    TenantId = tenantId,
                     Name = listName
                 });
                 await dbContext.ShoppingLists.AddAsync(shoppingList, cancellationToken);
@@ -133,7 +127,7 @@ public static class GenerateShoppingListFromMealPlan
                     }
                     else
                     {
-                        var storeSectionId = await itemCategoryResolver.ResolveAsync(displayName, tenantId, cancellationToken);
+                        var storeSectionId = await itemCategoryResolver.ResolveAsync(displayName, cancellationToken);
 
                         var newItem = ShoppingListItem.Create(new ShoppingListItemForCreation
                         {

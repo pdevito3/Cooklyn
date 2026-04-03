@@ -14,7 +14,6 @@
     <Build Solution="*|Any CPU" />
   </Project>
   <Project Path="Cooklyn.AppHost/Cooklyn.AppHost.csproj" />
-  <Project Path="Cooklyn.Bff/Cooklyn.Bff.csproj" />
   <Project Path="Cooklyn.Server/Cooklyn.Server.csproj" />
   <Project Path="Cooklyn.SourceGenerators/Cooklyn.SourceGenerators.csproj" />
 </Solution>

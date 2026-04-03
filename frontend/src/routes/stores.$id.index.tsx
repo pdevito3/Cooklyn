@@ -40,8 +40,8 @@ import { useStoreSections } from '@/domain/store-sections/apis/get-store-section
 import { createStoreSection } from '@/domain/store-sections/apis/store-section-mutations'
 import type { StoreSectionDto } from '@/domain/store-sections/types'
 import { useItemCollections } from '@/domain/item-collections/apis/get-item-collections'
-import { useMyDefaultStore } from '@/domain/users/apis/get-my-default-store'
-import { useUpdateMyDefaultStore } from '@/domain/users/apis/user-mutations'
+import { useDefaultStore } from '@/domain/settings/apis/get-setting'
+import { useUpdateDefaultStore } from '@/domain/settings/apis/setting-mutations'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Kbd } from '@/components/ui/kbd'
@@ -169,8 +169,8 @@ function StoreDetailPage() {
   const updateAisles = useUpdateStoreAisles()
   const updateDefaultCollections = useUpdateStoreDefaultCollections()
   const { data: collectionsData } = useItemCollections({ pageSize: 100 })
-  const { data: defaultStoreId } = useMyDefaultStore()
-  const updateDefaultStore = useUpdateMyDefaultStore()
+  const { data: defaultStoreId } = useDefaultStore()
+  const updateDefaultStore = useUpdateDefaultStore()
   const [deleteOpen, setDeleteOpen] = useState(false)
   const [editName, setEditName] = useState('')
   const [editAddress, setEditAddress] = useState('')
@@ -401,7 +401,7 @@ function StoreDetailPage() {
         ) : (
           <Button
             variant="outline"
-            onClick={() => updateDefaultStore.mutate({ storeId: id })}
+            onClick={() => updateDefaultStore.mutate(id)}
             disabled={updateDefaultStore.isPending}
           >
             Set as Default

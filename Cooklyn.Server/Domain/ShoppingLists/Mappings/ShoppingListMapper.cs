@@ -7,24 +7,18 @@ using Riok.Mapperly.Abstractions;
 [Mapper]
 public static partial class ShoppingListMapper
 {
-    [MapperIgnoreSource(nameof(ShoppingList.CreatedBy))]
-    [MapperIgnoreSource(nameof(ShoppingList.LastModifiedBy))]
     [MapperIgnoreSource(nameof(ShoppingList.CreatedOn))]
     [MapperIgnoreSource(nameof(ShoppingList.LastModifiedOn))]
     [MapperIgnoreSource(nameof(ShoppingList.IsDeleted))]
     [MapperIgnoreSource(nameof(ShoppingList.DomainEvents))]
     public static partial ShoppingListDto ToShoppingListDto(this ShoppingList shoppingList);
 
-    [MapperIgnoreSource(nameof(ShoppingListItem.CreatedBy))]
-    [MapperIgnoreSource(nameof(ShoppingListItem.LastModifiedBy))]
     [MapperIgnoreSource(nameof(ShoppingListItem.CreatedOn))]
     [MapperIgnoreSource(nameof(ShoppingListItem.LastModifiedOn))]
     [MapperIgnoreSource(nameof(ShoppingListItem.IsDeleted))]
     [MapperIgnoreSource(nameof(ShoppingListItem.DomainEvents))]
     public static partial ShoppingListItemDto ToShoppingListItemDto(this ShoppingListItem item);
 
-    [MapperIgnoreSource(nameof(ShoppingListItemRecipeSource.CreatedBy))]
-    [MapperIgnoreSource(nameof(ShoppingListItemRecipeSource.LastModifiedBy))]
     [MapperIgnoreSource(nameof(ShoppingListItemRecipeSource.CreatedOn))]
     [MapperIgnoreSource(nameof(ShoppingListItemRecipeSource.LastModifiedOn))]
     [MapperIgnoreSource(nameof(ShoppingListItemRecipeSource.IsDeleted))]
@@ -32,11 +26,10 @@ public static partial class ShoppingListMapper
     [MapperIgnoreSource(nameof(ShoppingListItemRecipeSource.ShoppingListItemId))]
     public static partial ShoppingListItemRecipeSourceDto ToRecipeSourceDto(this ShoppingListItemRecipeSource source);
 
-    public static ShoppingListForCreation ToShoppingListForCreation(this ShoppingListForCreationDto dto, string tenantId)
+    public static ShoppingListForCreation ToShoppingListForCreation(this ShoppingListForCreationDto dto)
     {
         return new ShoppingListForCreation
         {
-            TenantId = tenantId,
             Name = dto.Name,
             StoreId = dto.StoreId
         };

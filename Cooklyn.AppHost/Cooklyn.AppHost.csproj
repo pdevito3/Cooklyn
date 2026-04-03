@@ -10,7 +10,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Cooklyn.Server\Cooklyn.Server.csproj" />
-    <ProjectReference Include="..\Cooklyn.Bff\Cooklyn.Bff.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -22,10 +21,5 @@
   </ItemGroup>
 
 
-  <ItemGroup>
-    <Content Include="keycloak\**\*">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
 
 </Project>

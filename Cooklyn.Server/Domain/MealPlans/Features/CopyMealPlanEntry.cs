@@ -5,26 +5,20 @@ using Dtos;
 using Exceptions;
 using Mappings;
 using MediatR;
-using Services;
 
 public static class CopyMealPlanEntry
 {
     public sealed record Command(string Id, CopyMealPlanEntryDto Dto) : IRequest<MealPlanEntryDto>;
 
     public sealed class Handler(
-        AppDbContext dbContext,
-        ITenantIdProvider tenantIdProvider,
-        ICurrentUserService currentUserService) : IRequestHandler<Command, MealPlanEntryDto>
+        AppDbContext dbContext) : IRequestHandler<Command, MealPlanEntryDto>
     {
         public async Task<MealPlanEntryDto> Handle(Command request, CancellationToken cancellationToken)
         {
             var entry = await dbContext.MealPlanEntries.FindAsync([request.Id], cancellationToken)
                 ?? throw new NotFoundException($"Meal plan entry {request.Id} not found.");
 
-            var tenantId = await tenantIdProvider.GetTenantIdAsync(currentUserService.UserIdentifier!)
-                ?? throw new Exceptions.ValidationException(nameof(MealPlanEntry), "Unable to determine tenant.");
-
-            var copy = entry.Copy(tenantId, request.Dto.TargetDate, request.Dto.SortOrder);
+            var copy = entry.Copy(request.Dto.TargetDate, request.Dto.SortOrder);
 
             await dbContext.MealPlanEntries.AddAsync(copy, cancellationToken);
             await dbContext.SaveChangesAsync(cancellationToken);

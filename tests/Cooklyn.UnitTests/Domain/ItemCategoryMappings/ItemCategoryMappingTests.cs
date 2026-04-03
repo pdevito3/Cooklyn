@@ -13,7 +13,6 @@ public class ItemCategoryMappingTests
         // Arrange
         var forCreation = new ItemCategoryMappingForCreation
         {
-            TenantId = "tenant_123",
             NormalizedName = "chicken breast",
             StoreSectionId = "ssec_456",
             Source = "Seed"
@@ -23,24 +22,9 @@ public class ItemCategoryMappingTests
         var mapping = ItemCategoryMapping.Create(forCreation);
 
         // Assert
-        mapping.TenantId.ShouldBe("tenant_123");
         mapping.NormalizedName.ShouldBe("chicken breast");
         mapping.StoreSectionId.ShouldBe("ssec_456");
         mapping.Source.Value.ShouldBe("Seed");
-    }
-
-    [Fact]
-    public void missing_tenant_throws_validation_exception()
-    {
-        var forCreation = new ItemCategoryMappingForCreation
-        {
-            TenantId = "",
-            NormalizedName = "chicken",
-            StoreSectionId = "ssec_456",
-            Source = "Seed"
-        };
-
-        Should.Throw<ValidationException>(() => ItemCategoryMapping.Create(forCreation));
     }
 
     [Fact]
@@ -48,7 +32,6 @@ public class ItemCategoryMappingTests
     {
         var forCreation = new ItemCategoryMappingForCreation
         {
-            TenantId = "tenant_123",
             NormalizedName = "",
             StoreSectionId = "ssec_456",
             Source = "Seed"
@@ -62,7 +45,6 @@ public class ItemCategoryMappingTests
     {
         var forCreation = new ItemCategoryMappingForCreation
         {
-            TenantId = "tenant_123",
             NormalizedName = "chicken",
             StoreSectionId = "",
             Source = "Seed"
@@ -77,7 +59,6 @@ public class ItemCategoryMappingTests
         // Arrange
         var mapping = ItemCategoryMapping.Create(new ItemCategoryMappingForCreation
         {
-            TenantId = "tenant_123",
             NormalizedName = "egg",
             StoreSectionId = "ssec_original",
             Source = "Seed"
@@ -96,7 +77,6 @@ public class ItemCategoryMappingTests
     {
         var mapping = ItemCategoryMapping.Create(new ItemCategoryMappingForCreation
         {
-            TenantId = "tenant_123",
             NormalizedName = "egg",
             StoreSectionId = "ssec_original",
             Source = "Seed"

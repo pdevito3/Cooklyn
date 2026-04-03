@@ -9,8 +9,6 @@ using Services;
 [Mapper]
 public static partial class RecipeMapper
 {
-    [MapperIgnoreSource(nameof(Recipe.CreatedBy))]
-    [MapperIgnoreSource(nameof(Recipe.LastModifiedBy))]
     [MapperIgnoreSource(nameof(Recipe.IsDeleted))]
     [MapperIgnoreSource(nameof(Recipe.DomainEvents))]
     [MapperIgnoreSource(nameof(Recipe.RecipeTags))]
@@ -30,8 +28,6 @@ public static partial class RecipeMapper
         return dto with { ImageUrl = recipe.GetImagePreSignedUrl(fileStorage) };
     }
 
-    [MapperIgnoreSource(nameof(Recipe.CreatedBy))]
-    [MapperIgnoreSource(nameof(Recipe.LastModifiedBy))]
     [MapperIgnoreSource(nameof(Recipe.IsDeleted))]
     [MapperIgnoreSource(nameof(Recipe.DomainEvents))]
     [MapperIgnoreSource(nameof(Recipe.CreatedOn))]
@@ -41,7 +37,6 @@ public static partial class RecipeMapper
     [MapperIgnoreSource(nameof(Recipe.Source))]
     [MapperIgnoreSource(nameof(Recipe.Steps))]
     [MapperIgnoreSource(nameof(Recipe.Notes))]
-    [MapperIgnoreSource(nameof(Recipe.TenantId))]
     [MapperIgnoreSource(nameof(Recipe.ImageS3Bucket))]
     [MapperIgnoreSource(nameof(Recipe.ImageS3Key))]
     [MapperIgnoreSource(nameof(Recipe.HasImage))]
@@ -90,11 +85,10 @@ public static partial class RecipeMapper
         }).ToList();
     }
 
-    public static RecipeForCreation ToRecipeForCreation(this RecipeForCreationDto dto, string tenantId)
+    public static RecipeForCreation ToRecipeForCreation(this RecipeForCreationDto dto)
     {
         return new RecipeForCreation
         {
-            TenantId = tenantId,
             Title = dto.Title,
             Description = dto.Description,
             ImageS3Bucket = dto.ImageS3Bucket,

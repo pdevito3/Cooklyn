@@ -10,7 +10,6 @@
     <ItemGroup>
         <PackageReference Include="AutoBogusLifesupport" />
         <PackageReference Include="Bogus" />
-        <PackageReference Include="NSubstitute" />
     </ItemGroup>
 
     <ItemGroup>

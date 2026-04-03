@@ -1,10 +1,8 @@
 namespace Cooklyn.Server.Databases;
 
-using System.Security.Claims;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
-using Services;
 
 public class AppDbContextFactory : IDesignTimeDbContextFactory<AppDbContext>
 {
@@ -17,36 +15,7 @@ public class AppDbContextFactory : IDesignTimeDbContextFactory<AppDbContext>
         return new AppDbContext(
             optionsBuilder.Options,
             TimeProvider.System,
-            new DesignTimeCurrentUserService(),
-            new DesignTimeTenantIdProvider(),
             new DesignTimeMediator());
-    }
-
-    private sealed class DesignTimeCurrentUserService : ICurrentUserService
-    {
-        public ClaimsPrincipal? User => null;
-        public string? UserIdentifier => null;
-        public string? Email => null;
-        public string? FirstName => null;
-        public string? LastName => null;
-        public string? Name => null;
-        public string? Username => null;
-        public string? ClientId => null;
-        public bool IsMachine => false;
-        public bool IsAuthenticated => false;
-        public IReadOnlyList<string> Roles => [];
-        public bool IsInRole(string role) => false;
-        public string? GetClaimValue(string claimType) => null;
-        public IReadOnlyList<string> GetClaimValues(string claimType) => [];
-    }
-
-    private sealed class DesignTimeTenantIdProvider : ITenantIdProvider
-    {
-        public Task<string?> GetTenantIdAsync(string userIdentifier, CancellationToken cancellationToken = default)
-            => Task.FromResult<string?>(null);
-
-        public Task InvalidateCacheAsync(string userIdentifier, CancellationToken cancellationToken = default)
-            => Task.CompletedTask;
     }
 
     private sealed class DesignTimeMediator : IMediator

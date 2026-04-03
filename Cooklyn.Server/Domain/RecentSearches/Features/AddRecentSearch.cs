@@ -2,33 +2,26 @@ namespace Cooklyn.Server.Domain.RecentSearches.Features;
 
 using Databases;
 using Dtos;
-using Exceptions;
 using Mappings;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Services;
 
 public static class AddRecentSearch
 {
     public sealed record Command(RecentSearchForCreationDto Dto) : IRequest<RecentSearchDto>;
 
     public sealed class Handler(
-        AppDbContext dbContext,
-        ITenantIdProvider tenantIdProvider,
-        ICurrentUserService currentUserService) : IRequestHandler<Command, RecentSearchDto>
+        AppDbContext dbContext) : IRequestHandler<Command, RecentSearchDto>
     {
         private const int MaxEntriesPerTenant = 500;
 
         public async Task<RecentSearchDto> Handle(Command request, CancellationToken cancellationToken)
         {
-            var tenantId = await tenantIdProvider.GetTenantIdAsync(currentUserService.UserIdentifier!)
-                ?? throw new ValidationException(nameof(RecentSearch), "Unable to determine tenant.");
-            var forCreation = request.Dto.ToRecentSearchForCreation(tenantId);
+            var forCreation = request.Dto.ToRecentSearchForCreation();
 
             // Upsert: remove existing duplicate if present
             var existing = await dbContext.RecentSearches
                 .FirstOrDefaultAsync(rs =>
-                    rs.TenantId == tenantId &&
                     rs.SearchType == forCreation.SearchType &&
                     rs.SearchText == forCreation.SearchText &&
                     rs.ResourceType == forCreation.ResourceType &&
@@ -44,7 +37,6 @@ public static class AddRecentSearch
 
             // Prune old entries beyond limit
             var entriesToPrune = await dbContext.RecentSearches
-                .Where(rs => rs.TenantId == tenantId)
                 .OrderByDescending(rs => rs.CreatedOn)
                 .Skip(MaxEntriesPerTenant)
                 .ToListAsync(cancellationToken);

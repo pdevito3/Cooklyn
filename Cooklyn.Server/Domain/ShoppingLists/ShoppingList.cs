@@ -4,9 +4,8 @@ using Exceptions;
 using ShoppingLists.DomainEvents;
 using ShoppingLists.Models;
 
-public class ShoppingList : BaseEntity, ITenantable
+public class ShoppingList : BaseEntity
 {
-    public string TenantId { get; private set; } = default!;
     public string Name { get; private set; } = default!;
     public string? StoreId { get; private set; }
     public ShoppingListStatus Status { get; private set; } = ShoppingListStatus.Active();
@@ -19,7 +18,6 @@ public class ShoppingList : BaseEntity, ITenantable
     {
         var list = new ShoppingList
         {
-            TenantId = forCreation.TenantId,
             Name = forCreation.Name,
             StoreId = forCreation.StoreId,
             Status = ShoppingListStatus.Active()
@@ -72,7 +70,6 @@ public class ShoppingList : BaseEntity, ITenantable
 
     private static void ValidateShoppingList(ShoppingList list)
     {
-        ValidationException.ThrowWhenNullOrWhitespace(list.TenantId, "Please provide a tenant.");
         ValidationException.ThrowWhenNullOrWhitespace(list.Name, "Please provide a shopping list name.");
     }
 

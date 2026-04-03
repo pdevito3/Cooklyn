@@ -2,7 +2,6 @@ namespace Cooklyn.Server.Databases.EntityConfigurations;
 
 using Domain.MealPlans;
 using Domain.Recipes;
-using Domain.Tenants;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -12,9 +11,6 @@ public sealed class MealPlanEntryConfiguration : IEntityTypeConfiguration<MealPl
     {
         builder.HasKey(e => e.Id);
         builder.Property(e => e.Id).WithPrefix("mpe");
-
-        builder.Property(e => e.TenantId)
-            .IsRequired();
 
         builder.Property(e => e.Date)
             .IsRequired();
@@ -40,17 +36,12 @@ public sealed class MealPlanEntryConfiguration : IEntityTypeConfiguration<MealPl
         builder.Property(e => e.SortOrder)
             .IsRequired();
 
-        builder.HasOne<Tenant>()
-            .WithMany()
-            .HasForeignKey(e => e.TenantId)
-            .OnDelete(DeleteBehavior.Cascade);
-
         builder.HasOne<Recipe>()
             .WithMany()
             .HasForeignKey(e => e.RecipeId)
             .OnDelete(DeleteBehavior.SetNull);
 
-        builder.HasIndex(e => new { e.TenantId, e.Date });
+        builder.HasIndex(e => e.Date);
         builder.HasIndex(e => e.RecipeId);
     }
 }

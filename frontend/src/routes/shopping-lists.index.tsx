@@ -11,7 +11,7 @@ import {
   useDeleteShoppingList,
 } from '@/domain/shopping-lists/apis/shopping-list-mutations'
 import { useStores } from '@/domain/stores/apis/get-stores'
-import { useMyDefaultStore } from '@/domain/users/apis/get-my-default-store'
+import { useDefaultStore } from '@/domain/settings/apis/get-setting'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -53,7 +53,7 @@ function ShoppingListsIndexPage() {
   const navigate = useNavigate()
   const { data, isLoading, error } = useShoppingLists({ pageSize: 100 })
   const { data: storesData } = useStores({ pageSize: 100 })
-  const { data: defaultStoreId } = useMyDefaultStore()
+  const { data: defaultStoreId } = useDefaultStore()
   const createList = useCreateShoppingList()
   const deleteListMutation = useDeleteShoppingList()
   const [createOpen, setCreateOpen] = useState(false)

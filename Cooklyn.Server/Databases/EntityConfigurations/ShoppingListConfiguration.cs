@@ -2,7 +2,6 @@ namespace Cooklyn.Server.Databases.EntityConfigurations;
 
 using Domain.ShoppingLists;
 using Domain.Stores;
-using Domain.Tenants;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -16,14 +15,6 @@ public sealed class ShoppingListConfiguration : IEntityTypeConfiguration<Shoppin
         builder.Property(e => e.Name)
             .IsRequired()
             .HasMaxLength(200);
-
-        builder.Property(e => e.TenantId)
-            .IsRequired();
-
-        builder.HasOne<Tenant>()
-            .WithMany()
-            .HasForeignKey(e => e.TenantId)
-            .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasOne<Store>()
             .WithMany()
@@ -46,6 +37,5 @@ public sealed class ShoppingListConfiguration : IEntityTypeConfiguration<Shoppin
         builder.Navigation(e => e.Items)
             .UsePropertyAccessMode(PropertyAccessMode.Field);
 
-        builder.HasIndex(e => e.TenantId);
     }
 }

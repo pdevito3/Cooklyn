@@ -4,7 +4,6 @@ using Asp.Versioning;
 using Dtos;
 using Features;
 using MediatR;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Resources;
 using Resources.Extensions;
@@ -17,7 +16,6 @@ public sealed class StoreSectionsController(IMediator mediator) : ControllerBase
     /// <summary>
     /// Gets a single StoreSection by ID.
     /// </summary>
-    [Authorize]
     [HttpGet("{id}", Name = "GetStoreSection")]
     [ProducesResponseType(typeof(StoreSectionDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -31,7 +29,6 @@ public sealed class StoreSectionsController(IMediator mediator) : ControllerBase
     /// <summary>
     /// Gets a paginated list of StoreSections.
     /// </summary>
-    [Authorize]
     [HttpGet(Name = "GetStoreSectionList")]
     [ProducesResponseType(typeof(PagedList<StoreSectionDto>), StatusCodes.Status200OK)]
     public async Task<ActionResult<PagedList<StoreSectionDto>>> GetStoreSectionList(
@@ -48,7 +45,6 @@ public sealed class StoreSectionsController(IMediator mediator) : ControllerBase
     /// <summary>
     /// Creates a new StoreSection.
     /// </summary>
-    [Authorize]
     [HttpPost(Name = "AddStoreSection")]
     [ProducesResponseType(typeof(StoreSectionDto), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -66,7 +62,6 @@ public sealed class StoreSectionsController(IMediator mediator) : ControllerBase
     /// <summary>
     /// Updates an existing StoreSection.
     /// </summary>
-    [Authorize]
     [HttpPut("{id}", Name = "UpdateStoreSection")]
     [ProducesResponseType(typeof(StoreSectionDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -83,7 +78,6 @@ public sealed class StoreSectionsController(IMediator mediator) : ControllerBase
     /// <summary>
     /// Deletes a StoreSection.
     /// </summary>
-    [Authorize]
     [HttpDelete("{id}", Name = "DeleteStoreSection")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]

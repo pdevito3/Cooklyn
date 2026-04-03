@@ -2,7 +2,6 @@ namespace Cooklyn.Server.Domain.Recipes.Features;
 
 using Databases;
 using Dtos;
-using Exceptions;
 using Mappings;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -15,8 +14,6 @@ public static class AddRecipe
 
     public sealed class Handler(
         AppDbContext dbContext,
-        ITenantIdProvider tenantIdProvider,
-        ICurrentUserService currentUserService,
         IFileStorage fileStorage,
         IHttpClientFactory httpClientFactory,
         IConfiguration configuration,
@@ -33,9 +30,7 @@ public static class AddRecipe
 
         public async Task<RecipeDto> Handle(Command request, CancellationToken cancellationToken)
         {
-            var tenantId = await tenantIdProvider.GetTenantIdAsync(currentUserService.UserIdentifier!)
-                ?? throw new ValidationException(nameof(Recipe), "Unable to determine tenant.");
-            var forCreation = request.Dto.ToRecipeForCreation(tenantId);
+            var forCreation = request.Dto.ToRecipeForCreation();
             var recipe = Recipe.Create(forCreation);
 
             // Track entity so the value generator assigns the Id immediately
@@ -124,7 +119,7 @@ public static class AddRecipe
                 await networkStream.CopyToAsync(memoryStream, cancellationToken);
                 memoryStream.Position = 0;
 
-                var key = $"recipes/{recipe.TenantId}/{recipe.Id}/{Guid.NewGuid()}{extension}";
+                var key = $"recipes/{recipe.Id}/{Guid.NewGuid()}{extension}";
 
                 var uploadedKey = await fileStorage.UploadFileAsync(bucket, key, memoryStream, cancellationToken);
                 if (uploadedKey != null)

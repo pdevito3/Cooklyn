@@ -4,7 +4,6 @@ using Asp.Versioning;
 using Dtos;
 using Features;
 using MediatR;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Resources;
 using Resources.Extensions;
@@ -17,7 +16,6 @@ public sealed class ItemCollectionsController(IMediator mediator) : ControllerBa
     /// <summary>
     /// Gets a single ItemCollection by ID with all items.
     /// </summary>
-    [Authorize]
     [HttpGet("{id}", Name = "GetItemCollection")]
     [ProducesResponseType(typeof(ItemCollectionDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -31,7 +29,6 @@ public sealed class ItemCollectionsController(IMediator mediator) : ControllerBa
     /// <summary>
     /// Gets a paginated list of ItemCollections.
     /// </summary>
-    [Authorize]
     [HttpGet(Name = "GetItemCollectionList")]
     [ProducesResponseType(typeof(PagedList<ItemCollectionDto>), StatusCodes.Status200OK)]
     public async Task<ActionResult<PagedList<ItemCollectionDto>>> GetItemCollectionList(
@@ -48,7 +45,6 @@ public sealed class ItemCollectionsController(IMediator mediator) : ControllerBa
     /// <summary>
     /// Creates a new ItemCollection.
     /// </summary>
-    [Authorize]
     [HttpPost(Name = "AddItemCollection")]
     [ProducesResponseType(typeof(ItemCollectionDto), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -66,7 +62,6 @@ public sealed class ItemCollectionsController(IMediator mediator) : ControllerBa
     /// <summary>
     /// Updates an existing ItemCollection.
     /// </summary>
-    [Authorize]
     [HttpPut("{id}", Name = "UpdateItemCollection")]
     [ProducesResponseType(typeof(ItemCollectionDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -83,7 +78,6 @@ public sealed class ItemCollectionsController(IMediator mediator) : ControllerBa
     /// <summary>
     /// Deletes an ItemCollection.
     /// </summary>
-    [Authorize]
     [HttpDelete("{id}", Name = "DeleteItemCollection")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -97,7 +91,6 @@ public sealed class ItemCollectionsController(IMediator mediator) : ControllerBa
     /// <summary>
     /// Replaces all items in an ItemCollection.
     /// </summary>
-    [Authorize]
     [HttpPut("{id}/items", Name = "UpdateItemCollectionItems")]
     [ProducesResponseType(typeof(ItemCollectionDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]

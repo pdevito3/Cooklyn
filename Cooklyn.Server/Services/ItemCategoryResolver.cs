@@ -4,13 +4,12 @@ using Databases;
 using Domain.ItemCategoryMappings;
 using Domain.ItemCategoryMappings.Models;
 using Microsoft.EntityFrameworkCore;
-using Resources;
 using ZiggyCreatures.Caching.Fusion;
 
 public interface IItemCategoryResolver
 {
-    Task<string?> ResolveAsync(string itemName, string tenantId, CancellationToken cancellationToken = default);
-    Task UpsertMappingAsync(string itemName, string storeSectionId, string tenantId, CancellationToken cancellationToken = default);
+    Task<string?> ResolveAsync(string itemName, CancellationToken cancellationToken = default);
+    Task UpsertMappingAsync(string itemName, string storeSectionId, CancellationToken cancellationToken = default);
 }
 
 public sealed class ItemCategoryResolver(
@@ -25,25 +24,25 @@ public sealed class ItemCategoryResolver(
         FailSafeThrottleDuration = TimeSpan.FromSeconds(30)
     };
 
-    private static string GetCacheKey(string tenantId, string normalizedName) =>
-        $"item-category:{tenantId}:{normalizedName}";
+    private static string GetCacheKey(string normalizedName) =>
+        $"item-category:{normalizedName}";
 
-    public async Task<string?> ResolveAsync(string itemName, string tenantId, CancellationToken cancellationToken = default)
+    public async Task<string?> ResolveAsync(string itemName, CancellationToken cancellationToken = default)
     {
         var normalizedName = ItemNameNormalizer.Normalize(itemName);
         if (string.IsNullOrEmpty(normalizedName))
             return null;
 
-        var cacheKey = GetCacheKey(tenantId, normalizedName);
+        var cacheKey = GetCacheKey(normalizedName);
 
         return await cache.GetOrSetAsync(
             cacheKey,
-            async ct => await LookupStoreSectionIdAsync(normalizedName, tenantId, ct),
+            async ct => await LookupStoreSectionIdAsync(normalizedName, ct),
             CacheOptions,
             cancellationToken);
     }
 
-    public async Task UpsertMappingAsync(string itemName, string storeSectionId, string tenantId, CancellationToken cancellationToken = default)
+    public async Task UpsertMappingAsync(string itemName, string storeSectionId, CancellationToken cancellationToken = default)
     {
         var normalizedName = ItemNameNormalizer.Normalize(itemName);
         if (string.IsNullOrEmpty(normalizedName))
@@ -53,8 +52,7 @@ public sealed class ItemCategoryResolver(
         var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
         var existing = await dbContext.ItemCategoryMappings
-            .IgnoreQueryFilters([QueryFilterNames.Tenant])
-            .Where(m => m.TenantId == tenantId && m.NormalizedName == normalizedName)
+            .Where(m => m.NormalizedName == normalizedName)
             .FirstOrDefaultAsync(cancellationToken);
 
         if (existing != null)
@@ -65,7 +63,6 @@ public sealed class ItemCategoryResolver(
         {
             var mapping = ItemCategoryMapping.Create(new ItemCategoryMappingForCreation
             {
-                TenantId = tenantId,
                 NormalizedName = normalizedName,
                 StoreSectionId = storeSectionId,
                 Source = "User"
@@ -75,19 +72,18 @@ public sealed class ItemCategoryResolver(
 
         await dbContext.SaveChangesAsync(cancellationToken);
 
-        var cacheKey = GetCacheKey(tenantId, normalizedName);
+        var cacheKey = GetCacheKey(normalizedName);
         await cache.RemoveAsync(cacheKey, token: cancellationToken);
     }
 
-    private async Task<string?> LookupStoreSectionIdAsync(string normalizedName, string tenantId, CancellationToken cancellationToken)
+    private async Task<string?> LookupStoreSectionIdAsync(string normalizedName, CancellationToken cancellationToken)
     {
         await using var scope = scopeFactory.CreateAsyncScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
-        // 1. DB lookup - check for existing tenant-specific mapping
+        // 1. DB lookup - check for existing mapping
         var dbMapping = await dbContext.ItemCategoryMappings
-            .IgnoreQueryFilters([QueryFilterNames.Tenant])
-            .Where(m => m.TenantId == tenantId && m.NormalizedName == normalizedName)
+            .Where(m => m.NormalizedName == normalizedName)
             .Select(m => m.StoreSectionId)
             .FirstOrDefaultAsync(cancellationToken);
 
@@ -97,10 +93,10 @@ public sealed class ItemCategoryResolver(
         // 2. Seed full-name match
         if (ItemCategorySeedData.Mappings.TryGetValue(normalizedName, out var sectionName))
         {
-            var sectionId = await FindTenantSectionByNameAsync(dbContext, tenantId, sectionName, cancellationToken);
+            var sectionId = await FindSectionByNameAsync(dbContext, sectionName, cancellationToken);
             if (sectionId != null)
             {
-                await PersistSeedMappingAsync(dbContext, tenantId, normalizedName, sectionId, cancellationToken);
+                await PersistSeedMappingAsync(dbContext, normalizedName, sectionId, cancellationToken);
                 return sectionId;
             }
         }
@@ -114,10 +110,10 @@ public sealed class ItemCategoryResolver(
             {
                 if (ItemCategorySeedData.Mappings.TryGetValue(token, out var tokenSectionName))
                 {
-                    var sectionId = await FindTenantSectionByNameAsync(dbContext, tenantId, tokenSectionName, cancellationToken);
+                    var sectionId = await FindSectionByNameAsync(dbContext, tokenSectionName, cancellationToken);
                     if (sectionId != null)
                     {
-                        await PersistSeedMappingAsync(dbContext, tenantId, normalizedName, sectionId, cancellationToken);
+                        await PersistSeedMappingAsync(dbContext, normalizedName, sectionId, cancellationToken);
                         return sectionId;
                     }
                 }
@@ -130,36 +126,32 @@ public sealed class ItemCategoryResolver(
         return null;
     }
 
-    private static async Task<string?> FindTenantSectionByNameAsync(
+    private static async Task<string?> FindSectionByNameAsync(
         AppDbContext dbContext,
-        string tenantId,
         string sectionName,
         CancellationToken cancellationToken)
     {
         return await dbContext.StoreSections
-            .Where(s => s.TenantId == tenantId && EF.Functions.ILike(s.Name, $"%{sectionName}%"))
+            .Where(s => EF.Functions.ILike(s.Name, $"%{sectionName}%"))
             .Select(s => s.Id)
             .FirstOrDefaultAsync(cancellationToken);
     }
 
     private static async Task PersistSeedMappingAsync(
         AppDbContext dbContext,
-        string tenantId,
         string normalizedName,
         string storeSectionId,
         CancellationToken cancellationToken)
     {
         // Check if mapping already exists (race condition guard)
         var exists = await dbContext.ItemCategoryMappings
-            .IgnoreQueryFilters([QueryFilterNames.Tenant])
-            .AnyAsync(m => m.TenantId == tenantId && m.NormalizedName == normalizedName, cancellationToken);
+            .AnyAsync(m => m.NormalizedName == normalizedName, cancellationToken);
 
         if (exists)
             return;
 
         var mapping = ItemCategoryMapping.Create(new ItemCategoryMappingForCreation
         {
-            TenantId = tenantId,
             NormalizedName = normalizedName,
             StoreSectionId = storeSectionId,
             Source = "Seed"

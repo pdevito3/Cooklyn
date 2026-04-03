@@ -23,9 +23,8 @@ public static class UploadRecipeImage
             var bucket = configuration["AWS:RecipeImagesBucket"]
                 ?? throw new InvalidOperationException("AWS:RecipeImagesBucket configuration is required.");
 
-            // Generate unique key with tenant isolation
             var extension = Path.GetExtension(request.File.FileName).ToLowerInvariant();
-            var key = $"recipes/{recipe.TenantId}/{recipe.Id}/{Guid.NewGuid()}{extension}";
+            var key = $"recipes/{recipe.Id}/{Guid.NewGuid()}{extension}";
 
             // Upload the file
             var uploadedKey = await fileStorage.UploadFileAsync(bucket, key, request.File, cancellationToken);

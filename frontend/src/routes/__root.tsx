@@ -25,27 +25,12 @@ import {
 } from '@/components/ui/breadcrumb'
 import { CommandMenu } from '@/components/command-menu'
 import { MobileNavDrawer } from '@/components/mobile-nav-drawer'
-import { getUser } from '@/domain/auth/apis/get-user'
-import { AuthKeys } from '@/domain/auth/apis/auth.keys'
 
 export interface RouterContext {
   queryClient: QueryClient
 }
 
 export const Route = createRootRouteWithContext<RouterContext>()({
-  beforeLoad: async ({ context, location }) => {
-    try {
-      await context.queryClient.ensureQueryData({
-        queryKey: AuthKeys.user(),
-        queryFn: getUser,
-        staleTime: 5 * 60 * 1000,
-      })
-    } catch {
-      window.location.href = `/bff/login?returnUrl=${encodeURIComponent(location.href)}`
-      // Halt the router while the browser navigates to the IdP
-      await new Promise(() => {})
-    }
-  },
   component: RootComponent,
 })
 

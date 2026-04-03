@@ -7,9 +7,6 @@ using Riok.Mapperly.Abstractions;
 [Mapper]
 public static partial class MealPlanMapper
 {
-    [MapperIgnoreSource(nameof(MealPlanEntry.TenantId))]
-    [MapperIgnoreSource(nameof(MealPlanEntry.CreatedBy))]
-    [MapperIgnoreSource(nameof(MealPlanEntry.LastModifiedBy))]
     [MapperIgnoreSource(nameof(MealPlanEntry.CreatedOn))]
     [MapperIgnoreSource(nameof(MealPlanEntry.LastModifiedOn))]
     [MapperIgnoreSource(nameof(MealPlanEntry.IsDeleted))]
@@ -23,9 +20,6 @@ public static partial class MealPlanMapper
         return dto with { ImageUrl = imageUrl };
     }
 
-    [MapperIgnoreSource(nameof(MealPlanQueue.TenantId))]
-    [MapperIgnoreSource(nameof(MealPlanQueue.CreatedBy))]
-    [MapperIgnoreSource(nameof(MealPlanQueue.LastModifiedBy))]
     [MapperIgnoreSource(nameof(MealPlanQueue.CreatedOn))]
     [MapperIgnoreSource(nameof(MealPlanQueue.LastModifiedOn))]
     [MapperIgnoreSource(nameof(MealPlanQueue.IsDeleted))]
@@ -33,8 +27,6 @@ public static partial class MealPlanMapper
     public static partial MealPlanQueueDto ToMealPlanQueueDto(this MealPlanQueue queue);
 
     [MapperIgnoreSource(nameof(MealPlanQueueItem.QueueId))]
-    [MapperIgnoreSource(nameof(MealPlanQueueItem.CreatedBy))]
-    [MapperIgnoreSource(nameof(MealPlanQueueItem.LastModifiedBy))]
     [MapperIgnoreSource(nameof(MealPlanQueueItem.CreatedOn))]
     [MapperIgnoreSource(nameof(MealPlanQueueItem.LastModifiedOn))]
     [MapperIgnoreSource(nameof(MealPlanQueueItem.IsDeleted))]
@@ -48,11 +40,10 @@ public static partial class MealPlanMapper
         return dto with { ImageUrl = imageUrl };
     }
 
-    public static MealPlanEntryForCreation ToMealPlanEntryForCreation(this MealPlanEntryForCreationDto dto, string tenantId)
+    public static MealPlanEntryForCreation ToMealPlanEntryForCreation(this MealPlanEntryForCreationDto dto)
     {
         return new MealPlanEntryForCreation
         {
-            TenantId = tenantId,
             Date = dto.Date,
             EntryType = dto.EntryType,
             RecipeId = dto.RecipeId,
@@ -72,11 +63,10 @@ public static partial class MealPlanMapper
         };
     }
 
-    public static MealPlanQueueForCreation ToMealPlanQueueForCreation(this MealPlanQueueForCreationDto dto, string tenantId)
+    public static MealPlanQueueForCreation ToMealPlanQueueForCreation(this MealPlanQueueForCreationDto dto)
     {
         return new MealPlanQueueForCreation
         {
-            TenantId = tenantId,
             Name = dto.Name,
             IsDefault = false
         };

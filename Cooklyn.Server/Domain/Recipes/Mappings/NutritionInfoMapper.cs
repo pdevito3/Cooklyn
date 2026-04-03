@@ -7,8 +7,6 @@ using Riok.Mapperly.Abstractions;
 [Mapper]
 public static partial class NutritionInfoMapper
 {
-    [MapperIgnoreSource(nameof(NutritionInfo.CreatedBy))]
-    [MapperIgnoreSource(nameof(NutritionInfo.LastModifiedBy))]
     [MapperIgnoreSource(nameof(NutritionInfo.CreatedOn))]
     [MapperIgnoreSource(nameof(NutritionInfo.LastModifiedOn))]
     [MapperIgnoreSource(nameof(NutritionInfo.IsDeleted))]

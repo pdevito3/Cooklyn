@@ -10,12 +10,11 @@ using Services;
 
 public interface ICmtImportService
 {
-    Task<CmtImportPreviewDto> ParseZipAsync(IFormFile file, string tenantId, CancellationToken ct);
+    Task<CmtImportPreviewDto> ParseZipAsync(IFormFile file, CancellationToken ct);
 
     Task<CmtImportResultDto> ImportRecipesAsync(
         IFormFile file,
         CmtImportRequestDto request,
-        string tenantId,
         CancellationToken ct);
 }
 
@@ -35,14 +34,14 @@ public sealed partial class CmtImportService(
         [".avif"] = "image/avif",
     };
 
-    public async Task<CmtImportPreviewDto> ParseZipAsync(IFormFile file, string tenantId, CancellationToken ct)
+    public async Task<CmtImportPreviewDto> ParseZipAsync(IFormFile file, CancellationToken ct)
     {
         var recipes = ParseZipFile(file);
 
         // Check for duplicates
         var titles = recipes.Select(r => r.Title).ToList();
         var existingTitles = await dbContext.Recipes
-            .Where(r => r.TenantId == tenantId && titles.Contains(r.Title))
+            .Where(r => titles.Contains(r.Title))
             .Select(r => r.Title)
             .ToListAsync(ct);
 
@@ -76,7 +75,6 @@ public sealed partial class CmtImportService(
     public async Task<CmtImportResultDto> ImportRecipesAsync(
         IFormFile file,
         CmtImportRequestDto request,
-        string tenantId,
         CancellationToken ct)
     {
         var recipes = ParseZipFile(file);
@@ -114,7 +112,6 @@ public sealed partial class CmtImportService(
 
                 var forCreation = new RecipeForCreation
                 {
-                    TenantId = tenantId,
                     Title = parsed.Title,
                     Description = parsed.Description,
                     Source = parsed.Source,
@@ -137,7 +134,7 @@ public sealed partial class CmtImportService(
                 // Upload image if available
                 if (!string.IsNullOrWhiteSpace(bucket) && !string.IsNullOrWhiteSpace(parsed.ImageFileName))
                 {
-                    await TryUploadImage(archive, imageEntries, parsed.ImageFileName, recipe, bucket, tenantId, ct);
+                    await TryUploadImage(archive, imageEntries, parsed.ImageFileName, recipe, bucket, ct);
                 }
 
                 importedCount++;
@@ -205,7 +202,6 @@ public sealed partial class CmtImportService(
         string imageFileName,
         Recipe recipe,
         string bucket,
-        string tenantId,
         CancellationToken ct)
     {
         try
@@ -237,7 +233,7 @@ public sealed partial class CmtImportService(
             if (string.IsNullOrEmpty(extension))
                 extension = ".jpg";
 
-            var key = $"recipes/{tenantId}/{recipe.Id}/{Guid.NewGuid()}{extension}";
+            var key = $"recipes/{recipe.Id}/{Guid.NewGuid()}{extension}";
             var uploadedKey = await fileStorage.UploadFileAsync(bucket, key, memoryStream, ct);
             if (uploadedKey != null)
             {

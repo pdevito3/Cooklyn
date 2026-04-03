@@ -1,4 +1,3 @@
-using Cooklyn.AppHost;
 using Serilog;
 using Serilog.Events;
 
@@ -23,8 +22,6 @@ try
         .Enrich.WithThreadId()
         .Enrich.WithProperty("Application", "Cooklyn.AppHost"));
 
-    var authProvider = AuthProviders.Keycloak(builder);
-
     var postgres = builder.AddPostgres("postgres")
         .WithDataVolume("cooklyn-postgres")
         .WithContainerName("cooklyn-postgres")
@@ -45,7 +42,6 @@ try
         .WithReference(appDb)
         .WaitFor(appDb)
         .WaitFor(minio)
-        .WithServerAuth(authProvider)
         .WithEnvironment(context =>
         {
             context.EnvironmentVariables["AWS__ServiceURL"] = minio.GetEndpoint("http");
@@ -59,6 +55,7 @@ try
     minio.WithParentRelationship(server);
 
     var webfrontend = builder.AddViteApp("webfrontend", "../frontend")
+        .WithReference(server)
         .WithEndpoint("http", endpoint =>
         {
             endpoint.Port = 6179;
@@ -66,22 +63,7 @@ try
         })
         .WithPnpm();
 
-    var bff = builder.AddProject<Projects.Cooklyn_Bff>("bff")
-        .WithBffAuth(authProvider)
-        .WithReference(server)
-        .WithReference(webfrontend)
-        .WithEndpoint("http", e =>
-        {
-            e.Port = 5234;
-            e.IsProxied = false;
-        })
-        .WithHttpHealthCheck("/health", endpointName: "http")
-        .WithExternalHttpEndpoints()
-        .WithParentRelationship(webfrontend);
-
-    webfrontend
-        .WithReference(bff);
-
+    server.WithReference(webfrontend);
     server.PublishWithContainerFiles(webfrontend, "wwwroot");
 
     builder.Build().Run();

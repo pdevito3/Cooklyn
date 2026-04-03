@@ -1,7 +1,5 @@
 using System.Diagnostics;
-using System.Security.Claims;
 using Asp.Versioning;
-using Microsoft.EntityFrameworkCore;
 using Cooklyn.Server;
 using Cooklyn.Server.Databases;
 using Cooklyn.Server.Resources;
@@ -57,8 +55,7 @@ try
         app.UseSwaggerExtension(builder.Configuration);
     }
 
-    app.UseAuthentication();
-    app.UseAuthorization();
+    app.UseCors();
 
     app.MapControllers();
 
@@ -93,34 +90,6 @@ try
     .WithName("GetWeatherForecast")
     .MapToApiVersion(new ApiVersion(1, 0));
 
-    api.MapGet("/weather/secure", (ClaimsPrincipal user) =>
-    {
-        using var activity = Telemetry.Source.StartActivity("GenerateSecureWeatherForecast");
-        var sw = Stopwatch.StartNew();
-
-        var userName = user.Identity?.Name ?? user.FindFirstValue("sub") ?? "Unknown";
-        activity?.SetTag("user.name", userName);
-
-        var forecast = Enumerable.Range(1, 5).Select(index =>
-            new SecureWeatherForecast
-            (
-                DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-                Random.Shared.Next(-20, 55),
-                summaries[Random.Shared.Next(summaries.Length)],
-                userName
-            ))
-            .ToArray();
-
-        activity?.SetTag("forecast.count", forecast.Length);
-        Telemetry.Requests.Add(1, new KeyValuePair<string, object?>("endpoint", "/api/v1/weather/secure"));
-        Telemetry.RequestDuration.Record(sw.Elapsed.TotalMilliseconds, new KeyValuePair<string, object?>("endpoint", "/api/v1/weather/secure"));
-
-        return forecast;
-    })
-    .RequireAuthorization()
-    .WithName("GetSecureWeatherForecast")
-    .MapToApiVersion(new ApiVersion(1, 0));
-
     app.MapDefaultEndpoints();
 
     app.UseFileServer();
@@ -137,11 +106,6 @@ finally
 }
 
 record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
-
-record SecureWeatherForecast(DateOnly Date, int TemperatureC, string? Summary, string RequestedBy)
 {
     public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
 }

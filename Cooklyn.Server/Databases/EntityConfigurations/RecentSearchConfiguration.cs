@@ -1,7 +1,6 @@
 namespace Cooklyn.Server.Databases.EntityConfigurations;
 
 using Domain.RecentSearches;
-using Domain.Tenants;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -26,19 +25,11 @@ public sealed class RecentSearchConfiguration : IEntityTypeConfiguration<RecentS
         builder.Property(e => e.ResourceId)
             .HasMaxLength(100);
 
-        builder.Property(e => e.TenantId)
-            .IsRequired();
-
-        builder.HasOne<Tenant>()
-            .WithMany()
-            .HasForeignKey(e => e.TenantId)
-            .OnDelete(DeleteBehavior.Cascade);
-
         // Efficient recent queries
-        builder.HasIndex(e => new { e.TenantId, e.CreatedOn })
-            .IsDescending(false, true);
+        builder.HasIndex(e => e.CreatedOn)
+            .IsDescending(true);
 
         // Deduplication lookups
-        builder.HasIndex(e => new { e.TenantId, e.SearchType, e.SearchText, e.ResourceType, e.ResourceId });
+        builder.HasIndex(e => new { e.SearchType, e.SearchText, e.ResourceType, e.ResourceId });
     }
 }

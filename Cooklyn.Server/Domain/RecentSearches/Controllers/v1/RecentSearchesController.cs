@@ -4,7 +4,6 @@ using Asp.Versioning;
 using Dtos;
 using Features;
 using MediatR;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 [ApiController]
@@ -13,7 +12,6 @@ using Microsoft.AspNetCore.Mvc;
 public sealed class RecentSearchesController(IMediator mediator) : ControllerBase
 {
     /// <summary>Gets the most recent searches.</summary>
-    [Authorize]
     [HttpGet(Name = "GetRecentSearchList")]
     [ProducesResponseType(typeof(List<RecentSearchDto>), StatusCodes.Status200OK)]
     public async Task<ActionResult<List<RecentSearchDto>>> GetRecentSearchList(
@@ -25,7 +23,6 @@ public sealed class RecentSearchesController(IMediator mediator) : ControllerBas
     }
 
     /// <summary>Creates a new recent search entry.</summary>
-    [Authorize]
     [HttpPost(Name = "AddRecentSearch")]
     [ProducesResponseType(typeof(RecentSearchDto), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -38,7 +35,6 @@ public sealed class RecentSearchesController(IMediator mediator) : ControllerBas
     }
 
     /// <summary>Deletes a single recent search entry.</summary>
-    [Authorize]
     [HttpDelete("{id}", Name = "DeleteRecentSearch")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -50,7 +46,6 @@ public sealed class RecentSearchesController(IMediator mediator) : ControllerBas
     }
 
     /// <summary>Clears all recent searches for the current tenant.</summary>
-    [Authorize]
     [HttpDelete(Name = "ClearRecentSearches")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     public async Task<ActionResult> ClearRecentSearches()

@@ -4,9 +4,8 @@ using Exceptions;
 using SavedFilters.DomainEvents;
 using SavedFilters.Models;
 
-public class SavedFilter : BaseEntity, ITenantable
+public class SavedFilter : BaseEntity
 {
-    public string TenantId { get; private set; } = default!;
     public string Name { get; private set; } = default!;
     public string Context { get; private set; } = default!;
     public string FilterStateJson { get; private set; } = default!;
@@ -15,7 +14,6 @@ public class SavedFilter : BaseEntity, ITenantable
     {
         var savedFilter = new SavedFilter
         {
-            TenantId = forCreation.TenantId,
             Name = forCreation.Name,
             Context = forCreation.Context,
             FilterStateJson = forCreation.FilterStateJson
@@ -40,7 +38,6 @@ public class SavedFilter : BaseEntity, ITenantable
 
     private static void Validate(SavedFilter savedFilter)
     {
-        ValidationException.ThrowWhenNullOrWhitespace(savedFilter.TenantId, "Please provide a tenant.");
         ValidationException.ThrowWhenNullOrWhitespace(savedFilter.Name, "Please provide a filter name.");
         ValidationException.ThrowWhenNullOrWhitespace(savedFilter.Context, "Please provide a context.");
         ValidationException.ThrowWhenNullOrWhitespace(savedFilter.FilterStateJson, "Please provide a filter state.");

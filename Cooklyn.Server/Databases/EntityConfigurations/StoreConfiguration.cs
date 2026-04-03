@@ -1,7 +1,6 @@
 namespace Cooklyn.Server.Databases.EntityConfigurations;
 
 using Domain.Stores;
-using Domain.Tenants;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -19,14 +18,6 @@ public sealed class StoreConfiguration : IEntityTypeConfiguration<Store>
         builder.Property(e => e.Address)
             .HasMaxLength(500);
 
-        builder.Property(e => e.TenantId)
-            .IsRequired();
-
-        builder.HasOne<Tenant>()
-            .WithMany()
-            .HasForeignKey(e => e.TenantId)
-            .OnDelete(DeleteBehavior.Cascade);
-
         builder.HasMany(e => e.StoreAisles)
             .WithOne()
             .HasForeignKey(a => a.StoreId)
@@ -43,11 +34,9 @@ public sealed class StoreConfiguration : IEntityTypeConfiguration<Store>
         builder.Navigation(e => e.StoreDefaultCollections)
             .UsePropertyAccessMode(PropertyAccessMode.Field);
 
-        // Unique store name per tenant (excluding soft-deleted records)
-        builder.HasIndex(e => new { e.TenantId, e.Name })
+        // Unique store name (excluding soft-deleted records)
+        builder.HasIndex(e => e.Name)
             .IsUnique()
             .HasFilter("is_deleted = false");
-
-        builder.HasIndex(e => e.TenantId);
     }
 }

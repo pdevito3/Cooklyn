@@ -10,8 +10,6 @@ using Cooklyn.Server.Domain.ShoppingLists.Features;
 using Cooklyn.Server.Domain.ShoppingLists.Models;
 using Cooklyn.Server.Domain.StoreSections;
 using Cooklyn.Server.Domain.StoreSections.Models;
-using Cooklyn.Server.Resources;
-using Cooklyn.Server.Services;
 using Microsoft.EntityFrameworkCore;
 using Shouldly;
 
@@ -22,18 +20,15 @@ public class AutoCategorizeTests : TestBase
     {
         // Arrange
         var scope = new TestingServiceScope();
-        var tenant = await scope.SetupTenantAsync();
 
         var produceSection = StoreSection.Create(new StoreSectionForCreation
         {
-            TenantId = tenant.Id,
             Name = "Produce"
         });
         await scope.InsertAsync(produceSection);
 
         var shoppingList = ShoppingList.Create(new ShoppingListForCreation
         {
-            TenantId = tenant.Id,
             Name = "Test List"
         });
         await scope.InsertAsync(shoppingList);
@@ -57,18 +52,15 @@ public class AutoCategorizeTests : TestBase
     {
         // Arrange
         var scope = new TestingServiceScope();
-        var tenant = await scope.SetupTenantAsync();
 
         var bakingSection = StoreSection.Create(new StoreSectionForCreation
         {
-            TenantId = tenant.Id,
             Name = "Baking"
         });
         await scope.InsertAsync(bakingSection);
 
         var shoppingList = ShoppingList.Create(new ShoppingListForCreation
         {
-            TenantId = tenant.Id,
             Name = "Test List"
         });
         await scope.InsertAsync(shoppingList);
@@ -92,11 +84,9 @@ public class AutoCategorizeTests : TestBase
     {
         // Arrange
         var scope = new TestingServiceScope();
-        var tenant = await scope.SetupTenantAsync();
 
         var shoppingList = ShoppingList.Create(new ShoppingListForCreation
         {
-            TenantId = tenant.Id,
             Name = "Test List"
         });
         await scope.InsertAsync(shoppingList);
@@ -117,18 +107,15 @@ public class AutoCategorizeTests : TestBase
         // Arrange - "chicken breast" is a multi-word seed entry for "Meat & Seafood"
         // but also test token fallback: "smoked chicken" not in seed -> token "chicken" -> Meat & Seafood
         var scope = new TestingServiceScope();
-        var tenant = await scope.SetupTenantAsync();
 
         var meatSection = StoreSection.Create(new StoreSectionForCreation
         {
-            TenantId = tenant.Id,
             Name = "Meat & Seafood"
         });
         await scope.InsertAsync(meatSection);
 
         var shoppingList = ShoppingList.Create(new ShoppingListForCreation
         {
-            TenantId = tenant.Id,
             Name = "Test List"
         });
         await scope.InsertAsync(shoppingList);
@@ -148,20 +135,17 @@ public class AutoCategorizeTests : TestBase
     [Fact]
     public async Task add_item_resolves_section_with_contains_matching()
     {
-        // Arrange - tenant section "Dairy & Eggs" should match seed section "Dairy & Eggs"
+        // Arrange - section "Dairy & Eggs" should match seed section "Dairy & Eggs"
         var scope = new TestingServiceScope();
-        var tenant = await scope.SetupTenantAsync();
 
         var dairySection = StoreSection.Create(new StoreSectionForCreation
         {
-            TenantId = tenant.Id,
             Name = "Dairy & Eggs"
         });
         await scope.InsertAsync(dairySection);
 
         var shoppingList = ShoppingList.Create(new ShoppingListForCreation
         {
-            TenantId = tenant.Id,
             Name = "Test List"
         });
         await scope.InsertAsync(shoppingList);
@@ -181,23 +165,19 @@ public class AutoCategorizeTests : TestBase
     {
         // Arrange
         var scope = new TestingServiceScope();
-        var tenant = await scope.SetupTenantAsync();
 
         var bakingSection = StoreSection.Create(new StoreSectionForCreation
         {
-            TenantId = tenant.Id,
             Name = "Baking"
         });
         var dairySection = StoreSection.Create(new StoreSectionForCreation
         {
-            TenantId = tenant.Id,
             Name = "Dairy & Eggs"
         });
         await scope.InsertAsync(bakingSection, dairySection);
 
         var recipe = Recipe.Create(new RecipeForCreation
         {
-            TenantId = tenant.Id,
             Title = "Test Cake"
         });
         await scope.InsertAsync(recipe);
@@ -239,7 +219,6 @@ public class AutoCategorizeTests : TestBase
 
         var shoppingList = ShoppingList.Create(new ShoppingListForCreation
         {
-            TenantId = tenant.Id,
             Name = "Cake Shopping"
         });
         await scope.InsertAsync(shoppingList);
@@ -267,23 +246,19 @@ public class AutoCategorizeTests : TestBase
     {
         // Arrange
         var scope = new TestingServiceScope();
-        var tenant = await scope.SetupTenantAsync();
 
         var produceSection = StoreSection.Create(new StoreSectionForCreation
         {
-            TenantId = tenant.Id,
             Name = "Produce"
         });
         var snacksSection = StoreSection.Create(new StoreSectionForCreation
         {
-            TenantId = tenant.Id,
             Name = "Snacks"
         });
         await scope.InsertAsync(produceSection, snacksSection);
 
         var shoppingList = ShoppingList.Create(new ShoppingListForCreation
         {
-            TenantId = tenant.Id,
             Name = "Test List"
         });
         await scope.InsertAsync(shoppingList);
@@ -306,8 +281,7 @@ public class AutoCategorizeTests : TestBase
         // Assert - a User mapping should have been created/updated
         var mapping = await scope.ExecuteDbContextAsync(async db =>
             await db.ItemCategoryMappings
-                .IgnoreQueryFilters([QueryFilterNames.Tenant])
-                .FirstOrDefaultAsync(m => m.TenantId == tenant.Id && m.NormalizedName == "apple"));
+                .FirstOrDefaultAsync(m => m.NormalizedName == "apple"));
 
         mapping.ShouldNotBeNull();
         mapping.StoreSectionId.ShouldBe(snacksSection.Id);
@@ -319,23 +293,19 @@ public class AutoCategorizeTests : TestBase
     {
         // Arrange
         var scope = new TestingServiceScope();
-        var tenant = await scope.SetupTenantAsync();
 
         var produceSection = StoreSection.Create(new StoreSectionForCreation
         {
-            TenantId = tenant.Id,
             Name = "Produce"
         });
         var snacksSection = StoreSection.Create(new StoreSectionForCreation
         {
-            TenantId = tenant.Id,
             Name = "Snacks"
         });
         await scope.InsertAsync(produceSection, snacksSection);
 
         var shoppingList = ShoppingList.Create(new ShoppingListForCreation
         {
-            TenantId = tenant.Id,
             Name = "Test List"
         });
         await scope.InsertAsync(shoppingList);
@@ -353,13 +323,10 @@ public class AutoCategorizeTests : TestBase
         // Act - add "Banana" again on a new list
         var shoppingList2 = ShoppingList.Create(new ShoppingListForCreation
         {
-            TenantId = tenant.Id,
             Name = "Test List 2"
         });
         await scope.InsertAsync(shoppingList2);
 
-        // Need to clear cache so we pick up the DB mapping
-        var resolver = scope.GetService<IItemCategoryResolver>();
         // The upsert already invalidated cache, but since we're in the same scope,
         // let's add the item and verify it gets the user mapping
         var addResult2 = await scope.SendAsync(
@@ -374,18 +341,15 @@ public class AutoCategorizeTests : TestBase
     {
         // Arrange
         var scope = new TestingServiceScope();
-        var tenant = await scope.SetupTenantAsync();
 
         var spiceSection = StoreSection.Create(new StoreSectionForCreation
         {
-            TenantId = tenant.Id,
             Name = "Spices & Seasonings"
         });
         await scope.InsertAsync(spiceSection);
 
         var shoppingList = ShoppingList.Create(new ShoppingListForCreation
         {
-            TenantId = tenant.Id,
             Name = "Test List"
         });
         await scope.InsertAsync(shoppingList);
@@ -397,55 +361,10 @@ public class AutoCategorizeTests : TestBase
         // Assert - a Seed mapping should have been persisted
         var mapping = await scope.ExecuteDbContextAsync(async db =>
             await db.ItemCategoryMappings
-                .IgnoreQueryFilters([QueryFilterNames.Tenant])
-                .FirstOrDefaultAsync(m => m.TenantId == tenant.Id && m.NormalizedName == "cumin"));
+                .FirstOrDefaultAsync(m => m.NormalizedName == "cumin"));
 
         mapping.ShouldNotBeNull();
         mapping.StoreSectionId.ShouldBe(spiceSection.Id);
         mapping.Source.Value.ShouldBe("Seed");
-    }
-
-    [Fact]
-    public async Task tenant_isolation_prevents_cross_tenant_mapping_leak()
-    {
-        // Arrange - two tenants with different sections
-        var scope1 = new TestingServiceScope();
-        var tenant1 = await scope1.SetupTenantAsync("Tenant A");
-
-        var section1 = StoreSection.Create(new StoreSectionForCreation
-        {
-            TenantId = tenant1.Id,
-            Name = "Produce"
-        });
-        await scope1.InsertAsync(section1);
-
-        var list1 = ShoppingList.Create(new ShoppingListForCreation
-        {
-            TenantId = tenant1.Id,
-            Name = "List A"
-        });
-        await scope1.InsertAsync(list1);
-
-        // Tenant 1 categorizes "garlic"
-        await scope1.SendAsync(new AddShoppingListItem.Command(list1.Id,
-            new ShoppingListItemForCreationDto { Name = "Garlic" }));
-
-        // Tenant 2 has NO Produce section
-        var scope2 = new TestingServiceScope();
-        var tenant2 = await scope2.SetupTenantAsync("Tenant B");
-
-        var list2 = ShoppingList.Create(new ShoppingListForCreation
-        {
-            TenantId = tenant2.Id,
-            Name = "List B"
-        });
-        await scope2.InsertAsync(list2);
-
-        // Act - tenant 2 adds "garlic" but has no matching section
-        var result = await scope2.SendAsync(new AddShoppingListItem.Command(list2.Id,
-            new ShoppingListItemForCreationDto { Name = "Garlic" }));
-
-        // Assert - should be null since tenant 2 has no Produce section
-        result.Items.First().StoreSectionId.ShouldBeNull();
     }
 }

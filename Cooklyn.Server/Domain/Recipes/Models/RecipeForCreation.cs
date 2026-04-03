@@ -2,7 +2,6 @@ namespace Cooklyn.Server.Domain.Recipes.Models;
 
 public sealed record RecipeForCreation
 {
-    public string TenantId { get; init; } = default!;
     public string Title { get; init; } = default!;
     public string? Description { get; init; }
     public string? ImageS3Bucket { get; init; }

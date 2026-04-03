@@ -3,9 +3,8 @@ namespace Cooklyn.Server.Domain.MealPlans;
 using Exceptions;
 using MealPlans.Models;
 
-public class MealPlanQueue : BaseEntity, ITenantable
+public class MealPlanQueue : BaseEntity
 {
-    public string TenantId { get; private set; } = default!;
     public string Name { get; private set; } = default!;
     public bool IsDefault { get; private set; }
 
@@ -16,7 +15,6 @@ public class MealPlanQueue : BaseEntity, ITenantable
     {
         var queue = new MealPlanQueue
         {
-            TenantId = forCreation.TenantId,
             Name = forCreation.Name,
             IsDefault = forCreation.IsDefault
         };
@@ -25,11 +23,10 @@ public class MealPlanQueue : BaseEntity, ITenantable
         return queue;
     }
 
-    public static MealPlanQueue CreateDefault(string tenantId)
+    public static MealPlanQueue CreateDefault()
     {
         return new MealPlanQueue
         {
-            TenantId = tenantId,
             Name = "General",
             IsDefault = true
         };
@@ -56,7 +53,6 @@ public class MealPlanQueue : BaseEntity, ITenantable
 
     private static void ValidateQueue(MealPlanQueue queue)
     {
-        ValidationException.ThrowWhenNullOrWhitespace(queue.TenantId, "Please provide a tenant.");
         ValidationException.ThrowWhenNullOrWhitespace(queue.Name, "Please provide a queue name.");
     }
 

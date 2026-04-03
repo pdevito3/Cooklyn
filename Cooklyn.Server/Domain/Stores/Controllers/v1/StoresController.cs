@@ -4,7 +4,6 @@ using Asp.Versioning;
 using Dtos;
 using Features;
 using MediatR;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Resources;
 using Resources.Extensions;
@@ -17,7 +16,6 @@ public sealed class StoresController(IMediator mediator) : ControllerBase
     /// <summary>
     /// Gets a single Store by ID.
     /// </summary>
-    [Authorize]
     [HttpGet("{id}", Name = "GetStore")]
     [ProducesResponseType(typeof(StoreDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -31,7 +29,6 @@ public sealed class StoresController(IMediator mediator) : ControllerBase
     /// <summary>
     /// Gets a paginated list of Stores.
     /// </summary>
-    [Authorize]
     [HttpGet(Name = "GetStoreList")]
     [ProducesResponseType(typeof(PagedList<StoreDto>), StatusCodes.Status200OK)]
     public async Task<ActionResult<PagedList<StoreDto>>> GetStoreList(
@@ -48,7 +45,6 @@ public sealed class StoresController(IMediator mediator) : ControllerBase
     /// <summary>
     /// Creates a new Store.
     /// </summary>
-    [Authorize]
     [HttpPost(Name = "AddStore")]
     [ProducesResponseType(typeof(StoreDto), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -66,7 +62,6 @@ public sealed class StoresController(IMediator mediator) : ControllerBase
     /// <summary>
     /// Updates an existing Store.
     /// </summary>
-    [Authorize]
     [HttpPut("{id}", Name = "UpdateStore")]
     [ProducesResponseType(typeof(StoreDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -83,7 +78,6 @@ public sealed class StoresController(IMediator mediator) : ControllerBase
     /// <summary>
     /// Deletes a Store.
     /// </summary>
-    [Authorize]
     [HttpDelete("{id}", Name = "DeleteStore")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -97,7 +91,6 @@ public sealed class StoresController(IMediator mediator) : ControllerBase
     /// <summary>
     /// Updates the aisle ordering for a Store.
     /// </summary>
-    [Authorize]
     [HttpPut("{id}/aisles", Name = "UpdateStoreAisles")]
     [ProducesResponseType(typeof(StoreDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -114,7 +107,6 @@ public sealed class StoresController(IMediator mediator) : ControllerBase
     /// <summary>
     /// Updates the default collections for a Store.
     /// </summary>
-    [Authorize]
     [HttpPut("{id}/default-collections", Name = "UpdateStoreDefaultCollections")]
     [ProducesResponseType(typeof(StoreDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]

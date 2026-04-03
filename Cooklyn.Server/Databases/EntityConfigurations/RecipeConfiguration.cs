@@ -2,7 +2,6 @@ namespace Cooklyn.Server.Databases.EntityConfigurations;
 
 using Domain.BlobStorageKeys;
 using Domain.Recipes;
-using Domain.Tenants;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -37,14 +36,6 @@ public sealed class RecipeConfiguration : IEntityTypeConfiguration<Recipe>
 
         builder.Property(e => e.Notes)
             .HasMaxLength(10000);
-
-        builder.Property(e => e.TenantId)
-            .IsRequired();
-
-        builder.HasOne<Tenant>()
-            .WithMany()
-            .HasForeignKey(e => e.TenantId)
-            .OnDelete(DeleteBehavior.Cascade);
 
         // Value objects
         builder.ComplexProperty(e => e.Rating, rating =>
@@ -87,7 +78,6 @@ public sealed class RecipeConfiguration : IEntityTypeConfiguration<Recipe>
             .OnDelete(DeleteBehavior.Cascade);
 
         // Indexes
-        builder.HasIndex(e => e.TenantId);
         builder.HasIndex(e => e.Title);
     }
 }

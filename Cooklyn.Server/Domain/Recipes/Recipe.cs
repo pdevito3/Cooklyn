@@ -7,9 +7,8 @@ using Recipes.Models;
 using Services;
 using Tags;
 
-public class Recipe : BaseEntity, ITenantable
+public class Recipe : BaseEntity
 {
-    public string TenantId { get; private set; } = default!;
     public string Title { get; private set; } = default!;
     public string? Description { get; private set; }
     public string? ImageS3Bucket { get; private set; }
@@ -36,7 +35,6 @@ public class Recipe : BaseEntity, ITenantable
     {
         var recipe = new Recipe
         {
-            TenantId = forCreation.TenantId,
             Title = forCreation.Title,
             Description = forCreation.Description,
             ImageS3Bucket = forCreation.ImageS3Bucket,
@@ -200,7 +198,6 @@ public class Recipe : BaseEntity, ITenantable
 
     private static void ValidateRecipe(Recipe recipe)
     {
-        ValidationException.ThrowWhenNullOrWhitespace(recipe.TenantId, "Please provide a tenant.");
         ValidationException.ThrowWhenNullOrWhitespace(recipe.Title, "Please provide a recipe title.");
     }
 

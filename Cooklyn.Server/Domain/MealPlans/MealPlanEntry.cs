@@ -4,9 +4,8 @@ using Exceptions;
 using MealPlans.DomainEvents;
 using MealPlans.Models;
 
-public class MealPlanEntry : BaseEntity, ITenantable
+public class MealPlanEntry : BaseEntity
 {
-    public string TenantId { get; private set; } = default!;
     public DateOnly Date { get; private set; }
     public MealPlanEntryType EntryType { get; private set; } = MealPlanEntryType.Recipe();
     public string? RecipeId { get; private set; }
@@ -18,7 +17,6 @@ public class MealPlanEntry : BaseEntity, ITenantable
     {
         var entry = new MealPlanEntry
         {
-            TenantId = forCreation.TenantId,
             Date = forCreation.Date,
             EntryType = MealPlanEntryType.Of(forCreation.EntryType),
             RecipeId = forCreation.RecipeId,
@@ -52,11 +50,10 @@ public class MealPlanEntry : BaseEntity, ITenantable
         return this;
     }
 
-    public MealPlanEntry Copy(string tenantId, DateOnly targetDate, int sortOrder)
+    public MealPlanEntry Copy(DateOnly targetDate, int sortOrder)
     {
         return new MealPlanEntry
         {
-            TenantId = tenantId,
             Date = targetDate,
             EntryType = new MealPlanEntryType(EntryType.Value),
             RecipeId = RecipeId,
@@ -68,7 +65,6 @@ public class MealPlanEntry : BaseEntity, ITenantable
 
     private static void ValidateEntry(MealPlanEntry entry)
     {
-        ValidationException.ThrowWhenNullOrWhitespace(entry.TenantId, "Please provide a tenant.");
         ValidationException.ThrowWhenNullOrWhitespace(entry.Title, "Please provide a title.");
     }
 

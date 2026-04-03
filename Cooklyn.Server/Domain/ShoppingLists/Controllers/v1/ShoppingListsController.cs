@@ -4,7 +4,6 @@ using Asp.Versioning;
 using Dtos;
 using Features;
 using MediatR;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Resources;
 using Resources.Extensions;
@@ -17,7 +16,6 @@ public sealed class ShoppingListsController(IMediator mediator) : ControllerBase
     /// <summary>
     /// Gets a single ShoppingList by ID with all items.
     /// </summary>
-    [Authorize]
     [HttpGet("{id}", Name = "GetShoppingList")]
     [ProducesResponseType(typeof(ShoppingListDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -31,7 +29,6 @@ public sealed class ShoppingListsController(IMediator mediator) : ControllerBase
     /// <summary>
     /// Gets a paginated list of ShoppingList summaries.
     /// </summary>
-    [Authorize]
     [HttpGet(Name = "GetShoppingListList")]
     [ProducesResponseType(typeof(PagedList<ShoppingListSummaryDto>), StatusCodes.Status200OK)]
     public async Task<ActionResult<PagedList<ShoppingListSummaryDto>>> GetShoppingListList(
@@ -48,7 +45,6 @@ public sealed class ShoppingListsController(IMediator mediator) : ControllerBase
     /// <summary>
     /// Creates a new ShoppingList.
     /// </summary>
-    [Authorize]
     [HttpPost(Name = "AddShoppingList")]
     [ProducesResponseType(typeof(ShoppingListDto), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -66,7 +62,6 @@ public sealed class ShoppingListsController(IMediator mediator) : ControllerBase
     /// <summary>
     /// Updates an existing ShoppingList.
     /// </summary>
-    [Authorize]
     [HttpPut("{id}", Name = "UpdateShoppingList")]
     [ProducesResponseType(typeof(ShoppingListDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -83,7 +78,6 @@ public sealed class ShoppingListsController(IMediator mediator) : ControllerBase
     /// <summary>
     /// Deletes a ShoppingList.
     /// </summary>
-    [Authorize]
     [HttpDelete("{id}", Name = "DeleteShoppingList")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -97,7 +91,6 @@ public sealed class ShoppingListsController(IMediator mediator) : ControllerBase
     /// <summary>
     /// Marks a ShoppingList as completed.
     /// </summary>
-    [Authorize]
     [HttpPost("{id}/complete", Name = "CompleteShoppingList")]
     [ProducesResponseType(typeof(ShoppingListDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -111,7 +104,6 @@ public sealed class ShoppingListsController(IMediator mediator) : ControllerBase
     /// <summary>
     /// Reopens a completed ShoppingList.
     /// </summary>
-    [Authorize]
     [HttpPost("{id}/reopen", Name = "ReopenShoppingList")]
     [ProducesResponseType(typeof(ShoppingListDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -125,7 +117,6 @@ public sealed class ShoppingListsController(IMediator mediator) : ControllerBase
     /// <summary>
     /// Adds an item to a ShoppingList.
     /// </summary>
-    [Authorize]
     [HttpPost("{id}/items", Name = "AddShoppingListItem")]
     [ProducesResponseType(typeof(ShoppingListDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -141,7 +132,6 @@ public sealed class ShoppingListsController(IMediator mediator) : ControllerBase
     /// <summary>
     /// Updates an item in a ShoppingList.
     /// </summary>
-    [Authorize]
     [HttpPut("{id}/items/{itemId}", Name = "UpdateShoppingListItem")]
     [ProducesResponseType(typeof(ShoppingListDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -158,7 +148,6 @@ public sealed class ShoppingListsController(IMediator mediator) : ControllerBase
     /// <summary>
     /// Deletes an item from a ShoppingList.
     /// </summary>
-    [Authorize]
     [HttpDelete("{id}/items/{itemId}", Name = "DeleteShoppingListItem")]
     [ProducesResponseType(typeof(ShoppingListDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -174,7 +163,6 @@ public sealed class ShoppingListsController(IMediator mediator) : ControllerBase
     /// <summary>
     /// Toggles the checked state of a ShoppingList item.
     /// </summary>
-    [Authorize]
     [HttpPost("{id}/items/{itemId}/toggle-check", Name = "ToggleShoppingListItemCheck")]
     [ProducesResponseType(typeof(ShoppingListDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -190,7 +178,6 @@ public sealed class ShoppingListsController(IMediator mediator) : ControllerBase
     /// <summary>
     /// Removes all checked items from a ShoppingList.
     /// </summary>
-    [Authorize]
     [HttpPost("{id}/remove-checked", Name = "RemoveCheckedItems")]
     [ProducesResponseType(typeof(ShoppingListDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -204,7 +191,6 @@ public sealed class ShoppingListsController(IMediator mediator) : ControllerBase
     /// <summary>
     /// Adds items from a recipe to a ShoppingList with quantity merging.
     /// </summary>
-    [Authorize]
     [HttpPost("{id}/add-from-recipe", Name = "AddItemsFromRecipe")]
     [ProducesResponseType(typeof(ShoppingListDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -220,7 +206,6 @@ public sealed class ShoppingListsController(IMediator mediator) : ControllerBase
     /// <summary>
     /// Adds items from a collection to a ShoppingList with quantity merging.
     /// </summary>
-    [Authorize]
     [HttpPost("{id}/add-from-collection", Name = "AddItemsFromCollection")]
     [ProducesResponseType(typeof(ShoppingListDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]

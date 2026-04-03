@@ -18,7 +18,7 @@ namespace Cooklyn.Server.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "10.0.1")
+                .HasAnnotation("ProductVersion", "10.0.5")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -29,10 +29,6 @@ namespace Cooklyn.Server.Migrations
                         .HasColumnType("text")
                         .HasColumnName("id");
 
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("text")
-                        .HasColumnName("created_by");
-
                     b.Property<DateTimeOffset>("CreatedOn")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_on");
@@ -40,10 +36,6 @@ namespace Cooklyn.Server.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean")
                         .HasColumnName("is_deleted");
-
-                    b.Property<string>("LastModifiedBy")
-                        .HasColumnType("text")
-                        .HasColumnName("last_modified_by");
 
                     b.Property<DateTimeOffset?>("LastModifiedOn")
                         .HasColumnType("timestamp with time zone")
@@ -60,11 +52,6 @@ namespace Cooklyn.Server.Migrations
                         .HasColumnType("text")
                         .HasColumnName("store_section_id");
 
-                    b.Property<string>("TenantId")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("tenant_id");
-
                     b.ComplexProperty(typeof(Dictionary<string, object>), "Source", "Cooklyn.Server.Domain.ItemCategoryMappings.ItemCategoryMapping.Source#MappingSource", b1 =>
                         {
                             b1.IsRequired();
@@ -79,16 +66,13 @@ namespace Cooklyn.Server.Migrations
                     b.HasKey("Id")
                         .HasName("pk_item_category_mappings");
 
+                    b.HasIndex("NormalizedName")
+                        .IsUnique()
+                        .HasDatabaseName("ix_item_category_mappings_normalized_name")
+                        .HasFilter("is_deleted = false");
+
                     b.HasIndex("StoreSectionId")
                         .HasDatabaseName("ix_item_category_mappings_store_section_id");
-
-                    b.HasIndex("TenantId")
-                        .HasDatabaseName("ix_item_category_mappings_tenant_id");
-
-                    b.HasIndex("TenantId", "NormalizedName")
-                        .IsUnique()
-                        .HasDatabaseName("ix_item_category_mappings_tenant_id_normalized_name")
-                        .HasFilter("is_deleted = false");
 
                     b.ToTable("item_category_mappings", (string)null);
                 });
@@ -99,10 +83,6 @@ namespace Cooklyn.Server.Migrations
                         .HasColumnType("text")
                         .HasColumnName("id");
 
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("text")
-                        .HasColumnName("created_by");
-
                     b.Property<DateTimeOffset>("CreatedOn")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_on");
@@ -110,10 +90,6 @@ namespace Cooklyn.Server.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean")
                         .HasColumnName("is_deleted");
-
-                    b.Property<string>("LastModifiedBy")
-                        .HasColumnType("text")
-                        .HasColumnName("last_modified_by");
 
                     b.Property<DateTimeOffset?>("LastModifiedOn")
                         .HasColumnType("timestamp with time zone")
@@ -125,20 +101,12 @@ namespace Cooklyn.Server.Migrations
                         .HasColumnType("character varying(200)")
                         .HasColumnName("name");
 
-                    b.Property<string>("TenantId")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("tenant_id");
-
                     b.HasKey("Id")
                         .HasName("pk_item_collections");
 
-                    b.HasIndex("TenantId")
-                        .HasDatabaseName("ix_item_collections_tenant_id");
-
-                    b.HasIndex("TenantId", "Name")
+                    b.HasIndex("Name")
                         .IsUnique()
-                        .HasDatabaseName("ix_item_collections_tenant_id_name")
+                        .HasDatabaseName("ix_item_collections_name")
                         .HasFilter("is_deleted = false");
 
                     b.ToTable("item_collections", (string)null);
@@ -149,10 +117,6 @@ namespace Cooklyn.Server.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("text")
                         .HasColumnName("id");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("text")
-                        .HasColumnName("created_by");
 
                     b.Property<DateTimeOffset>("CreatedOn")
                         .HasColumnType("timestamp with time zone")
@@ -166,10 +130,6 @@ namespace Cooklyn.Server.Migrations
                         .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("item_collection_id");
-
-                    b.Property<string>("LastModifiedBy")
-                        .HasColumnType("text")
-                        .HasColumnName("last_modified_by");
 
                     b.Property<DateTimeOffset?>("LastModifiedOn")
                         .HasColumnType("timestamp with time zone")
@@ -223,10 +183,6 @@ namespace Cooklyn.Server.Migrations
                         .HasColumnType("text")
                         .HasColumnName("id");
 
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("text")
-                        .HasColumnName("created_by");
-
                     b.Property<DateTimeOffset>("CreatedOn")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_on");
@@ -238,10 +194,6 @@ namespace Cooklyn.Server.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean")
                         .HasColumnName("is_deleted");
-
-                    b.Property<string>("LastModifiedBy")
-                        .HasColumnType("text")
-                        .HasColumnName("last_modified_by");
 
                     b.Property<DateTimeOffset?>("LastModifiedOn")
                         .HasColumnType("timestamp with time zone")
@@ -261,11 +213,6 @@ namespace Cooklyn.Server.Migrations
                     b.Property<int>("SortOrder")
                         .HasColumnType("integer")
                         .HasColumnName("sort_order");
-
-                    b.Property<string>("TenantId")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("tenant_id");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -287,11 +234,11 @@ namespace Cooklyn.Server.Migrations
                     b.HasKey("Id")
                         .HasName("pk_meal_plan_entries");
 
+                    b.HasIndex("Date")
+                        .HasDatabaseName("ix_meal_plan_entries_date");
+
                     b.HasIndex("RecipeId")
                         .HasDatabaseName("ix_meal_plan_entries_recipe_id");
-
-                    b.HasIndex("TenantId", "Date")
-                        .HasDatabaseName("ix_meal_plan_entries_tenant_id_date");
 
                     b.ToTable("meal_plan_entries", (string)null);
                 });
@@ -301,10 +248,6 @@ namespace Cooklyn.Server.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("text")
                         .HasColumnName("id");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("text")
-                        .HasColumnName("created_by");
 
                     b.Property<DateTimeOffset>("CreatedOn")
                         .HasColumnType("timestamp with time zone")
@@ -318,10 +261,6 @@ namespace Cooklyn.Server.Migrations
                         .HasColumnType("boolean")
                         .HasColumnName("is_deleted");
 
-                    b.Property<string>("LastModifiedBy")
-                        .HasColumnType("text")
-                        .HasColumnName("last_modified_by");
-
                     b.Property<DateTimeOffset?>("LastModifiedOn")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("last_modified_on");
@@ -332,16 +271,8 @@ namespace Cooklyn.Server.Migrations
                         .HasColumnType("character varying(200)")
                         .HasColumnName("name");
 
-                    b.Property<string>("TenantId")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("tenant_id");
-
                     b.HasKey("Id")
                         .HasName("pk_meal_plan_queues");
-
-                    b.HasIndex("TenantId")
-                        .HasDatabaseName("ix_meal_plan_queues_tenant_id");
 
                     b.ToTable("meal_plan_queues", (string)null);
                 });
@@ -352,10 +283,6 @@ namespace Cooklyn.Server.Migrations
                         .HasColumnType("text")
                         .HasColumnName("id");
 
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("text")
-                        .HasColumnName("created_by");
-
                     b.Property<DateTimeOffset>("CreatedOn")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_on");
@@ -363,10 +290,6 @@ namespace Cooklyn.Server.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean")
                         .HasColumnName("is_deleted");
-
-                    b.Property<string>("LastModifiedBy")
-                        .HasColumnType("text")
-                        .HasColumnName("last_modified_by");
 
                     b.Property<DateTimeOffset?>("LastModifiedOn")
                         .HasColumnType("timestamp with time zone")
@@ -416,10 +339,6 @@ namespace Cooklyn.Server.Migrations
                         .HasColumnType("text")
                         .HasColumnName("id");
 
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("text")
-                        .HasColumnName("created_by");
-
                     b.Property<DateTimeOffset>("CreatedOn")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_on");
@@ -427,10 +346,6 @@ namespace Cooklyn.Server.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean")
                         .HasColumnName("is_deleted");
-
-                    b.Property<string>("LastModifiedBy")
-                        .HasColumnType("text")
-                        .HasColumnName("last_modified_by");
 
                     b.Property<DateTimeOffset?>("LastModifiedOn")
                         .HasColumnType("timestamp with time zone")
@@ -458,20 +373,15 @@ namespace Cooklyn.Server.Migrations
                         .HasColumnType("character varying(20)")
                         .HasColumnName("search_type");
 
-                    b.Property<string>("TenantId")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("tenant_id");
-
                     b.HasKey("Id")
                         .HasName("pk_recent_searches");
 
-                    b.HasIndex("TenantId", "CreatedOn")
-                        .IsDescending(false, true)
-                        .HasDatabaseName("ix_recent_searches_tenant_id_created_on");
+                    b.HasIndex("CreatedOn")
+                        .IsDescending()
+                        .HasDatabaseName("ix_recent_searches_created_on");
 
-                    b.HasIndex("TenantId", "SearchType", "SearchText", "ResourceType", "ResourceId")
-                        .HasDatabaseName("ix_recent_searches_tenant_id_search_type_search_text_resource_");
+                    b.HasIndex("SearchType", "SearchText", "ResourceType", "ResourceId")
+                        .HasDatabaseName("ix_recent_searches_search_type_search_text_resource_type_resou");
 
                     b.ToTable("recent_searches", (string)null);
                 });
@@ -492,10 +402,6 @@ namespace Cooklyn.Server.Migrations
                         .HasColumnType("character varying(50)")
                         .HasColumnName("amount_text");
 
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("text")
-                        .HasColumnName("created_by");
-
                     b.Property<DateTimeOffset>("CreatedOn")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_on");
@@ -513,10 +419,6 @@ namespace Cooklyn.Server.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean")
                         .HasColumnName("is_deleted");
-
-                    b.Property<string>("LastModifiedBy")
-                        .HasColumnType("text")
-                        .HasColumnName("last_modified_by");
 
                     b.Property<DateTimeOffset?>("LastModifiedOn")
                         .HasColumnType("timestamp with time zone")
@@ -586,10 +488,6 @@ namespace Cooklyn.Server.Migrations
                         .HasColumnType("numeric(10,2)")
                         .HasColumnName("cholesterol_milligrams");
 
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("text")
-                        .HasColumnName("created_by");
-
                     b.Property<DateTimeOffset>("CreatedOn")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_on");
@@ -611,10 +509,6 @@ namespace Cooklyn.Server.Migrations
                     b.Property<bool>("IsManuallyEntered")
                         .HasColumnType("boolean")
                         .HasColumnName("is_manually_entered");
-
-                    b.Property<string>("LastModifiedBy")
-                        .HasColumnType("text")
-                        .HasColumnName("last_modified_by");
 
                     b.Property<DateTimeOffset?>("LastModifiedOn")
                         .HasColumnType("timestamp with time zone")
@@ -686,10 +580,6 @@ namespace Cooklyn.Server.Migrations
                         .HasColumnType("text")
                         .HasColumnName("id");
 
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("text")
-                        .HasColumnName("created_by");
-
                     b.Property<DateTimeOffset>("CreatedOn")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_on");
@@ -707,10 +597,6 @@ namespace Cooklyn.Server.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean")
                         .HasColumnName("is_deleted");
-
-                    b.Property<string>("LastModifiedBy")
-                        .HasColumnType("text")
-                        .HasColumnName("last_modified_by");
 
                     b.Property<DateTimeOffset?>("LastModifiedOn")
                         .HasColumnType("timestamp with time zone")
@@ -733,11 +619,6 @@ namespace Cooklyn.Server.Migrations
                     b.Property<string>("Steps")
                         .HasColumnType("text")
                         .HasColumnName("steps");
-
-                    b.Property<string>("TenantId")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("tenant_id");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -769,9 +650,6 @@ namespace Cooklyn.Server.Migrations
                     b.HasKey("Id")
                         .HasName("pk_recipes");
 
-                    b.HasIndex("TenantId")
-                        .HasDatabaseName("ix_recipes_tenant_id");
-
                     b.HasIndex("Title")
                         .HasDatabaseName("ix_recipes_title");
 
@@ -784,10 +662,6 @@ namespace Cooklyn.Server.Migrations
                         .HasColumnType("text")
                         .HasColumnName("id");
 
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("text")
-                        .HasColumnName("created_by");
-
                     b.Property<DateTimeOffset>("CreatedOn")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_on");
@@ -795,10 +669,6 @@ namespace Cooklyn.Server.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean")
                         .HasColumnName("is_deleted");
-
-                    b.Property<string>("LastModifiedBy")
-                        .HasColumnType("text")
-                        .HasColumnName("last_modified_by");
 
                     b.Property<DateTimeOffset?>("LastModifiedOn")
                         .HasColumnType("timestamp with time zone")
@@ -835,10 +705,6 @@ namespace Cooklyn.Server.Migrations
                         .HasColumnType("text")
                         .HasColumnName("id");
 
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("text")
-                        .HasColumnName("created_by");
-
                     b.Property<DateTimeOffset>("CreatedOn")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_on");
@@ -846,10 +712,6 @@ namespace Cooklyn.Server.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean")
                         .HasColumnName("is_deleted");
-
-                    b.Property<string>("LastModifiedBy")
-                        .HasColumnType("text")
-                        .HasColumnName("last_modified_by");
 
                     b.Property<DateTimeOffset?>("LastModifiedOn")
                         .HasColumnType("timestamp with time zone")
@@ -893,10 +755,6 @@ namespace Cooklyn.Server.Migrations
                         .HasColumnType("character varying(50)")
                         .HasColumnName("context");
 
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("text")
-                        .HasColumnName("created_by");
-
                     b.Property<DateTimeOffset>("CreatedOn")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_on");
@@ -910,10 +768,6 @@ namespace Cooklyn.Server.Migrations
                         .HasColumnType("boolean")
                         .HasColumnName("is_deleted");
 
-                    b.Property<string>("LastModifiedBy")
-                        .HasColumnType("text")
-                        .HasColumnName("last_modified_by");
-
                     b.Property<DateTimeOffset?>("LastModifiedOn")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("last_modified_on");
@@ -924,22 +778,56 @@ namespace Cooklyn.Server.Migrations
                         .HasColumnType("character varying(100)")
                         .HasColumnName("name");
 
-                    b.Property<string>("TenantId")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("tenant_id");
-
                     b.HasKey("Id")
                         .HasName("pk_saved_filters");
 
-                    b.HasIndex("TenantId", "Context")
-                        .HasDatabaseName("ix_saved_filters_tenant_id_context");
+                    b.HasIndex("Context")
+                        .HasDatabaseName("ix_saved_filters_context");
 
-                    b.HasIndex("TenantId", "Name", "Context")
+                    b.HasIndex("Name", "Context")
                         .IsUnique()
-                        .HasDatabaseName("ix_saved_filters_tenant_id_name_context");
+                        .HasDatabaseName("ix_saved_filters_name_context");
 
                     b.ToTable("saved_filters", (string)null);
+                });
+
+            modelBuilder.Entity("Cooklyn.Server.Domain.Settings.Setting", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("text")
+                        .HasColumnName("id");
+
+                    b.Property<DateTimeOffset>("CreatedOn")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_on");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
+
+                    b.Property<string>("Key")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)")
+                        .HasColumnName("key");
+
+                    b.Property<DateTimeOffset?>("LastModifiedOn")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("last_modified_on");
+
+                    b.Property<string>("Value")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)")
+                        .HasColumnName("value");
+
+                    b.HasKey("Id")
+                        .HasName("pk_settings");
+
+                    b.HasIndex("Key")
+                        .IsUnique()
+                        .HasDatabaseName("ix_settings_key");
+
+                    b.ToTable("settings", (string)null);
                 });
 
             modelBuilder.Entity("Cooklyn.Server.Domain.ShoppingLists.ShoppingList", b =>
@@ -952,10 +840,6 @@ namespace Cooklyn.Server.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("completed_on");
 
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("text")
-                        .HasColumnName("created_by");
-
                     b.Property<DateTimeOffset>("CreatedOn")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_on");
@@ -963,10 +847,6 @@ namespace Cooklyn.Server.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean")
                         .HasColumnName("is_deleted");
-
-                    b.Property<string>("LastModifiedBy")
-                        .HasColumnType("text")
-                        .HasColumnName("last_modified_by");
 
                     b.Property<DateTimeOffset?>("LastModifiedOn")
                         .HasColumnType("timestamp with time zone")
@@ -981,11 +861,6 @@ namespace Cooklyn.Server.Migrations
                     b.Property<string>("StoreId")
                         .HasColumnType("text")
                         .HasColumnName("store_id");
-
-                    b.Property<string>("TenantId")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("tenant_id");
 
                     b.ComplexProperty(typeof(Dictionary<string, object>), "Status", "Cooklyn.Server.Domain.ShoppingLists.ShoppingList.Status#ShoppingListStatus", b1 =>
                         {
@@ -1004,9 +879,6 @@ namespace Cooklyn.Server.Migrations
                     b.HasIndex("StoreId")
                         .HasDatabaseName("ix_shopping_lists_store_id");
 
-                    b.HasIndex("TenantId")
-                        .HasDatabaseName("ix_shopping_lists_tenant_id");
-
                     b.ToTable("shopping_lists", (string)null);
                 });
 
@@ -1020,10 +892,6 @@ namespace Cooklyn.Server.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("checked_on");
 
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("text")
-                        .HasColumnName("created_by");
-
                     b.Property<DateTimeOffset>("CreatedOn")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_on");
@@ -1035,10 +903,6 @@ namespace Cooklyn.Server.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean")
                         .HasColumnName("is_deleted");
-
-                    b.Property<string>("LastModifiedBy")
-                        .HasColumnType("text")
-                        .HasColumnName("last_modified_by");
 
                     b.Property<DateTimeOffset?>("LastModifiedOn")
                         .HasColumnType("timestamp with time zone")
@@ -1102,10 +966,6 @@ namespace Cooklyn.Server.Migrations
                         .HasColumnType("text")
                         .HasColumnName("id");
 
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("text")
-                        .HasColumnName("created_by");
-
                     b.Property<DateTimeOffset>("CreatedOn")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_on");
@@ -1113,10 +973,6 @@ namespace Cooklyn.Server.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean")
                         .HasColumnName("is_deleted");
-
-                    b.Property<string>("LastModifiedBy")
-                        .HasColumnType("text")
-                        .HasColumnName("last_modified_by");
 
                     b.Property<DateTimeOffset?>("LastModifiedOn")
                         .HasColumnType("timestamp with time zone")
@@ -1164,10 +1020,6 @@ namespace Cooklyn.Server.Migrations
                         .HasColumnType("text")
                         .HasColumnName("id");
 
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("text")
-                        .HasColumnName("created_by");
-
                     b.Property<DateTimeOffset>("CreatedOn")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_on");
@@ -1175,10 +1027,6 @@ namespace Cooklyn.Server.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean")
                         .HasColumnName("is_deleted");
-
-                    b.Property<string>("LastModifiedBy")
-                        .HasColumnType("text")
-                        .HasColumnName("last_modified_by");
 
                     b.Property<DateTimeOffset?>("LastModifiedOn")
                         .HasColumnType("timestamp with time zone")
@@ -1190,20 +1038,12 @@ namespace Cooklyn.Server.Migrations
                         .HasColumnType("character varying(100)")
                         .HasColumnName("name");
 
-                    b.Property<string>("TenantId")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("tenant_id");
-
                     b.HasKey("Id")
                         .HasName("pk_store_sections");
 
-                    b.HasIndex("TenantId")
-                        .HasDatabaseName("ix_store_sections_tenant_id");
-
-                    b.HasIndex("TenantId", "Name")
+                    b.HasIndex("Name")
                         .IsUnique()
-                        .HasDatabaseName("ix_store_sections_tenant_id_name")
+                        .HasDatabaseName("ix_store_sections_name")
                         .HasFilter("is_deleted = false");
 
                     b.ToTable("store_sections", (string)null);
@@ -1220,10 +1060,6 @@ namespace Cooklyn.Server.Migrations
                         .HasColumnType("character varying(500)")
                         .HasColumnName("address");
 
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("text")
-                        .HasColumnName("created_by");
-
                     b.Property<DateTimeOffset>("CreatedOn")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_on");
@@ -1231,10 +1067,6 @@ namespace Cooklyn.Server.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean")
                         .HasColumnName("is_deleted");
-
-                    b.Property<string>("LastModifiedBy")
-                        .HasColumnType("text")
-                        .HasColumnName("last_modified_by");
 
                     b.Property<DateTimeOffset?>("LastModifiedOn")
                         .HasColumnType("timestamp with time zone")
@@ -1246,20 +1078,12 @@ namespace Cooklyn.Server.Migrations
                         .HasColumnType("character varying(200)")
                         .HasColumnName("name");
 
-                    b.Property<string>("TenantId")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("tenant_id");
-
                     b.HasKey("Id")
                         .HasName("pk_stores");
 
-                    b.HasIndex("TenantId")
-                        .HasDatabaseName("ix_stores_tenant_id");
-
-                    b.HasIndex("TenantId", "Name")
+                    b.HasIndex("Name")
                         .IsUnique()
-                        .HasDatabaseName("ix_stores_tenant_id_name")
+                        .HasDatabaseName("ix_stores_name")
                         .HasFilter("is_deleted = false");
 
                     b.ToTable("stores", (string)null);
@@ -1270,10 +1094,6 @@ namespace Cooklyn.Server.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("text")
                         .HasColumnName("id");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("text")
-                        .HasColumnName("created_by");
 
                     b.Property<DateTimeOffset>("CreatedOn")
                         .HasColumnType("timestamp with time zone")
@@ -1287,10 +1107,6 @@ namespace Cooklyn.Server.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean")
                         .HasColumnName("is_deleted");
-
-                    b.Property<string>("LastModifiedBy")
-                        .HasColumnType("text")
-                        .HasColumnName("last_modified_by");
 
                     b.Property<DateTimeOffset?>("LastModifiedOn")
                         .HasColumnType("timestamp with time zone")
@@ -1332,10 +1148,6 @@ namespace Cooklyn.Server.Migrations
                         .HasColumnType("text")
                         .HasColumnName("id");
 
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("text")
-                        .HasColumnName("created_by");
-
                     b.Property<DateTimeOffset>("CreatedOn")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_on");
@@ -1348,10 +1160,6 @@ namespace Cooklyn.Server.Migrations
                         .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("item_collection_id");
-
-                    b.Property<string>("LastModifiedBy")
-                        .HasColumnType("text")
-                        .HasColumnName("last_modified_by");
 
                     b.Property<DateTimeOffset?>("LastModifiedOn")
                         .HasColumnType("timestamp with time zone")
@@ -1385,10 +1193,6 @@ namespace Cooklyn.Server.Migrations
                         .HasColumnType("text")
                         .HasColumnName("id");
 
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("text")
-                        .HasColumnName("created_by");
-
                     b.Property<DateTimeOffset>("CreatedOn")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_on");
@@ -1396,10 +1200,6 @@ namespace Cooklyn.Server.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean")
                         .HasColumnName("is_deleted");
-
-                    b.Property<string>("LastModifiedBy")
-                        .HasColumnType("text")
-                        .HasColumnName("last_modified_by");
 
                     b.Property<DateTimeOffset?>("LastModifiedOn")
                         .HasColumnType("timestamp with time zone")
@@ -1410,216 +1210,15 @@ namespace Cooklyn.Server.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)")
                         .HasColumnName("name");
-
-                    b.Property<string>("TenantId")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("tenant_id");
 
                     b.HasKey("Id")
                         .HasName("pk_tags");
 
-                    b.HasIndex("TenantId")
-                        .HasDatabaseName("ix_tags_tenant_id");
-
-                    b.HasIndex("TenantId", "Name")
-                        .IsUnique()
-                        .HasDatabaseName("ix_tags_tenant_id_name");
-
-                    b.ToTable("tags", (string)null);
-                });
-
-            modelBuilder.Entity("Cooklyn.Server.Domain.Tenants.Tenant", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("text")
-                        .HasColumnName("id");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("text")
-                        .HasColumnName("created_by");
-
-                    b.Property<DateTimeOffset>("CreatedOn")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_on");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean")
-                        .HasColumnName("is_deleted");
-
-                    b.Property<string>("LastModifiedBy")
-                        .HasColumnType("text")
-                        .HasColumnName("last_modified_by");
-
-                    b.Property<DateTimeOffset?>("LastModifiedOn")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("last_modified_on");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)")
-                        .HasColumnName("name");
-
-                    b.HasKey("Id")
-                        .HasName("pk_tenants");
-
                     b.HasIndex("Name")
                         .IsUnique()
-                        .HasDatabaseName("ix_tenants_name");
+                        .HasDatabaseName("ix_tags_name");
 
-                    b.ToTable("tenants", (string)null);
-                });
-
-            modelBuilder.Entity("Cooklyn.Server.Domain.Users.User", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("text")
-                        .HasColumnName("id");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("text")
-                        .HasColumnName("created_by");
-
-                    b.Property<DateTimeOffset>("CreatedOn")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_on");
-
-                    b.Property<string>("DefaultStoreId")
-                        .HasColumnType("text")
-                        .HasColumnName("default_store_id");
-
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)")
-                        .HasColumnName("first_name");
-
-                    b.Property<string>("Identifier")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
-                        .HasColumnName("identifier");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean")
-                        .HasColumnName("is_deleted");
-
-                    b.Property<string>("LastModifiedBy")
-                        .HasColumnType("text")
-                        .HasColumnName("last_modified_by");
-
-                    b.Property<DateTimeOffset?>("LastModifiedOn")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("last_modified_on");
-
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)")
-                        .HasColumnName("last_name");
-
-                    b.Property<string>("TenantId")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("tenant_id");
-
-                    b.Property<string>("Username")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)")
-                        .HasColumnName("username");
-
-                    b.ComplexProperty(typeof(Dictionary<string, object>), "Email", "Cooklyn.Server.Domain.Users.User.Email#EmailAddress", b1 =>
-                        {
-                            b1.IsRequired();
-
-                            b1.Property<string>("Value")
-                                .IsRequired()
-                                .HasMaxLength(320)
-                                .HasColumnType("character varying(320)")
-                                .HasColumnName("email");
-                        });
-
-                    b.ComplexProperty(typeof(Dictionary<string, object>), "Role", "Cooklyn.Server.Domain.Users.User.Role#UserRole", b1 =>
-                        {
-                            b1.IsRequired();
-
-                            b1.Property<string>("Value")
-                                .IsRequired()
-                                .HasMaxLength(50)
-                                .HasColumnType("character varying(50)")
-                                .HasColumnName("role");
-                        });
-
-                    b.HasKey("Id")
-                        .HasName("pk_users");
-
-                    b.HasIndex("DefaultStoreId")
-                        .HasDatabaseName("ix_users_default_store_id");
-
-                    b.HasIndex("Identifier")
-                        .IsUnique()
-                        .HasDatabaseName("ix_users_identifier");
-
-                    b.HasIndex("TenantId")
-                        .HasDatabaseName("ix_users_tenant_id");
-
-                    b.HasIndex("Username")
-                        .HasDatabaseName("ix_users_username");
-
-                    b.ToTable("users", (string)null);
-                });
-
-            modelBuilder.Entity("Cooklyn.Server.Domain.Users.UserPermission", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("text")
-                        .HasColumnName("id");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("text")
-                        .HasColumnName("created_by");
-
-                    b.Property<DateTimeOffset>("CreatedOn")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_on");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean")
-                        .HasColumnName("is_deleted");
-
-                    b.Property<string>("LastModifiedBy")
-                        .HasColumnType("text")
-                        .HasColumnName("last_modified_by");
-
-                    b.Property<DateTimeOffset?>("LastModifiedOn")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("last_modified_on");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("user_id");
-
-                    b.ComplexProperty(typeof(Dictionary<string, object>), "Permission", "Cooklyn.Server.Domain.Users.UserPermission.Permission#Permission", b1 =>
-                        {
-                            b1.IsRequired();
-
-                            b1.Property<string>("Value")
-                                .IsRequired()
-                                .HasMaxLength(100)
-                                .HasColumnType("character varying(100)")
-                                .HasColumnName("permission");
-                        });
-
-                    b.HasKey("Id")
-                        .HasName("pk_user_permissions");
-
-                    b.HasIndex("UserId")
-                        .HasDatabaseName("ix_user_permissions_user_id");
-
-                    b.ToTable("user_permissions", (string)null);
+                    b.ToTable("tags", (string)null);
                 });
 
             modelBuilder.Entity("Cooklyn.Server.Domain.ItemCategoryMappings.ItemCategoryMapping", b =>
@@ -1630,23 +1229,6 @@ namespace Cooklyn.Server.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_item_category_mappings_store_sections_store_section_id");
-
-                    b.HasOne("Cooklyn.Server.Domain.Tenants.Tenant", null)
-                        .WithMany()
-                        .HasForeignKey("TenantId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_item_category_mappings_tenants_tenant_id");
-                });
-
-            modelBuilder.Entity("Cooklyn.Server.Domain.ItemCollections.ItemCollection", b =>
-                {
-                    b.HasOne("Cooklyn.Server.Domain.Tenants.Tenant", null)
-                        .WithMany()
-                        .HasForeignKey("TenantId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_item_collections_tenants_tenant_id");
                 });
 
             modelBuilder.Entity("Cooklyn.Server.Domain.ItemCollections.ItemCollectionItem", b =>
@@ -1672,23 +1254,6 @@ namespace Cooklyn.Server.Migrations
                         .HasForeignKey("RecipeId")
                         .OnDelete(DeleteBehavior.SetNull)
                         .HasConstraintName("fk_meal_plan_entries_recipes_recipe_id");
-
-                    b.HasOne("Cooklyn.Server.Domain.Tenants.Tenant", null)
-                        .WithMany()
-                        .HasForeignKey("TenantId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_meal_plan_entries_tenants_tenant_id");
-                });
-
-            modelBuilder.Entity("Cooklyn.Server.Domain.MealPlans.MealPlanQueue", b =>
-                {
-                    b.HasOne("Cooklyn.Server.Domain.Tenants.Tenant", null)
-                        .WithMany()
-                        .HasForeignKey("TenantId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_meal_plan_queues_tenants_tenant_id");
                 });
 
             modelBuilder.Entity("Cooklyn.Server.Domain.MealPlans.MealPlanQueueItem", b =>
@@ -1705,16 +1270,6 @@ namespace Cooklyn.Server.Migrations
                         .HasForeignKey("RecipeId")
                         .OnDelete(DeleteBehavior.SetNull)
                         .HasConstraintName("fk_meal_plan_queue_items_recipes_recipe_id");
-                });
-
-            modelBuilder.Entity("Cooklyn.Server.Domain.RecentSearches.RecentSearch", b =>
-                {
-                    b.HasOne("Cooklyn.Server.Domain.Tenants.Tenant", null)
-                        .WithMany()
-                        .HasForeignKey("TenantId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_recent_searches_tenants_tenant_id");
                 });
 
             modelBuilder.Entity("Cooklyn.Server.Domain.Recipes.Ingredient", b =>
@@ -1735,16 +1290,6 @@ namespace Cooklyn.Server.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_nutrition_infos_recipes_recipe_id");
-                });
-
-            modelBuilder.Entity("Cooklyn.Server.Domain.Recipes.Recipe", b =>
-                {
-                    b.HasOne("Cooklyn.Server.Domain.Tenants.Tenant", null)
-                        .WithMany()
-                        .HasForeignKey("TenantId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_recipes_tenants_tenant_id");
                 });
 
             modelBuilder.Entity("Cooklyn.Server.Domain.Recipes.RecipeFlagEntry", b =>
@@ -1778,16 +1323,6 @@ namespace Cooklyn.Server.Migrations
                     b.Navigation("Tag");
                 });
 
-            modelBuilder.Entity("Cooklyn.Server.Domain.SavedFilters.SavedFilter", b =>
-                {
-                    b.HasOne("Cooklyn.Server.Domain.Tenants.Tenant", null)
-                        .WithMany()
-                        .HasForeignKey("TenantId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_saved_filters_tenants_tenant_id");
-                });
-
             modelBuilder.Entity("Cooklyn.Server.Domain.ShoppingLists.ShoppingList", b =>
                 {
                     b.HasOne("Cooklyn.Server.Domain.Stores.Store", null)
@@ -1795,13 +1330,6 @@ namespace Cooklyn.Server.Migrations
                         .HasForeignKey("StoreId")
                         .OnDelete(DeleteBehavior.SetNull)
                         .HasConstraintName("fk_shopping_lists_stores_store_id");
-
-                    b.HasOne("Cooklyn.Server.Domain.Tenants.Tenant", null)
-                        .WithMany()
-                        .HasForeignKey("TenantId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_shopping_lists_tenants_tenant_id");
                 });
 
             modelBuilder.Entity("Cooklyn.Server.Domain.ShoppingLists.ShoppingListItem", b =>
@@ -1835,26 +1363,6 @@ namespace Cooklyn.Server.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_shopping_list_item_recipe_sources_shopping_list_items_shopp");
-                });
-
-            modelBuilder.Entity("Cooklyn.Server.Domain.StoreSections.StoreSection", b =>
-                {
-                    b.HasOne("Cooklyn.Server.Domain.Tenants.Tenant", null)
-                        .WithMany()
-                        .HasForeignKey("TenantId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_store_sections_tenants_tenant_id");
-                });
-
-            modelBuilder.Entity("Cooklyn.Server.Domain.Stores.Store", b =>
-                {
-                    b.HasOne("Cooklyn.Server.Domain.Tenants.Tenant", null)
-                        .WithMany()
-                        .HasForeignKey("TenantId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_stores_tenants_tenant_id");
                 });
 
             modelBuilder.Entity("Cooklyn.Server.Domain.Stores.StoreAisle", b =>
@@ -1893,42 +1401,6 @@ namespace Cooklyn.Server.Migrations
                     b.Navigation("ItemCollection");
                 });
 
-            modelBuilder.Entity("Cooklyn.Server.Domain.Tags.Tag", b =>
-                {
-                    b.HasOne("Cooklyn.Server.Domain.Tenants.Tenant", null)
-                        .WithMany()
-                        .HasForeignKey("TenantId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_tags_tenants_tenant_id");
-                });
-
-            modelBuilder.Entity("Cooklyn.Server.Domain.Users.User", b =>
-                {
-                    b.HasOne("Cooklyn.Server.Domain.Stores.Store", null)
-                        .WithMany()
-                        .HasForeignKey("DefaultStoreId")
-                        .OnDelete(DeleteBehavior.SetNull)
-                        .HasConstraintName("fk_users_stores_default_store_id");
-
-                    b.HasOne("Cooklyn.Server.Domain.Tenants.Tenant", null)
-                        .WithMany()
-                        .HasForeignKey("TenantId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired()
-                        .HasConstraintName("fk_users_tenants_tenant_id");
-                });
-
-            modelBuilder.Entity("Cooklyn.Server.Domain.Users.UserPermission", b =>
-                {
-                    b.HasOne("Cooklyn.Server.Domain.Users.User", null)
-                        .WithMany("UserPermissions")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_user_permissions_users_user_id");
-                });
-
             modelBuilder.Entity("Cooklyn.Server.Domain.ItemCollections.ItemCollection", b =>
                 {
                     b.Navigation("Items");
@@ -1965,11 +1437,6 @@ namespace Cooklyn.Server.Migrations
                     b.Navigation("StoreAisles");
 
                     b.Navigation("StoreDefaultCollections");
-                });
-
-            modelBuilder.Entity("Cooklyn.Server.Domain.Users.User", b =>
-                {
-                    b.Navigation("UserPermissions");
                 });
 #pragma warning restore 612, 618
         }

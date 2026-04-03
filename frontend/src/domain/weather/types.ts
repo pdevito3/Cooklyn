@@ -9,6 +9,3 @@ export interface WeatherForecast {
   summary: string
 }
 
-export interface SecureWeatherForecast extends WeatherForecast {
-  requestedBy: string
-}

@@ -4,7 +4,6 @@ using Asp.Versioning;
 using Dtos;
 using Features;
 using MediatR;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Resources;
 using Resources.Extensions;
@@ -17,7 +16,6 @@ public sealed class RecipesController(IMediator mediator) : ControllerBase
     /// <summary>
     /// Gets a single Recipe by ID.
     /// </summary>
-    [Authorize]
     [HttpGet("{id}", Name = "GetRecipe")]
     [ProducesResponseType(typeof(RecipeDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -31,7 +29,6 @@ public sealed class RecipesController(IMediator mediator) : ControllerBase
     /// <summary>
     /// Gets a paginated list of Recipes.
     /// </summary>
-    [Authorize]
     [HttpGet(Name = "GetRecipeList")]
     [ProducesResponseType(typeof(PagedList<RecipeSummaryDto>), StatusCodes.Status200OK)]
     public async Task<ActionResult<PagedList<RecipeSummaryDto>>> GetRecipeList(
@@ -48,7 +45,6 @@ public sealed class RecipesController(IMediator mediator) : ControllerBase
     /// <summary>
     /// Creates a new Recipe.
     /// </summary>
-    [Authorize]
     [HttpPost(Name = "AddRecipe")]
     [ProducesResponseType(typeof(RecipeDto), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -66,7 +62,6 @@ public sealed class RecipesController(IMediator mediator) : ControllerBase
     /// <summary>
     /// Updates an existing Recipe.
     /// </summary>
-    [Authorize]
     [HttpPut("{id}", Name = "UpdateRecipe")]
     [ProducesResponseType(typeof(RecipeDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -83,7 +78,6 @@ public sealed class RecipesController(IMediator mediator) : ControllerBase
     /// <summary>
     /// Deletes a Recipe.
     /// </summary>
-    [Authorize]
     [HttpDelete("{id}", Name = "DeleteRecipe")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -97,7 +91,6 @@ public sealed class RecipesController(IMediator mediator) : ControllerBase
     /// <summary>
     /// Updates the rating of a Recipe.
     /// </summary>
-    [Authorize]
     [HttpPut("{id}/rating", Name = "UpdateRecipeRating")]
     [ProducesResponseType(typeof(RecipeDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -114,7 +107,6 @@ public sealed class RecipesController(IMediator mediator) : ControllerBase
     /// <summary>
     /// Updates the tags of a Recipe.
     /// </summary>
-    [Authorize]
     [HttpPut("{id}/tags", Name = "UpdateRecipeTags")]
     [ProducesResponseType(typeof(RecipeDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -131,7 +123,6 @@ public sealed class RecipesController(IMediator mediator) : ControllerBase
     /// <summary>
     /// Updates the flags of a Recipe.
     /// </summary>
-    [Authorize]
     [HttpPut("{id}/flags", Name = "UpdateRecipeFlags")]
     [ProducesResponseType(typeof(RecipeDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -148,7 +139,6 @@ public sealed class RecipesController(IMediator mediator) : ControllerBase
     /// <summary>
     /// Updates the ingredients of a Recipe.
     /// </summary>
-    [Authorize]
     [HttpPut("{id}/ingredients", Name = "UpdateRecipeIngredients")]
     [ProducesResponseType(typeof(RecipeDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -165,7 +155,6 @@ public sealed class RecipesController(IMediator mediator) : ControllerBase
     /// <summary>
     /// Parses free-text ingredients into structured data.
     /// </summary>
-    [Authorize]
     [HttpPost("parse-ingredients", Name = "ParseIngredients")]
     [ProducesResponseType(typeof(IReadOnlyList<IngredientForCreationDto>), StatusCodes.Status200OK)]
     public async Task<ActionResult<IReadOnlyList<IngredientForCreationDto>>> ParseIngredients(
@@ -179,7 +168,6 @@ public sealed class RecipesController(IMediator mediator) : ControllerBase
     /// <summary>
     /// Imports a recipe from a URL and returns a preview.
     /// </summary>
-    [Authorize]
     [HttpPost("import/preview", Name = "ImportRecipePreview")]
     [ProducesResponseType(typeof(ImportRecipePreviewDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -194,7 +182,6 @@ public sealed class RecipesController(IMediator mediator) : ControllerBase
     /// <summary>
     /// Uploads a recipe image from an external URL.
     /// </summary>
-    [Authorize]
     [HttpPost("{id}/image-from-url", Name = "UploadRecipeImageFromUrl")]
     [ProducesResponseType(typeof(RecipeImageDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -211,7 +198,6 @@ public sealed class RecipesController(IMediator mediator) : ControllerBase
     /// <summary>
     /// Uploads an image for a Recipe.
     /// </summary>
-    [Authorize]
     [HttpPost("{id}/image", Name = "UploadRecipeImage")]
     [ProducesResponseType(typeof(RecipeImageDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -228,7 +214,6 @@ public sealed class RecipesController(IMediator mediator) : ControllerBase
     /// <summary>
     /// Deletes the image of a Recipe.
     /// </summary>
-    [Authorize]
     [HttpDelete("{id}/image", Name = "DeleteRecipeImage")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -242,7 +227,6 @@ public sealed class RecipesController(IMediator mediator) : ControllerBase
     /// <summary>
     /// Previews a Copy Me That ZIP import, returning all found recipes with duplicate detection.
     /// </summary>
-    [Authorize]
     [HttpPost("import/cmt/preview", Name = "PreviewCmtImport")]
     [ProducesResponseType(typeof(CmtImportPreviewDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -258,7 +242,6 @@ public sealed class RecipesController(IMediator mediator) : ControllerBase
     /// <summary>
     /// Imports selected recipes from a Copy Me That ZIP export.
     /// </summary>
-    [Authorize]
     [HttpPost("import/cmt", Name = "ImportCmtRecipes")]
     [ProducesResponseType(typeof(CmtImportResultDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -282,7 +265,6 @@ public sealed class RecipesController(IMediator mediator) : ControllerBase
     /// <summary>
     /// Proxies an external image to avoid CORS issues when cropping.
     /// </summary>
-    [Authorize]
     [HttpGet("proxy-image", Name = "ProxyImage")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]

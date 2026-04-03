@@ -1,7 +1,6 @@
 namespace Cooklyn.Server.Databases.EntityConfigurations;
 
 using Domain.SavedFilters;
-using Domain.Tenants;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -23,18 +22,10 @@ public sealed class SavedFilterConfiguration : IEntityTypeConfiguration<SavedFil
         builder.Property(e => e.FilterStateJson)
             .IsRequired();
 
-        builder.Property(e => e.TenantId)
-            .IsRequired();
-
-        builder.HasOne<Tenant>()
-            .WithMany()
-            .HasForeignKey(e => e.TenantId)
-            .OnDelete(DeleteBehavior.Cascade);
-
-        // Unique filter name per tenant and context
-        builder.HasIndex(e => new { e.TenantId, e.Name, e.Context })
+        // Unique filter name per context
+        builder.HasIndex(e => new { e.Name, e.Context })
             .IsUnique();
 
-        builder.HasIndex(e => new { e.TenantId, e.Context });
+        builder.HasIndex(e => e.Context);
     }
 }

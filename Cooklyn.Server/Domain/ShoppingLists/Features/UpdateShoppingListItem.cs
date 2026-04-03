@@ -4,8 +4,8 @@ using Databases;
 using Dtos;
 using Mappings;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using Services;
+using Microsoft.EntityFrameworkCore;
 
 public static class UpdateShoppingListItem
 {
@@ -13,9 +13,7 @@ public static class UpdateShoppingListItem
 
     public sealed class Handler(
         AppDbContext dbContext,
-        IItemCategoryResolver itemCategoryResolver,
-        ITenantIdProvider tenantIdProvider,
-        ICurrentUserService currentUserService) : IRequestHandler<Command, ShoppingListDto>
+        IItemCategoryResolver itemCategoryResolver) : IRequestHandler<Command, ShoppingListDto>
     {
         public async Task<ShoppingListDto> Handle(Command request, CancellationToken cancellationToken)
         {
@@ -37,12 +35,7 @@ public static class UpdateShoppingListItem
             // If user changed the store section, upsert the mapping for future auto-categorization
             if (item.StoreSectionId != null && item.StoreSectionId != oldStoreSectionId)
             {
-                var tenantId = currentUserService.UserIdentifier != null
-                    ? await tenantIdProvider.GetTenantIdAsync(currentUserService.UserIdentifier, cancellationToken)
-                    : null;
-
-                if (tenantId != null)
-                    await itemCategoryResolver.UpsertMappingAsync(item.Name, item.StoreSectionId, tenantId, cancellationToken);
+                await itemCategoryResolver.UpsertMappingAsync(item.Name, item.StoreSectionId, cancellationToken);
             }
 
             return shoppingList.ToShoppingListDto();

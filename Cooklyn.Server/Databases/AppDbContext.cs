@@ -7,28 +7,20 @@ using Domain.Recipes;
 using Domain.RecentSearches;
 using Domain.MealPlans;
 using Domain.SavedFilters;
+using Domain.Settings;
 using Domain.ShoppingLists;
 using Domain.StoreSections;
 using Domain.Stores;
 using Domain.Tags;
-using Domain.Tenants;
-using Domain.Users;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Services;
 
 public class AppDbContext(
     DbContextOptions<AppDbContext> options,
     TimeProvider timeProvider,
-    ICurrentUserService currentUserService,
-    ITenantIdProvider tenantIdProvider,
     IMediator mediator) : DbContext(options)
 {
     #region DbSet Region
-    public DbSet<Tenant> Tenants => Set<Tenant>();
-    public DbSet<User> Users => Set<User>();
-    public DbSet<UserPermission> UserPermissions => Set<UserPermission>();
-
     public DbSet<Tag> Tags => Set<Tag>();
     public DbSet<Recipe> Recipes => Set<Recipe>();
     public DbSet<RecipeTag> RecipeTags => Set<RecipeTag>();
@@ -56,24 +48,9 @@ public class AppDbContext(
 
     public DbSet<SavedFilter> SavedFilters => Set<SavedFilter>();
     public DbSet<RecentSearch> RecentSearches => Set<RecentSearch>();
+
+    public DbSet<Setting> Settings => Set<Setting>();
     #endregion
-
-    /// <summary>
-    /// The current user's tenant ID for query filtering.
-    /// Returns null to allow access to all tenants (e.g., for system operations or unauthenticated requests).
-    /// </summary>
-    public string? CurrentTenantId
-    {
-        get
-        {
-            var userIdentifier = currentUserService.UserIdentifier;
-            if (userIdentifier == null)
-                return null;
-
-            // FusionCache handles caching internally, so this is fast on subsequent calls
-            return tenantIdProvider.GetTenantIdAsync(userIdentifier).GetAwaiter().GetResult();
-        }
-    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -82,7 +59,6 @@ public class AppDbContext(
         // Automatically discovers and applies all IEntityTypeConfiguration<T> implementations in the assembly
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
         modelBuilder.FilterSoftDeletedRecords();
-        modelBuilder.FilterByTenant(this);
     }
 
     public override int SaveChanges()
@@ -142,17 +118,17 @@ public class AppDbContext(
             switch (entry.State)
             {
                 case EntityState.Added:
-                    entry.Entity.UpdateCreationProperties(now, currentUserService.UserIdentifier);
-                    entry.Entity.UpdateModifiedProperties(now, currentUserService.UserIdentifier);
+                    entry.Entity.UpdateCreationProperties(now);
+                    entry.Entity.UpdateModifiedProperties(now);
                     break;
 
                 case EntityState.Modified:
-                    entry.Entity.UpdateModifiedProperties(now, currentUserService.UserIdentifier);
+                    entry.Entity.UpdateModifiedProperties(now);
                     break;
 
                 case EntityState.Deleted:
                     entry.State = EntityState.Modified;
-                    entry.Entity.UpdateModifiedProperties(now, currentUserService.UserIdentifier);
+                    entry.Entity.UpdateModifiedProperties(now);
                     entry.Entity.UpdateIsDeleted(true);
                     break;
             }

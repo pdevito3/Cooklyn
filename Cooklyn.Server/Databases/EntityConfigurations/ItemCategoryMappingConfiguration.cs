@@ -2,7 +2,6 @@ namespace Cooklyn.Server.Databases.EntityConfigurations;
 
 using Domain.ItemCategoryMappings;
 using Domain.StoreSections;
-using Domain.Tenants;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -17,20 +16,12 @@ public sealed class ItemCategoryMappingConfiguration : IEntityTypeConfiguration<
             .IsRequired()
             .HasMaxLength(300);
 
-        builder.Property(e => e.TenantId)
-            .IsRequired();
-
         builder.Property(e => e.StoreSectionId)
             .IsRequired();
 
         builder.HasOne<StoreSection>()
             .WithMany()
             .HasForeignKey(e => e.StoreSectionId)
-            .OnDelete(DeleteBehavior.Cascade);
-
-        builder.HasOne<Tenant>()
-            .WithMany()
-            .HasForeignKey(e => e.TenantId)
             .OnDelete(DeleteBehavior.Cascade);
 
         builder.ComplexProperty(e => e.Source, source =>
@@ -41,11 +32,9 @@ public sealed class ItemCategoryMappingConfiguration : IEntityTypeConfiguration<
                 .IsRequired();
         });
 
-        // Unique normalized name per tenant (excluding soft-deleted records)
-        builder.HasIndex(e => new { e.TenantId, e.NormalizedName })
+        // Unique normalized name (excluding soft-deleted records)
+        builder.HasIndex(e => e.NormalizedName)
             .IsUnique()
             .HasFilter("is_deleted = false");
-
-        builder.HasIndex(e => e.TenantId);
     }
 }

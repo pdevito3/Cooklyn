@@ -7,7 +7,7 @@ import {
   useAddMultipleShoppingListItems,
 } from '@/domain/shopping-lists/apis/shopping-list-mutations'
 import type { ShoppingListItemForCreationDto } from '@/domain/shopping-lists/types'
-import { useMyDefaultStore } from '@/domain/users/apis/get-my-default-store'
+import { useDefaultStore } from '@/domain/settings/apis/get-setting'
 import { parseText } from '@/domain/recipes/utils/ingredient-parser'
 import { Button } from '@/components/ui/button'
 import { Kbd } from '@/components/ui/kbd'
@@ -39,7 +39,7 @@ const NEW_LIST_VALUE = '__new__'
 
 export function QuickAddDialog({ open, onOpenChange }: QuickAddDialogProps) {
   const { data: listsData } = useShoppingLists({ pageSize: 100 })
-  const { data: defaultStoreId } = useMyDefaultStore()
+  const { data: defaultStoreId } = useDefaultStore()
   const createList = useCreateShoppingList()
   const addItems = useAddMultipleShoppingListItems()
 

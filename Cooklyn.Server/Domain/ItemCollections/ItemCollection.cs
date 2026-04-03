@@ -4,9 +4,8 @@ using Exceptions;
 using ItemCollections.DomainEvents;
 using ItemCollections.Models;
 
-public class ItemCollection : BaseEntity, ITenantable
+public class ItemCollection : BaseEntity
 {
-    public string TenantId { get; private set; } = default!;
     public string Name { get; private set; } = default!;
 
     private readonly List<ItemCollectionItem> _items = [];
@@ -16,7 +15,6 @@ public class ItemCollection : BaseEntity, ITenantable
     {
         var collection = new ItemCollection
         {
-            TenantId = forCreation.TenantId,
             Name = forCreation.Name
         };
 
@@ -38,7 +36,6 @@ public class ItemCollection : BaseEntity, ITenantable
 
     private static void ValidateItemCollection(ItemCollection collection)
     {
-        ValidationException.ThrowWhenNullOrWhitespace(collection.TenantId, "Please provide a tenant.");
         ValidationException.ThrowWhenNullOrWhitespace(collection.Name, "Please provide a collection name.");
     }
 

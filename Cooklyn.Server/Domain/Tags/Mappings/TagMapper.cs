@@ -7,8 +7,6 @@ using Riok.Mapperly.Abstractions;
 [Mapper]
 public static partial class TagMapper
 {
-    [MapperIgnoreSource(nameof(Tag.CreatedBy))]
-    [MapperIgnoreSource(nameof(Tag.LastModifiedBy))]
     [MapperIgnoreSource(nameof(Tag.CreatedOn))]
     [MapperIgnoreSource(nameof(Tag.LastModifiedOn))]
     [MapperIgnoreSource(nameof(Tag.IsDeleted))]
@@ -17,11 +15,10 @@ public static partial class TagMapper
 
     public static partial IQueryable<TagDto> ToTagDtoQueryable(this IQueryable<Tag> queryable);
 
-    public static TagForCreation ToTagForCreation(this TagForCreationDto dto, string tenantId)
+    public static TagForCreation ToTagForCreation(this TagForCreationDto dto)
     {
         return new TagForCreation
         {
-            TenantId = tenantId,
             Name = dto.Name
         };
     }

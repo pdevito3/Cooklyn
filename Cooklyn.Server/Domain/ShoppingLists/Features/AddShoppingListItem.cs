@@ -4,8 +4,8 @@ using Databases;
 using Dtos;
 using Mappings;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using Services;
+using Microsoft.EntityFrameworkCore;
 
 public static class AddShoppingListItem
 {
@@ -13,9 +13,7 @@ public static class AddShoppingListItem
 
     public sealed class Handler(
         AppDbContext dbContext,
-        IItemCategoryResolver itemCategoryResolver,
-        ITenantIdProvider tenantIdProvider,
-        ICurrentUserService currentUserService) : IRequestHandler<Command, ShoppingListDto>
+        IItemCategoryResolver itemCategoryResolver) : IRequestHandler<Command, ShoppingListDto>
     {
         public async Task<ShoppingListDto> Handle(Command request, CancellationToken cancellationToken)
         {
@@ -32,16 +30,9 @@ public static class AddShoppingListItem
 
             if (forCreation.StoreSectionId is null)
             {
-                var tenantId = currentUserService.UserIdentifier != null
-                    ? await tenantIdProvider.GetTenantIdAsync(currentUserService.UserIdentifier, cancellationToken)
-                    : null;
-
-                if (tenantId != null)
-                {
-                    var resolvedSectionId = await itemCategoryResolver.ResolveAsync(forCreation.Name, tenantId, cancellationToken);
-                    if (resolvedSectionId != null)
-                        forCreation = forCreation with { StoreSectionId = resolvedSectionId };
-                }
+                var resolvedSectionId = await itemCategoryResolver.ResolveAsync(forCreation.Name, cancellationToken);
+                if (resolvedSectionId != null)
+                    forCreation = forCreation with { StoreSectionId = resolvedSectionId };
             }
 
             var item = ShoppingListItem.Create(forCreation);

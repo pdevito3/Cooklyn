@@ -4,9 +4,8 @@ using Exceptions;
 using RecentSearches.DomainEvents;
 using RecentSearches.Models;
 
-public class RecentSearch : BaseEntity, ITenantable
+public class RecentSearch : BaseEntity
 {
-    public string TenantId { get; private set; } = default!;
     public string SearchType { get; private set; } = default!;
     public string SearchText { get; private set; } = default!;
     public string? ResourceType { get; private set; }
@@ -16,7 +15,6 @@ public class RecentSearch : BaseEntity, ITenantable
     {
         var recentSearch = new RecentSearch
         {
-            TenantId = forCreation.TenantId,
             SearchType = forCreation.SearchType,
             SearchText = forCreation.SearchText,
             ResourceType = forCreation.ResourceType,
@@ -31,7 +29,6 @@ public class RecentSearch : BaseEntity, ITenantable
 
     private static void Validate(RecentSearch recentSearch)
     {
-        ValidationException.ThrowWhenNullOrWhitespace(recentSearch.TenantId, "Please provide a tenant.");
         ValidationException.ThrowWhenNullOrWhitespace(recentSearch.SearchType, "Please provide a search type.");
         ValidationException.ThrowWhenNullOrWhitespace(recentSearch.SearchText, "Please provide search text.");
         ValidationException.Must(

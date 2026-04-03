@@ -32,7 +32,6 @@
     <PackageReference Include="ZiggyCreatures.FusionCache" />
     <PackageReference Include="AWSSDK.S3" />
     <PackageReference Include="AngleSharp" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
     <PackageReference Include="Swashbuckle.AspNetCore" />
     <PackageReference Include="Microsoft.OpenApi" />

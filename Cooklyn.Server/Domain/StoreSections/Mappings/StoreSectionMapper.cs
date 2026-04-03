@@ -7,8 +7,6 @@ using Riok.Mapperly.Abstractions;
 [Mapper]
 public static partial class StoreSectionMapper
 {
-    [MapperIgnoreSource(nameof(StoreSection.CreatedBy))]
-    [MapperIgnoreSource(nameof(StoreSection.LastModifiedBy))]
     [MapperIgnoreSource(nameof(StoreSection.CreatedOn))]
     [MapperIgnoreSource(nameof(StoreSection.LastModifiedOn))]
     [MapperIgnoreSource(nameof(StoreSection.IsDeleted))]
@@ -17,11 +15,10 @@ public static partial class StoreSectionMapper
 
     public static partial IQueryable<StoreSectionDto> ToStoreSectionDtoQueryable(this IQueryable<StoreSection> queryable);
 
-    public static StoreSectionForCreation ToStoreSectionForCreation(this StoreSectionForCreationDto dto, string tenantId)
+    public static StoreSectionForCreation ToStoreSectionForCreation(this StoreSectionForCreationDto dto)
     {
         return new StoreSectionForCreation
         {
-            TenantId = tenantId,
             Name = dto.Name
         };
     }

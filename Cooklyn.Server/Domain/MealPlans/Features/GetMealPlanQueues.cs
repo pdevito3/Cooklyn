@@ -5,8 +5,8 @@ using Domain.Recipes;
 using Dtos;
 using Mappings;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using Services;
+using Microsoft.EntityFrameworkCore;
 
 public static class GetMealPlanQueues
 {
@@ -14,15 +14,10 @@ public static class GetMealPlanQueues
 
     public sealed class Handler(
         AppDbContext dbContext,
-        ITenantIdProvider tenantIdProvider,
-        ICurrentUserService currentUserService,
         IFileStorage fileStorage) : IRequestHandler<Query, IReadOnlyList<MealPlanQueueDto>>
     {
         public async Task<IReadOnlyList<MealPlanQueueDto>> Handle(Query request, CancellationToken cancellationToken)
         {
-            var tenantId = await tenantIdProvider.GetTenantIdAsync(currentUserService.UserIdentifier!)
-                ?? throw new Exceptions.ValidationException(nameof(MealPlanQueue), "Unable to determine tenant.");
-
             var queues = await dbContext.MealPlanQueues
                 .AsNoTracking()
                 .Include(q => q.Items.OrderBy(i => i.SortOrder))
@@ -33,7 +28,7 @@ public static class GetMealPlanQueues
             // Auto-create default queue if none exists
             if (!queues.Any(q => q.IsDefault))
             {
-                var defaultQueue = MealPlanQueue.CreateDefault(tenantId);
+                var defaultQueue = MealPlanQueue.CreateDefault();
                 await dbContext.MealPlanQueues.AddAsync(defaultQueue, cancellationToken);
                 await dbContext.SaveChangesAsync(cancellationToken);
 

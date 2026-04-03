@@ -4,9 +4,8 @@ using Exceptions;
 using Stores.DomainEvents;
 using Stores.Models;
 
-public class Store : BaseEntity, ITenantable
+public class Store : BaseEntity
 {
-    public string TenantId { get; private set; } = default!;
     public string Name { get; private set; } = default!;
     public string? Address { get; private set; }
 
@@ -20,7 +19,6 @@ public class Store : BaseEntity, ITenantable
     {
         var store = new Store
         {
-            TenantId = forCreation.TenantId,
             Name = forCreation.Name,
             Address = forCreation.Address
         };
@@ -60,7 +58,6 @@ public class Store : BaseEntity, ITenantable
 
     private static void ValidateStore(Store store)
     {
-        ValidationException.ThrowWhenNullOrWhitespace(store.TenantId, "Please provide a tenant.");
         ValidationException.ThrowWhenNullOrWhitespace(store.Name, "Please provide a store name.");
     }
 

@@ -3,7 +3,6 @@ namespace Cooklyn.Server.Resources.Extensions;
 using Databases;
 using Domain.Recipes.Importing;
 using Domain.Recipes.Importing.CopyMeThat;
-using ExceptionHandlers;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.EntityFrameworkCore;
 using ZiggyCreatures.Caching.Fusion;
@@ -13,9 +12,7 @@ public static class WebAppServiceConfiguration
     public static void ConfigureServices(this WebApplicationBuilder builder)
     {
         builder.Services.AddSingleton(TimeProvider.System);
-        builder.Services.AddExceptionHandler<AutoProvisionTenantExceptionHandler>();
         builder.Services.AddProblemDetails();
-        builder.Services.AddHttpContextAccessor();
         builder.Services.AddFusionCache()
             .WithDefaultEntryOptions(options =>
             {
@@ -29,14 +26,23 @@ public static class WebAppServiceConfiguration
         builder.Services.AddApiVersioningExtension();
         builder.Services.AddControllers();
         builder.Services.AddSwaggerExtension(builder.Configuration);
-        builder.Services.AddJwtBearerAuthentication(builder.Configuration, builder.Environment);
+
+        builder.Services.AddCors(options =>
+        {
+            options.AddDefaultPolicy(policy =>
+            {
+                var frontendUrl = builder.Configuration["services:webfrontend:https:0"]
+                    ?? builder.Configuration["services:webfrontend:http:0"]
+                    ?? "http://localhost:6179";
+                policy.WithOrigins(frontendUrl)
+                    .AllowAnyHeader()
+                    .AllowAnyMethod();
+            });
+        });
 
         builder.Services.AddDbContext<AppDbContext>((serviceProvider, options) =>
         {
-            // use this to account for malformed DATABASE_URL from Northflank. Please remove it if you don't need it
-            var connectionString = ConnectionStringHelper
-                .ConvertPostgresUri(builder.Configuration.GetConnectionString(DatabaseConsts.DatabaseName));
-            // var connectionString = builder.Configuration.GetConnectionString(DatabaseConsts.DatabaseName);
+            var connectionString = builder.Configuration.GetConnectionString(DatabaseConsts.DatabaseName);
 
             options.UseNpgsql(connectionString)
                 .UseSnakeCaseNamingConvention();

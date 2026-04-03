@@ -19,7 +19,7 @@ export interface ApiClientRequestConfig extends AxiosRequestConfig {
 }
 
 /**
- * Axios instance configured for BFF API calls with CSRF protection and credentials.
+ * Axios instance configured for API calls.
  *
  * Usage:
  *   import { apiClient } from '@/lib/api-client'
@@ -32,12 +32,7 @@ export interface ApiClientRequestConfig extends AxiosRequestConfig {
  *
  *   const response = await apiClient.get('/api/something', { suppressErrorToast: true })
  */
-export const apiClient = axios.create({
-  withCredentials: true, // Required to send cookies cross-origin
-  headers: {
-    'X-CSRF': '1', // BFF CSRF protection header
-  },
-})
+export const apiClient = axios.create()
 
 /**
  * Extracts a user-friendly error message from a Problem Details response
@@ -90,12 +85,6 @@ apiClient.interceptors.response.use(
     if (!axios.isAxiosError(error)) {
       // Not an Axios error, re-throw as-is
       return Promise.reject(error)
-    }
-
-    // Session expired — redirect to IdP login
-    if (error.response?.status === 401) {
-      window.location.href = `/bff/login?returnUrl=${encodeURIComponent(window.location.pathname)}`
-      return new Promise(() => {})
     }
 
     // Convert to appropriate error type

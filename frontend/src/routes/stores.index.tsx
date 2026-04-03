@@ -9,7 +9,7 @@ import {
   useCreateStore,
   useDeleteStore,
 } from '@/domain/stores/apis/store-mutations'
-import { useMyDefaultStore } from '@/domain/users/apis/get-my-default-store'
+import { useDefaultStore } from '@/domain/settings/apis/get-setting'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -42,7 +42,7 @@ export const Route = createFileRoute('/stores/')({
 function StoresIndexPage() {
   const navigate = useNavigate()
   const { data, isLoading, error } = useStores({ pageSize: 100 })
-  const { data: defaultStoreId } = useMyDefaultStore()
+  const { data: defaultStoreId } = useDefaultStore()
   const createStore = useCreateStore()
   const deleteStoreMutation = useDeleteStore()
   const [createOpen, setCreateOpen] = useState(false)

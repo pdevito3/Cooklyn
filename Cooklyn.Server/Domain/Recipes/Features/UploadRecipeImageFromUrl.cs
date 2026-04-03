@@ -54,8 +54,7 @@ public static class UploadRecipeImageFromUrl
             await networkStream.CopyToAsync(memoryStream, cancellationToken);
             memoryStream.Position = 0;
 
-            // Generate unique key with tenant isolation
-            var key = $"recipes/{recipe.TenantId}/{recipe.Id}/{Guid.NewGuid()}{extension}";
+            var key = $"recipes/{recipe.Id}/{Guid.NewGuid()}{extension}";
 
             var uploadedKey = await fileStorage.UploadFileAsync(bucket, key, memoryStream, cancellationToken);
             ValidationException.ThrowWhenNull(uploadedKey, "Failed to upload the image.");

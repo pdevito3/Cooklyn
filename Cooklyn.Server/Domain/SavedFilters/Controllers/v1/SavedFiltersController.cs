@@ -4,7 +4,6 @@ using Asp.Versioning;
 using Dtos;
 using Features;
 using MediatR;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Resources;
 using Resources.Extensions;
@@ -17,7 +16,6 @@ public sealed class SavedFiltersController(IMediator mediator) : ControllerBase
     /// <summary>
     /// Gets a single SavedFilter by ID.
     /// </summary>
-    [Authorize]
     [HttpGet("{id}", Name = "GetSavedFilter")]
     [ProducesResponseType(typeof(SavedFilterDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -31,7 +29,6 @@ public sealed class SavedFiltersController(IMediator mediator) : ControllerBase
     /// <summary>
     /// Gets a paginated list of SavedFilters filtered by context.
     /// </summary>
-    [Authorize]
     [HttpGet(Name = "GetSavedFilterList")]
     [ProducesResponseType(typeof(PagedList<SavedFilterDto>), StatusCodes.Status200OK)]
     public async Task<ActionResult<PagedList<SavedFilterDto>>> GetSavedFilterList(
@@ -48,7 +45,6 @@ public sealed class SavedFiltersController(IMediator mediator) : ControllerBase
     /// <summary>
     /// Creates a new SavedFilter.
     /// </summary>
-    [Authorize]
     [HttpPost(Name = "AddSavedFilter")]
     [ProducesResponseType(typeof(SavedFilterDto), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -66,7 +62,6 @@ public sealed class SavedFiltersController(IMediator mediator) : ControllerBase
     /// <summary>
     /// Updates an existing SavedFilter.
     /// </summary>
-    [Authorize]
     [HttpPut("{id}", Name = "UpdateSavedFilter")]
     [ProducesResponseType(typeof(SavedFilterDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -83,7 +78,6 @@ public sealed class SavedFiltersController(IMediator mediator) : ControllerBase
     /// <summary>
     /// Deletes a SavedFilter.
     /// </summary>
-    [Authorize]
     [HttpDelete("{id}", Name = "DeleteSavedFilter")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]

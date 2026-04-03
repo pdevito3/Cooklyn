@@ -7,8 +7,6 @@ using Riok.Mapperly.Abstractions;
 [Mapper]
 public static partial class SavedFilterMapper
 {
-    [MapperIgnoreSource(nameof(SavedFilter.CreatedBy))]
-    [MapperIgnoreSource(nameof(SavedFilter.LastModifiedBy))]
     [MapperIgnoreSource(nameof(SavedFilter.CreatedOn))]
     [MapperIgnoreSource(nameof(SavedFilter.LastModifiedOn))]
     [MapperIgnoreSource(nameof(SavedFilter.IsDeleted))]
@@ -17,11 +15,10 @@ public static partial class SavedFilterMapper
 
     public static partial IQueryable<SavedFilterDto> ToSavedFilterDtoQueryable(this IQueryable<SavedFilter> queryable);
 
-    public static SavedFilterForCreation ToSavedFilterForCreation(this SavedFilterForCreationDto dto, string tenantId)
+    public static SavedFilterForCreation ToSavedFilterForCreation(this SavedFilterForCreationDto dto)
     {
         return new SavedFilterForCreation
         {
-            TenantId = tenantId,
             Name = dto.Name,
             Context = dto.Context,
             FilterStateJson = dto.FilterStateJson

@@ -4,16 +4,14 @@ using Exceptions;
 using Tags.DomainEvents;
 using Tags.Models;
 
-public class Tag : BaseEntity, ITenantable
+public class Tag : BaseEntity
 {
-    public string TenantId { get; private set; } = default!;
     public string Name { get; private set; } = default!;
 
     public static Tag Create(TagForCreation tagForCreation)
     {
         var tag = new Tag
         {
-            TenantId = tagForCreation.TenantId,
             Name = tagForCreation.Name
         };
 
@@ -35,7 +33,6 @@ public class Tag : BaseEntity, ITenantable
 
     private static void ValidateTag(Tag tag)
     {
-        ValidationException.ThrowWhenNullOrWhitespace(tag.TenantId, "Please provide a tenant.");
         ValidationException.ThrowWhenNullOrWhitespace(tag.Name, "Please provide a tag name.");
     }
 

@@ -29,26 +29,11 @@ export default defineConfig({
   },
   server: {
     proxy: {
-      // BFF management endpoints (login, logout, user)
-      '/bff': {
-        target: process.env.BFF_HTTPS || process.env.BFF_HTTP,
-        changeOrigin: true,
-        secure: false,
-      },
-      // OIDC callback endpoints
-      '/signin-oidc': {
-        target: process.env.BFF_HTTPS || process.env.BFF_HTTP,
-        changeOrigin: true,
-        secure: false,
-      },
-      '/signout-callback-oidc': {
-        target: process.env.BFF_HTTPS || process.env.BFF_HTTP,
-        changeOrigin: true,
-        secure: false,
-      },
-      // API calls proxied through BFF
       '/api': {
-        target: process.env.BFF_HTTPS || process.env.BFF_HTTP,
+        target:
+          process.env.services__server__https__0 ||
+          process.env.services__server__http__0 ||
+          'http://localhost:5000',
         changeOrigin: true,
         secure: false,
       },
