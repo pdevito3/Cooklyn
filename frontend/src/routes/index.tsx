@@ -1,213 +1,357 @@
-import { useState } from 'react'
-import { createFileRoute } from '@tanstack/react-router'
-import { useQueryClient } from '@tanstack/react-query'
-import {
-  RotateClockwiseIcon,
-  CloudIcon,
-} from '@hugeicons/core-free-icons'
-import { HugeiconsIcon } from '@hugeicons/react'
+import { useRef, useState } from 'react'
+import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
+import { useHotkeys } from 'react-hotkeys-hook'
+import { format, startOfWeek, endOfWeek, addDays, isToday } from 'date-fns'
 
-import { useWeatherForecast } from '@/domain/weather/apis/get-weather'
-import { WeatherKeys } from '@/domain/weather/apis/weather.keys'
+import { useMealPlanCalendar } from '@/domain/meal-plans/apis/get-meal-plan-calendar'
+import { useShoppingLists } from '@/domain/shopping-lists/apis/get-shopping-lists'
+import { useAddShoppingListItem } from '@/domain/shopping-lists/apis/shopping-list-mutations'
+import { useRecipes } from '@/domain/recipes/apis/get-recipes'
+import { useStores } from '@/domain/stores/apis/get-stores'
 import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
-import {
-  Tooltip,
-  TooltipTrigger,
-  TooltipContent,
-} from '@/components/ui/tooltip'
+import { Kbd } from '@/components/ui/kbd'
+import { cn } from '@/lib/utils'
 
 export const Route = createFileRoute('/')({
-  component: Index,
+  component: Dashboard,
 })
 
-function Index() {
-  const [useCelsius, setUseCelsius] = useState(false)
-  const queryClient = useQueryClient()
+function getGreeting(): string {
+  const hour = new Date().getHours()
+  if (hour < 12) return 'Good morning'
+  if (hour < 18) return 'Good afternoon'
+  return 'Good evening'
+}
 
-  const {
-    data: weatherData = [],
-    isLoading: loading,
-    error,
-    isFetching,
-  } = useWeatherForecast()
+function Dashboard() {
+  const navigate = useNavigate()
+  const searchRef = useRef<HTMLInputElement>(null)
+  const [searchQuery, setSearchQuery] = useState('')
 
-  const handleRefresh = () => {
-    queryClient.invalidateQueries({ queryKey: WeatherKeys.all })
-  }
+  // Week range (Monday–Sunday)
+  const now = new Date()
+  const weekStart = startOfWeek(now, { weekStartsOn: 1 })
+  const weekEnd = endOfWeek(now, { weekStartsOn: 1 })
+  const startDate = format(weekStart, 'yyyy-MM-dd')
+  const endDate = format(weekEnd, 'yyyy-MM-dd')
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString(undefined, {
-      weekday: 'short',
-      month: 'short',
-      day: 'numeric',
-    })
+  const { data: days = [], isLoading: mealPlanLoading } = useMealPlanCalendar(
+    startDate,
+    endDate,
+  )
+  const { data: listsData, isLoading: listsLoading } = useShoppingLists({
+    pageSize: 100,
+  })
+  const { data: recipesData } = useRecipes({ pageSize: 1 })
+  const { data: storesData } = useStores({ pageSize: 100 })
+
+  const activeLists =
+    listsData?.items.filter((l) => l.status !== 'Completed') ?? []
+  const storeMap = new Map(storesData?.items.map((s) => [s.id, s.name]) ?? [])
+
+  const totalRecipes = recipesData?.pagination.totalCount ?? 0
+  const mealsThisWeek = days.reduce((sum, d) => sum + d.entries.length, 0)
+
+  // Build full 7-day grid so empty days show too
+  const weekDays = Array.from({ length: 7 }, (_, i) => {
+    const date = addDays(weekStart, i)
+    const key = format(date, 'yyyy-MM-dd')
+    const dayData = days.find((d) => d.date === key)
+    return { date, key, entries: dayData?.entries ?? [] }
+  })
+
+  // Hotkeys
+  useHotkeys(
+    '/',
+    (e) => {
+      e.preventDefault()
+      searchRef.current?.focus()
+    },
+    { preventDefault: true },
+  )
+  useHotkeys('p', () => navigate({ to: '/meal-plan' }))
+  useHotkeys('r', () => navigate({ to: '/recipes' }))
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault()
+    navigate({ to: '/recipes' })
   }
 
   return (
     <div className="min-h-screen bg-background">
-      <main className="max-w-4xl mx-auto px-4 py-8">
+      <main className="mx-auto max-w-6xl px-4 py-8">
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">
-              Weather Forecast
-            </h1>
-            <p className="text-muted-foreground mt-1">
-              .NET Aspire + React
-            </p>
-          </div>
+        <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <h1 className="text-3xl font-bold tracking-tight">
+            {getGreeting()}
+          </h1>
+          <form onSubmit={handleSearch} className="relative w-full sm:w-72">
+            <Input
+              ref={searchRef}
+              placeholder="Search recipes…"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pr-10"
+            />
+            <span className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2">
+              <Kbd>/</Kbd>
+            </span>
+          </form>
         </div>
 
-        {/* Controls Card */}
-        <Card className="mb-6">
-          <CardContent className="pt-6">
-            <div className="flex flex-wrap items-center justify-between gap-4">
-              {/* Left: Unit toggle */}
-              <div className="flex items-center gap-4">
-                <div className="flex items-center rounded-lg border border-border p-1 gap-1">
+        {/* Main grid */}
+        <div className="grid gap-6 lg:grid-cols-2">
+          {/* This Week's Meal Plan */}
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between">
+              <CardTitle>This Week's Meals</CardTitle>
+              <Button variant="ghost" size="sm" render={<Link to="/meal-plan" />}>
+                Plan meals
+              </Button>
+            </CardHeader>
+            <CardContent>
+              {mealPlanLoading ? (
+                <div className="space-y-3">
+                  {Array.from({ length: 7 }, (_, i) => (
+                    <Skeleton key={i} className="h-8 w-full" />
+                  ))}
+                </div>
+              ) : (
+                <div className="space-y-1">
+                  {weekDays.map(({ date, key, entries }) => (
+                    <div
+                      key={key}
+                      className={cn(
+                        'flex gap-3 rounded-md px-2 py-1.5',
+                        isToday(date) && 'bg-accent',
+                      )}
+                    >
+                      <span
+                        className={cn(
+                          'w-16 shrink-0 text-sm font-medium',
+                          isToday(date)
+                            ? 'text-foreground'
+                            : 'text-muted-foreground',
+                        )}
+                      >
+                        {format(date, 'EEE d')}
+                      </span>
+                      <div className="min-w-0 flex-1">
+                        {entries.length > 0 ? (
+                          <div className="space-y-0.5">
+                            {entries.map((entry) => (
+                              <div
+                                key={entry.id}
+                                className="flex items-center gap-2"
+                              >
+                                {entry.imageUrl && (
+                                  <img
+                                    src={entry.imageUrl}
+                                    alt=""
+                                    className="h-5 w-5 rounded object-cover"
+                                  />
+                                )}
+                                <span className="truncate text-sm">
+                                  {entry.title}
+                                </span>
+                              </div>
+                            ))}
+                          </div>
+                        ) : (
+                          <span className="text-sm text-muted-foreground/50">
+                            No meals planned
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Active Shopping Lists */}
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between">
+              <CardTitle>Active Shopping Lists</CardTitle>
+              <Button
+                variant="ghost"
+                size="sm"
+                render={<Link to="/shopping-lists" />}
+              >
+                View all
+              </Button>
+            </CardHeader>
+            <CardContent>
+              {listsLoading ? (
+                <div className="space-y-4">
+                  {Array.from({ length: 3 }, (_, i) => (
+                    <Skeleton key={i} className="h-16 w-full" />
+                  ))}
+                </div>
+              ) : activeLists.length > 0 ? (
+                <div className="space-y-4">
+                  {activeLists.map((list) => (
+                    <ShoppingListCard
+                      key={list.id}
+                      list={list}
+                      storeName={
+                        list.storeId ? storeMap.get(list.storeId) : undefined
+                      }
+                    />
+                  ))}
+                </div>
+              ) : (
+                <div className="py-6 text-center text-sm text-muted-foreground">
+                  <p>No active shopping lists</p>
                   <Button
-                    variant={!useCelsius ? 'default' : 'ghost'}
+                    variant="link"
                     size="sm"
-                    onClick={() => setUseCelsius(false)}
+                    className="mt-1"
+                    render={<Link to="/shopping-lists" />}
                   >
-                    °F
-                  </Button>
-                  <Button
-                    variant={useCelsius ? 'default' : 'ghost'}
-                    size="sm"
-                    onClick={() => setUseCelsius(true)}
-                  >
-                    °C
+                    Create one
                   </Button>
                 </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Bottom row */}
+        <div className="mt-6 grid gap-6 sm:grid-cols-2">
+          {/* Quick Actions */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Quick Actions</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex flex-wrap gap-2">
+                <Button variant="outline" render={<Link to="/meal-plan" />}>
+                  Meal Plan
+                  <Kbd>P</Kbd>
+                </Button>
+                <Button variant="outline" render={<Link to="/recipes" />}>
+                  Recipes
+                  <Kbd>R</Kbd>
+                </Button>
               </div>
+            </CardContent>
+          </Card>
 
-              {/* Right: Refresh button */}
-              <Tooltip>
-                <TooltipTrigger
-                  render={
-                    <Button
-                      variant="outline"
-                      onClick={handleRefresh}
-                      disabled={isFetching}
-                    >
-                      <HugeiconsIcon
-                        icon={RotateClockwiseIcon}
-                        className={`w-4 h-4 mr-2 ${isFetching ? 'animate-spin' : ''}`}
-                      />
-                      Refresh
-                    </Button>
-                  }
-                />
-                <TooltipContent>Fetch latest weather data</TooltipContent>
-              </Tooltip>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Error Message */}
-        {error && (
-          <div className="bg-destructive/10 border border-destructive/20 text-destructive rounded-lg p-4 mb-6">
-            <p className="font-medium">Error loading weather data</p>
-            <p className="text-sm mt-1">
-              {error instanceof Error
-                ? error.message
-                : 'Failed to fetch weather data'}
-            </p>
-          </div>
-        )}
-
-        {/* Loading State */}
-        {loading && weatherData.length === 0 && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {[...Array(6)].map((_, i) => (
-              <Card key={i}>
-                <CardContent className="pt-6">
-                  <Skeleton className="h-4 w-24 mb-2" />
-                  <Skeleton className="h-6 w-32 mb-4" />
-                  <Skeleton className="h-10 w-20" />
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        )}
-
-        {/* Weather Grid */}
-        {weatherData.length > 0 && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {weatherData.map((forecast, index) => (
-              <WeatherCard
-                key={index}
-                forecast={forecast}
-                useCelsius={useCelsius}
-                formatDate={formatDate}
-              />
-            ))}
-          </div>
-        )}
-
-        {/* Empty State */}
-        {!loading && !error && weatherData.length === 0 && (
-          <div className="text-center py-12">
-            <HugeiconsIcon
-              icon={CloudIcon}
-              className="w-12 h-12 mx-auto text-muted-foreground mb-4"
-            />
-            <p className="text-muted-foreground">No weather data available</p>
-            <Button variant="outline" className="mt-4" onClick={handleRefresh}>
-              Try Again
-            </Button>
-          </div>
-        )}
+          {/* Stats */}
+          <Card>
+            <CardHeader>
+              <CardTitle>At a Glance</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm">
+                <span>
+                  <span className="font-semibold">{totalRecipes}</span>{' '}
+                  <span className="text-muted-foreground">recipes</span>
+                </span>
+                <span>
+                  <span className="font-semibold">{mealsThisWeek}</span>{' '}
+                  <span className="text-muted-foreground">
+                    meals this week
+                  </span>
+                </span>
+                <span>
+                  <span className="font-semibold">{activeLists.length}</span>{' '}
+                  <span className="text-muted-foreground">active lists</span>
+                </span>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
       </main>
     </div>
   )
 }
 
-interface WeatherCardProps {
-  forecast: {
-    date: string
-    temperatureC: number
-    temperatureF: number
-    summary: string
+function ShoppingListCard({
+  list,
+  storeName,
+}: {
+  list: {
+    id: string
+    name: string
+    itemCount: number
+    checkedCount: number
   }
-  useCelsius: boolean
-  formatDate: (date: string) => string
-}
+  storeName?: string
+}) {
+  const addItem = useAddShoppingListItem()
+  const [newItem, setNewItem] = useState('')
 
-function WeatherCard({
-  forecast,
-  useCelsius,
-  formatDate,
-}: WeatherCardProps) {
+  const progress =
+    list.itemCount > 0
+      ? Math.round((list.checkedCount / list.itemCount) * 100)
+      : 0
+
+  const handleAdd = (e: React.FormEvent) => {
+    e.preventDefault()
+    const name = newItem.trim()
+    if (!name) return
+    addItem.mutate(
+      {
+        shoppingListId: list.id,
+        dto: {
+          name,
+          quantity: null,
+          unit: null,
+          storeSectionId: null,
+          notes: null,
+        },
+      },
+      { onSuccess: () => setNewItem('') },
+    )
+  }
+
   return (
-    <Card className="transition-shadow hover:shadow-md">
-      <CardHeader className="pb-2">
-        <div className="flex items-start justify-between">
-          <div>
-            <p className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
-              {formatDate(forecast.date)}
-            </p>
-            <CardTitle className="mt-1">{forecast.summary}</CardTitle>
-          </div>
-          <HugeiconsIcon
-            icon={CloudIcon}
-            className="w-6 h-6 text-muted-foreground"
-          />
-        </div>
-      </CardHeader>
-      <CardContent>
-        <div className="pt-3 border-t">
-          <p className="text-3xl font-bold">
-            {useCelsius ? forecast.temperatureC : forecast.temperatureF}°
-          </p>
-          <p className="text-sm text-muted-foreground">
-            {useCelsius ? 'Celsius' : 'Fahrenheit'}
-          </p>
-        </div>
-      </CardContent>
-    </Card>
+    <div className="space-y-2">
+      <div className="flex items-center justify-between gap-2">
+        <Link
+          to="/shopping-lists/$id"
+          params={{ id: list.id }}
+          className="truncate font-medium hover:underline"
+        >
+          {list.name}
+        </Link>
+        <span className="shrink-0 text-xs text-muted-foreground">
+          {list.checkedCount}/{list.itemCount}
+        </span>
+      </div>
+      {storeName && (
+        <p className="text-xs text-muted-foreground">{storeName}</p>
+      )}
+      {/* Progress bar */}
+      <div className="h-1.5 w-full rounded-full bg-muted">
+        <div
+          className="h-full rounded-full bg-primary transition-all duration-300"
+          style={{ width: `${progress}%` }}
+        />
+      </div>
+      {/* Inline add */}
+      <form onSubmit={handleAdd} className="flex gap-1.5">
+        <Input
+          placeholder="Add item…"
+          value={newItem}
+          onChange={(e) => setNewItem(e.target.value)}
+          className="h-7 text-xs"
+        />
+        <Button
+          type="submit"
+          variant="ghost"
+          size="xs"
+          disabled={addItem.isPending || !newItem.trim()}
+        >
+          Add
+        </Button>
+      </form>
+    </div>
   )
 }
