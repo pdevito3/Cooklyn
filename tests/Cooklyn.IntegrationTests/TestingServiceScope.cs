@@ -1,7 +1,10 @@
 namespace Cooklyn.IntegrationTests;
 
 using Cooklyn.Server.Databases;
+using Cooklyn.Server.Domain.StoreSections;
+using Cooklyn.Server.Domain.StoreSections.Models;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
 public class TestingServiceScope
@@ -62,6 +65,21 @@ public class TestingServiceScope
                 db.Set<T>().Add(entity);
             }
             return await db.SaveChangesAsync();
+        });
+    }
+
+    public async Task<StoreSection> GetOrCreateSectionAsync(string name)
+    {
+        return await ExecuteDbContextAsync(async db =>
+        {
+            var existing = await db.StoreSections.FirstOrDefaultAsync(s => s.Name == name);
+            if (existing != null)
+                return existing;
+
+            var section = StoreSection.Create(new StoreSectionForCreation { Name = name });
+            db.StoreSections.Add(section);
+            await db.SaveChangesAsync();
+            return section;
         });
     }
 }

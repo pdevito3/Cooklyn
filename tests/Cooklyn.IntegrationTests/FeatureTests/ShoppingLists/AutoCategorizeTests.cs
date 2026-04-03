@@ -8,8 +8,6 @@ using Cooklyn.Server.Domain.ShoppingLists;
 using Cooklyn.Server.Domain.ShoppingLists.Dtos;
 using Cooklyn.Server.Domain.ShoppingLists.Features;
 using Cooklyn.Server.Domain.ShoppingLists.Models;
-using Cooklyn.Server.Domain.StoreSections;
-using Cooklyn.Server.Domain.StoreSections.Models;
 using Microsoft.EntityFrameworkCore;
 using Shouldly;
 
@@ -21,11 +19,7 @@ public class AutoCategorizeTests : TestBase
         // Arrange
         var scope = new TestingServiceScope();
 
-        var produceSection = StoreSection.Create(new StoreSectionForCreation
-        {
-            Name = "Produce"
-        });
-        await scope.InsertAsync(produceSection);
+        var produceSection = await scope.GetOrCreateSectionAsync("Produce");
 
         var shoppingList = ShoppingList.Create(new ShoppingListForCreation
         {
@@ -53,11 +47,7 @@ public class AutoCategorizeTests : TestBase
         // Arrange
         var scope = new TestingServiceScope();
 
-        var bakingSection = StoreSection.Create(new StoreSectionForCreation
-        {
-            Name = "Baking"
-        });
-        await scope.InsertAsync(bakingSection);
+        var bakingSection = await scope.GetOrCreateSectionAsync("Baking");
 
         var shoppingList = ShoppingList.Create(new ShoppingListForCreation
         {
@@ -108,11 +98,7 @@ public class AutoCategorizeTests : TestBase
         // but also test token fallback: "smoked chicken" not in seed -> token "chicken" -> Meat & Seafood
         var scope = new TestingServiceScope();
 
-        var meatSection = StoreSection.Create(new StoreSectionForCreation
-        {
-            Name = "Meat & Seafood"
-        });
-        await scope.InsertAsync(meatSection);
+        var meatSection = await scope.GetOrCreateSectionAsync("Meat & Seafood");
 
         var shoppingList = ShoppingList.Create(new ShoppingListForCreation
         {
@@ -138,11 +124,7 @@ public class AutoCategorizeTests : TestBase
         // Arrange - section "Dairy & Eggs" should match seed section "Dairy & Eggs"
         var scope = new TestingServiceScope();
 
-        var dairySection = StoreSection.Create(new StoreSectionForCreation
-        {
-            Name = "Dairy & Eggs"
-        });
-        await scope.InsertAsync(dairySection);
+        var dairySection = await scope.GetOrCreateSectionAsync("Dairy & Eggs");
 
         var shoppingList = ShoppingList.Create(new ShoppingListForCreation
         {
@@ -166,15 +148,8 @@ public class AutoCategorizeTests : TestBase
         // Arrange
         var scope = new TestingServiceScope();
 
-        var bakingSection = StoreSection.Create(new StoreSectionForCreation
-        {
-            Name = "Baking"
-        });
-        var dairySection = StoreSection.Create(new StoreSectionForCreation
-        {
-            Name = "Dairy & Eggs"
-        });
-        await scope.InsertAsync(bakingSection, dairySection);
+        var bakingSection = await scope.GetOrCreateSectionAsync("Baking");
+        var dairySection = await scope.GetOrCreateSectionAsync("Dairy & Eggs");
 
         var recipe = Recipe.Create(new RecipeForCreation
         {
@@ -247,15 +222,8 @@ public class AutoCategorizeTests : TestBase
         // Arrange
         var scope = new TestingServiceScope();
 
-        var produceSection = StoreSection.Create(new StoreSectionForCreation
-        {
-            Name = "Produce"
-        });
-        var snacksSection = StoreSection.Create(new StoreSectionForCreation
-        {
-            Name = "Snacks"
-        });
-        await scope.InsertAsync(produceSection, snacksSection);
+        var produceSection = await scope.GetOrCreateSectionAsync("Produce");
+        var snacksSection = await scope.GetOrCreateSectionAsync("Snacks");
 
         var shoppingList = ShoppingList.Create(new ShoppingListForCreation
         {
@@ -294,15 +262,8 @@ public class AutoCategorizeTests : TestBase
         // Arrange
         var scope = new TestingServiceScope();
 
-        var produceSection = StoreSection.Create(new StoreSectionForCreation
-        {
-            Name = "Produce"
-        });
-        var snacksSection = StoreSection.Create(new StoreSectionForCreation
-        {
-            Name = "Snacks"
-        });
-        await scope.InsertAsync(produceSection, snacksSection);
+        var produceSection = await scope.GetOrCreateSectionAsync("Produce");
+        var snacksSection = await scope.GetOrCreateSectionAsync("Snacks");
 
         var shoppingList = ShoppingList.Create(new ShoppingListForCreation
         {
@@ -342,11 +303,7 @@ public class AutoCategorizeTests : TestBase
         // Arrange
         var scope = new TestingServiceScope();
 
-        var spiceSection = StoreSection.Create(new StoreSectionForCreation
-        {
-            Name = "Spices & Seasonings"
-        });
-        await scope.InsertAsync(spiceSection);
+        var spiceSection = await scope.GetOrCreateSectionAsync("Spices & Seasonings");
 
         var shoppingList = ShoppingList.Create(new ShoppingListForCreation
         {
