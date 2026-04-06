@@ -56,6 +56,8 @@ public class AppDbContext(
     {
         base.OnModelCreating(modelBuilder);
 
+        modelBuilder.HasDefaultSchema("cooklyn");
+
         // Automatically discovers and applies all IEntityTypeConfiguration<T> implementations in the assembly
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
         modelBuilder.FilterSoftDeletedRecords();

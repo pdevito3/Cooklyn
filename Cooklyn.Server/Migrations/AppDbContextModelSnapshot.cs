@@ -18,6 +18,7 @@ namespace Cooklyn.Server.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
+                .HasDefaultSchema("cooklyn")
                 .HasAnnotation("ProductVersion", "10.0.5")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
@@ -74,7 +75,7 @@ namespace Cooklyn.Server.Migrations
                     b.HasIndex("StoreSectionId")
                         .HasDatabaseName("ix_item_category_mappings_store_section_id");
 
-                    b.ToTable("item_category_mappings", (string)null);
+                    b.ToTable("item_category_mappings", "cooklyn");
                 });
 
             modelBuilder.Entity("Cooklyn.Server.Domain.ItemCollections.ItemCollection", b =>
@@ -109,7 +110,7 @@ namespace Cooklyn.Server.Migrations
                         .HasDatabaseName("ix_item_collections_name")
                         .HasFilter("is_deleted = false");
 
-                    b.ToTable("item_collections", (string)null);
+                    b.ToTable("item_collections", "cooklyn");
                 });
 
             modelBuilder.Entity("Cooklyn.Server.Domain.ItemCollections.ItemCollectionItem", b =>
@@ -174,7 +175,7 @@ namespace Cooklyn.Server.Migrations
                     b.HasIndex("StoreSectionId")
                         .HasDatabaseName("ix_item_collection_items_store_section_id");
 
-                    b.ToTable("item_collection_items", (string)null);
+                    b.ToTable("item_collection_items", "cooklyn");
                 });
 
             modelBuilder.Entity("Cooklyn.Server.Domain.MealPlans.MealPlanEntry", b =>
@@ -240,7 +241,7 @@ namespace Cooklyn.Server.Migrations
                     b.HasIndex("RecipeId")
                         .HasDatabaseName("ix_meal_plan_entries_recipe_id");
 
-                    b.ToTable("meal_plan_entries", (string)null);
+                    b.ToTable("meal_plan_entries", "cooklyn");
                 });
 
             modelBuilder.Entity("Cooklyn.Server.Domain.MealPlans.MealPlanQueue", b =>
@@ -274,7 +275,7 @@ namespace Cooklyn.Server.Migrations
                     b.HasKey("Id")
                         .HasName("pk_meal_plan_queues");
 
-                    b.ToTable("meal_plan_queues", (string)null);
+                    b.ToTable("meal_plan_queues", "cooklyn");
                 });
 
             modelBuilder.Entity("Cooklyn.Server.Domain.MealPlans.MealPlanQueueItem", b =>
@@ -330,7 +331,7 @@ namespace Cooklyn.Server.Migrations
                     b.HasIndex("RecipeId")
                         .HasDatabaseName("ix_meal_plan_queue_items_recipe_id");
 
-                    b.ToTable("meal_plan_queue_items", (string)null);
+                    b.ToTable("meal_plan_queue_items", "cooklyn");
                 });
 
             modelBuilder.Entity("Cooklyn.Server.Domain.RecentSearches.RecentSearch", b =>
@@ -383,7 +384,7 @@ namespace Cooklyn.Server.Migrations
                     b.HasIndex("SearchType", "SearchText", "ResourceType", "ResourceId")
                         .HasDatabaseName("ix_recent_searches_search_type_search_text_resource_type_resou");
 
-                    b.ToTable("recent_searches", (string)null);
+                    b.ToTable("recent_searches", "cooklyn");
                 });
 
             modelBuilder.Entity("Cooklyn.Server.Domain.Recipes.Ingredient", b =>
@@ -459,7 +460,7 @@ namespace Cooklyn.Server.Migrations
                     b.HasIndex("RecipeId")
                         .HasDatabaseName("ix_ingredients_recipe_id");
 
-                    b.ToTable("ingredients", (string)null);
+                    b.ToTable("ingredients", "cooklyn");
                 });
 
             modelBuilder.Entity("Cooklyn.Server.Domain.Recipes.NutritionInfo", b =>
@@ -571,7 +572,7 @@ namespace Cooklyn.Server.Migrations
                         .IsUnique()
                         .HasDatabaseName("ix_nutrition_infos_recipe_id");
 
-                    b.ToTable("nutrition_infos", (string)null);
+                    b.ToTable("nutrition_infos", "cooklyn");
                 });
 
             modelBuilder.Entity("Cooklyn.Server.Domain.Recipes.Recipe", b =>
@@ -653,7 +654,7 @@ namespace Cooklyn.Server.Migrations
                     b.HasIndex("Title")
                         .HasDatabaseName("ix_recipes_title");
 
-                    b.ToTable("recipes", (string)null);
+                    b.ToTable("recipes", "cooklyn");
                 });
 
             modelBuilder.Entity("Cooklyn.Server.Domain.Recipes.RecipeFlagEntry", b =>
@@ -696,7 +697,7 @@ namespace Cooklyn.Server.Migrations
                     b.HasIndex("RecipeId")
                         .HasDatabaseName("ix_recipe_flag_entries_recipe_id");
 
-                    b.ToTable("recipe_flag_entries", (string)null);
+                    b.ToTable("recipe_flag_entries", "cooklyn");
                 });
 
             modelBuilder.Entity("Cooklyn.Server.Domain.Recipes.RecipeTag", b =>
@@ -740,7 +741,7 @@ namespace Cooklyn.Server.Migrations
                         .IsUnique()
                         .HasDatabaseName("ix_recipe_tags_recipe_id_tag_id");
 
-                    b.ToTable("recipe_tags", (string)null);
+                    b.ToTable("recipe_tags", "cooklyn");
                 });
 
             modelBuilder.Entity("Cooklyn.Server.Domain.SavedFilters.SavedFilter", b =>
@@ -788,7 +789,7 @@ namespace Cooklyn.Server.Migrations
                         .IsUnique()
                         .HasDatabaseName("ix_saved_filters_name_context");
 
-                    b.ToTable("saved_filters", (string)null);
+                    b.ToTable("saved_filters", "cooklyn");
                 });
 
             modelBuilder.Entity("Cooklyn.Server.Domain.Settings.Setting", b =>
@@ -827,7 +828,7 @@ namespace Cooklyn.Server.Migrations
                         .IsUnique()
                         .HasDatabaseName("ix_settings_key");
 
-                    b.ToTable("settings", (string)null);
+                    b.ToTable("settings", "cooklyn");
                 });
 
             modelBuilder.Entity("Cooklyn.Server.Domain.ShoppingLists.ShoppingList", b =>
@@ -879,7 +880,7 @@ namespace Cooklyn.Server.Migrations
                     b.HasIndex("StoreId")
                         .HasDatabaseName("ix_shopping_lists_store_id");
 
-                    b.ToTable("shopping_lists", (string)null);
+                    b.ToTable("shopping_lists", "cooklyn");
                 });
 
             modelBuilder.Entity("Cooklyn.Server.Domain.ShoppingLists.ShoppingListItem", b =>
@@ -957,7 +958,7 @@ namespace Cooklyn.Server.Migrations
                     b.HasIndex("StoreSectionId")
                         .HasDatabaseName("ix_shopping_list_items_store_section_id");
 
-                    b.ToTable("shopping_list_items", (string)null);
+                    b.ToTable("shopping_list_items", "cooklyn");
                 });
 
             modelBuilder.Entity("Cooklyn.Server.Domain.ShoppingLists.ShoppingListItemRecipeSource", b =>
@@ -1011,7 +1012,7 @@ namespace Cooklyn.Server.Migrations
                         .IsUnique()
                         .HasDatabaseName("ix_shopping_list_item_recipe_sources_shopping_list_item_id_rec");
 
-                    b.ToTable("shopping_list_item_recipe_sources", (string)null);
+                    b.ToTable("shopping_list_item_recipe_sources", "cooklyn");
                 });
 
             modelBuilder.Entity("Cooklyn.Server.Domain.StoreSections.StoreSection", b =>
@@ -1046,7 +1047,7 @@ namespace Cooklyn.Server.Migrations
                         .HasDatabaseName("ix_store_sections_name")
                         .HasFilter("is_deleted = false");
 
-                    b.ToTable("store_sections", (string)null);
+                    b.ToTable("store_sections", "cooklyn");
                 });
 
             modelBuilder.Entity("Cooklyn.Server.Domain.Stores.Store", b =>
@@ -1086,7 +1087,7 @@ namespace Cooklyn.Server.Migrations
                         .HasDatabaseName("ix_stores_name")
                         .HasFilter("is_deleted = false");
 
-                    b.ToTable("stores", (string)null);
+                    b.ToTable("stores", "cooklyn");
                 });
 
             modelBuilder.Entity("Cooklyn.Server.Domain.Stores.StoreAisle", b =>
@@ -1139,7 +1140,7 @@ namespace Cooklyn.Server.Migrations
                         .IsUnique()
                         .HasDatabaseName("ix_store_aisles_store_id_store_section_id");
 
-                    b.ToTable("store_aisles", (string)null);
+                    b.ToTable("store_aisles", "cooklyn");
                 });
 
             modelBuilder.Entity("Cooklyn.Server.Domain.Stores.StoreDefaultCollection", b =>
@@ -1184,7 +1185,7 @@ namespace Cooklyn.Server.Migrations
                         .HasDatabaseName("ix_store_default_collections_store_id_item_collection_id")
                         .HasFilter("is_deleted = false");
 
-                    b.ToTable("store_default_collections", (string)null);
+                    b.ToTable("store_default_collections", "cooklyn");
                 });
 
             modelBuilder.Entity("Cooklyn.Server.Domain.Tags.Tag", b =>
@@ -1218,7 +1219,7 @@ namespace Cooklyn.Server.Migrations
                         .IsUnique()
                         .HasDatabaseName("ix_tags_name");
 
-                    b.ToTable("tags", (string)null);
+                    b.ToTable("tags", "cooklyn");
                 });
 
             modelBuilder.Entity("Cooklyn.Server.Domain.ItemCategoryMappings.ItemCategoryMapping", b =>
