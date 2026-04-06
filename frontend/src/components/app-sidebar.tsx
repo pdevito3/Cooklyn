@@ -186,6 +186,7 @@ export function AppSidebar() {
   )
 
   return (
+    <>
     <Sidebar variant="inset" collapsible="icon">
       <SidebarHeader>
         <SidebarMenu>
@@ -383,7 +384,8 @@ export function AppSidebar() {
         </SidebarMenu>
       </SidebarFooter>
       <SidebarRail />
-      <QuickAddDialog open={quickAddOpen} onOpenChange={setQuickAddOpen} />
     </Sidebar>
+    <QuickAddDialog open={quickAddOpen} onOpenChange={setQuickAddOpen} />
+    </>
   )
 }
