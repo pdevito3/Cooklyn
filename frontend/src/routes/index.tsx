@@ -74,6 +74,9 @@ function Dashboard() {
   )
   useHotkeys('p', () => navigate({ to: '/meal-plan' }))
   useHotkeys('r', () => navigate({ to: '/recipes' }))
+  useHotkeys('n', () =>
+    window.dispatchEvent(new CustomEvent('open-quick-add')),
+  )
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
@@ -230,6 +233,15 @@ function Dashboard() {
             </CardHeader>
             <CardContent>
               <div className="flex flex-wrap gap-2">
+                <Button
+                  variant="outline"
+                  onClick={() =>
+                    window.dispatchEvent(new CustomEvent('open-quick-add'))
+                  }
+                >
+                  New Item
+                  <Kbd>N</Kbd>
+                </Button>
                 <Button variant="outline" render={<Link to="/meal-plan" />}>
                   Meal Plan
                   <Kbd>P</Kbd>
