@@ -134,6 +134,11 @@ public sealed class FileStorage(IAmazonS3 s3Client, IConfiguration configuration
 
     public string GetPreSignedUrl(string bucketName, string key, int durationInMinutes = 5)
     {
+        // When using a local S3 service (MinIO), return proxy URLs to avoid
+        // internal Docker hostnames in browser-facing URLs
+        if (_useLocalCompatibility)
+            return $"/api/v1/files/{bucketName}/{key}";
+
         var request = new GetPreSignedUrlRequest
         {
             BucketName = bucketName,
