@@ -93,6 +93,7 @@ try
     app.MapDefaultEndpoints();
 
     app.UseFileServer();
+    app.MapFallbackToFile("index.html");
 
     app.Run();
 }
