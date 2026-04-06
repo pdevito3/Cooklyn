@@ -16,6 +16,7 @@ import { Route as MealPlanRouteImport } from './routes/meal-plan'
 import { Route as FilterDemoRouteImport } from './routes/filter-demo'
 import { Route as ComponentsRouteImport } from './routes/components'
 import { Route as CollectionsRouteImport } from './routes/collections'
+import { Route as BuildRouteImport } from './routes/build'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as StoresIndexRouteImport } from './routes/stores.index'
 import { Route as ShoppingListsIndexRouteImport } from './routes/shopping-lists.index'
@@ -69,6 +70,11 @@ const ComponentsRoute = ComponentsRouteImport.update({
 const CollectionsRoute = CollectionsRouteImport.update({
   id: '/collections',
   path: '/collections',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BuildRoute = BuildRouteImport.update({
+  id: '/build',
+  path: '/build',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -169,6 +175,7 @@ const RecipesIdEditRoute = RecipesIdEditRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/build': typeof BuildRoute
   '/collections': typeof CollectionsRouteWithChildren
   '/components': typeof ComponentsRoute
   '/filter-demo': typeof FilterDemoRoute
@@ -197,6 +204,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/build': typeof BuildRoute
   '/components': typeof ComponentsRoute
   '/filter-demo': typeof FilterDemoRoute
   '/recipes/import': typeof RecipesImportRoute
@@ -217,6 +225,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/build': typeof BuildRoute
   '/collections': typeof CollectionsRouteWithChildren
   '/components': typeof ComponentsRoute
   '/filter-demo': typeof FilterDemoRoute
@@ -247,6 +256,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/build'
     | '/collections'
     | '/components'
     | '/filter-demo'
@@ -275,6 +285,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/build'
     | '/components'
     | '/filter-demo'
     | '/recipes/import'
@@ -294,6 +305,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/build'
     | '/collections'
     | '/components'
     | '/filter-demo'
@@ -323,6 +335,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  BuildRoute: typeof BuildRoute
   CollectionsRoute: typeof CollectionsRouteWithChildren
   ComponentsRoute: typeof ComponentsRoute
   FilterDemoRoute: typeof FilterDemoRoute
@@ -381,6 +394,13 @@ declare module '@tanstack/react-router' {
       path: '/collections'
       fullPath: '/collections'
       preLoaderRoute: typeof CollectionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/build': {
+      id: '/build'
+      path: '/build'
+      fullPath: '/build'
+      preLoaderRoute: typeof BuildRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -645,6 +665,7 @@ const StoresRouteWithChildren =
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  BuildRoute: BuildRoute,
   CollectionsRoute: CollectionsRouteWithChildren,
   ComponentsRoute: ComponentsRoute,
   FilterDemoRoute: FilterDemoRoute,

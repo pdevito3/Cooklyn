@@ -77,6 +77,11 @@ export const settingsItems = [
     url: '/collections',
     hotkey: 'C',
   },
+  {
+    title: 'Build Info',
+    url: '/build',
+    hotkey: 'B',
+  },
 ]
 
 export const importItems = [

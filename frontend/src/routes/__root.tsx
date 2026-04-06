@@ -41,6 +41,7 @@ const routeNames: Record<string, string> = {
   '/meal-plan': 'Meal Plan',
   '/components': 'Components',
   '/filter-demo': 'Filter Builder',
+  '/build': 'Build Info',
 }
 
 // Dynamic route name resolver for parameterized routes

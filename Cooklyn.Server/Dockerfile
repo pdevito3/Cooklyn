@@ -29,6 +29,9 @@ WORKDIR /app
 COPY --from=build /app/publish .
 COPY --from=frontend /app/dist ./wwwroot
 
+# Copy CI-generated build info (glob pattern is a no-op if file doesn't exist)
+COPY build-info.jso[n] ./
+
 ENV ASPNETCORE_URLS=http://+:8080
 ENV ASPNETCORE_ENVIRONMENT=Production
 

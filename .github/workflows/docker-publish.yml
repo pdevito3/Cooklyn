@@ -18,6 +18,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 25
 
       - uses: docker/login-action@v3
         with:
@@ -32,6 +34,30 @@ jobs:
           tags: |
             type=raw,value=latest
             type=sha,prefix=
+
+      - name: Generate build info
+        run: |
+          git log --format='%H|||%h|||%s|||%an|||%aI' -n 25 | \
+          jq -R -s '
+            split("\n") | map(select(length > 0)) | map(split("|||")) |
+            map({sha: .[0], shortSha: .[1], message: .[2], author: .[3], date: .[4]})
+          ' > /tmp/commits.json
+
+          jq -n \
+            --arg sha "${{ github.sha }}" \
+            --arg shortSha "${GITHUB_SHA:0:7}" \
+            --arg branch "${{ github.ref_name }}" \
+            --arg timestamp "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+            --arg repoUrl "${{ github.server_url }}/${{ github.repository }}" \
+            --slurpfile commits /tmp/commits.json \
+            '{
+              commitSha: $sha,
+              shortSha: $shortSha,
+              branch: $branch,
+              buildTimestamp: $timestamp,
+              repositoryUrl: $repoUrl,
+              commits: $commits[0]
+            }' > build-info.json
 
       - uses: docker/build-push-action@v6
         with:
