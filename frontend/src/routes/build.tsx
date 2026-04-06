@@ -118,39 +118,47 @@ function BuildPage() {
           </CardHeader>
           <CardContent className="p-0">
             <div className="divide-y">
-              {buildInfo.commits.map((commit) => (
-                <div
-                  key={commit.sha}
-                  className="flex items-start gap-3 px-6 py-3"
-                >
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-medium">
-                      {commit.message}
-                    </p>
-                    <p className="text-muted-foreground text-xs">
-                      {commit.author}
-                      {' \u00B7 '}
-                      {formatRelativeTime(commit.date)}
-                    </p>
+              {buildInfo.commits.map((commit) => {
+                const isActive = commit.sha === buildInfo.commitSha
+                return (
+                  <div
+                    key={commit.sha}
+                    className={`flex items-start gap-3 px-6 py-3 ${isActive ? 'bg-primary/5 border-l-2 border-l-primary' : ''}`}
+                  >
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-sm font-medium">
+                        {commit.message}
+                        {isActive && (
+                          <Badge variant="outline" className="ml-2 align-middle text-[10px] px-1.5 py-0">
+                            deployed
+                          </Badge>
+                        )}
+                      </p>
+                      <p className="text-muted-foreground text-xs">
+                        {commit.author}
+                        {' \u00B7 '}
+                        {formatRelativeTime(commit.date)}
+                      </p>
+                    </div>
+                    <div className="shrink-0">
+                      {commitUrl ? (
+                        <a
+                          href={`${commitUrl}${commit.sha}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={`font-mono text-xs transition-colors ${isActive ? 'text-primary font-semibold' : 'text-muted-foreground hover:text-primary'}`}
+                        >
+                          {commit.shortSha}
+                        </a>
+                      ) : (
+                        <span className={`font-mono text-xs ${isActive ? 'text-primary font-semibold' : 'text-muted-foreground'}`}>
+                          {commit.shortSha}
+                        </span>
+                      )}
+                    </div>
                   </div>
-                  <div className="shrink-0">
-                    {commitUrl ? (
-                      <a
-                        href={`${commitUrl}${commit.sha}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-muted-foreground hover:text-primary font-mono text-xs transition-colors"
-                      >
-                        {commit.shortSha}
-                      </a>
-                    ) : (
-                      <span className="text-muted-foreground font-mono text-xs">
-                        {commit.shortSha}
-                      </span>
-                    )}
-                  </div>
-                </div>
-              ))}
+                )
+              })}
             </div>
           </CardContent>
         </Card>
