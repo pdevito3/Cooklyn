@@ -208,3 +208,8 @@ dotnet ef database update --project Cooklyn.Server
 - Use hotkeys for common actions (e.g. Ctrl+K to open command palette, `C` for Create, `E` for edit, `Delete` for delete, etc.) or sidenav to speed up development and testing, including a kbd hint. in buttons and UI elements.
 - Forms should be able to be submitted with enter like a normal form when appropriate, but should always use Cmd+Enter
 - No barrel files
+
+## Notes
+
+- Use conventional commit naming for git commits with the area, for example `feat(epub): Add enhanced text reading`
+- Ensure we have high signal test coverage to confirm functionality of features and catch regressions
