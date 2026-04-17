@@ -3,6 +3,7 @@ namespace Cooklyn.Server.Resources.Extensions;
 using Databases;
 using Domain.Recipes.Importing;
 using Domain.Recipes.Importing.CopyMeThat;
+using Exceptions;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.EntityFrameworkCore;
 using ZiggyCreatures.Caching.Fusion;
@@ -13,6 +14,7 @@ public static class WebAppServiceConfiguration
     {
         builder.Services.AddSingleton(TimeProvider.System);
         builder.Services.AddProblemDetails();
+        builder.Services.AddExceptionHandler<DomainExceptionHandler>();
         builder.Services.AddFusionCache()
             .WithDefaultEntryOptions(options =>
             {
