@@ -68,20 +68,28 @@ import { useDebouncedValue } from '@/hooks/use-debounced-value'
 
 const PAGE_SIZE = 24
 
+type RecipesIndexSearch = {
+  q?: string
+}
+
 export const Route = createFileRoute('/recipes/')({
   component: RecipesIndexPage,
+  validateSearch: (search: Record<string, unknown>): RecipesIndexSearch => ({
+    q: typeof search.q === 'string' && search.q ? search.q : undefined,
+  }),
 })
 
 function RecipesIndexPage() {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
+  const { q: initialQuery } = Route.useSearch()
   const [viewMode, setViewMode] = useState<RecipeViewMode>(() => {
     const stored = localStorage.getItem('recipe-view-mode')
     if (stored === 'cards' || stored === 'small-cards' || stored === 'list')
       return stored
     return 'cards'
   })
-  const [searchQuery, setSearchQuery] = useState('')
+  const [searchQuery, setSearchQuery] = useState(initialQuery ?? '')
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [recipeToDelete, setRecipeToDelete] = useState<string | null>(null)
   const [addToListDialogOpen, setAddToListDialogOpen] = useState(false)

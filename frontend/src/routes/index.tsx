@@ -80,7 +80,11 @@ function Dashboard() {
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
-    navigate({ to: '/recipes' })
+    const q = searchQuery.trim()
+    navigate({
+      to: '/recipes',
+      search: q ? { q } : {},
+    })
   }
 
   return (
