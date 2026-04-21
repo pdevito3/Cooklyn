@@ -10,6 +10,7 @@ public sealed record RecipeSummaryDto
     /// </summary>
     public string? ImageUrl { get; init; }
     public string Rating { get; init; } = default!;
+    public string? Source { get; init; }
     public int? Servings { get; init; }
     public IReadOnlyList<string> Tags { get; init; } = [];
     public IReadOnlyList<string> Flags { get; init; } = [];

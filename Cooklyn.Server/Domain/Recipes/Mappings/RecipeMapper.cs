@@ -34,7 +34,6 @@ public static partial class RecipeMapper
     [MapperIgnoreSource(nameof(Recipe.LastModifiedOn))]
     [MapperIgnoreSource(nameof(Recipe.NutritionInfo))]
     [MapperIgnoreSource(nameof(Recipe.RecipeTags))]
-    [MapperIgnoreSource(nameof(Recipe.Source))]
     [MapperIgnoreSource(nameof(Recipe.Steps))]
     [MapperIgnoreSource(nameof(Recipe.Notes))]
     [MapperIgnoreSource(nameof(Recipe.ImageS3Bucket))]

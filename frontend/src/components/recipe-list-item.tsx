@@ -8,10 +8,12 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import type { RecipeSummaryDto } from '@/domain/recipes/types'
+import { formatSourceDisplay, isSourceUrl } from '@/domain/recipes/utils/source'
 import {
   Calendar03Icon,
   Delete01Icon,
   Edit01Icon,
+  LinkSquare02Icon,
   MoreVerticalIcon,
   ShoppingCart01Icon,
   SpoonAndForkIcon,
@@ -71,10 +73,28 @@ export function RecipeListItem({
           </p>
         )}
         <div className="mt-1 flex items-center gap-3 text-xs text-muted-foreground">
-          {recipe.servings && <span>{recipe.servings} servings</span>}
-          {recipe.ingredientCount > 0 && (
-            <span>{recipe.ingredientCount} ingredients</span>
-          )}
+          {recipe.source &&
+            (isSourceUrl(recipe.source) ? (
+              <a
+                href={recipe.source}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(e) => e.stopPropagation()}
+                className="inline-flex min-w-0 items-center gap-1 hover:text-foreground hover:underline"
+              >
+                <HugeiconsIcon
+                  icon={LinkSquare02Icon}
+                  className="h-3 w-3 shrink-0"
+                />
+                <span className="truncate">
+                  {formatSourceDisplay(recipe.source)}
+                </span>
+              </a>
+            ) : (
+              <span className="truncate">
+                {formatSourceDisplay(recipe.source)}
+              </span>
+            ))}
           {recipe.tags.length > 0 && (
             <span className="truncate">{recipe.tags.slice(0, 3).join(', ')}</span>
           )}

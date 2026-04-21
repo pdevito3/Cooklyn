@@ -8,10 +8,12 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import type { RecipeSummaryDto } from '@/domain/recipes/types'
+import { formatSourceDisplay, isSourceUrl } from '@/domain/recipes/utils/source'
 import {
   Calendar03Icon,
   Delete01Icon,
   Edit01Icon,
+  LinkSquare02Icon,
   MoreVerticalIcon,
   ShoppingCart01Icon,
   SpoonAndForkIcon,
@@ -134,6 +136,28 @@ export function RecipeSmallCard({
             {recipe.title}
           </h3>
         </Link>
+        {recipe.source &&
+          (isSourceUrl(recipe.source) ? (
+            <a
+              href={recipe.source}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={(e) => e.stopPropagation()}
+              className="mt-0.5 inline-flex max-w-full items-center gap-1 text-xs text-muted-foreground hover:text-foreground hover:underline"
+            >
+              <HugeiconsIcon
+                icon={LinkSquare02Icon}
+                className="h-3 w-3 shrink-0"
+              />
+              <span className="truncate">
+                {formatSourceDisplay(recipe.source)}
+              </span>
+            </a>
+          ) : (
+            <p className="mt-0.5 truncate text-xs text-muted-foreground">
+              {formatSourceDisplay(recipe.source)}
+            </p>
+          ))}
         {recipe.description && (
           <p className="mt-0.5 truncate text-xs text-muted-foreground">
             {recipe.description}

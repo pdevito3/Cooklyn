@@ -73,6 +73,7 @@ export interface RecipeSummaryDto {
   description: string | null
   imageUrl: string | null
   rating: string
+  source: string | null
   servings: number | null
   tags: string[]
   flags: string[]
