@@ -88,7 +88,7 @@ export function MealPlanEntryDialog({
     }
     let cancelled = false
     apiClient
-      .get(`/api/v1/recipes?filters=title @=* "${debouncedQuery}"&pageSize=8`)
+      .get(`/api/v1/recipes?filters=title @=* "${debouncedQuery}"&pageSize=500`)
       .then((res) => {
         if (!cancelled) {
           setRecipeResults(res.data as RecipeSummaryDto[])

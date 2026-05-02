@@ -36,6 +36,7 @@ import {
   MoreVerticalIcon,
   Calendar01Icon,
   Image01Icon,
+  DragDropIcon,
 } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
 import { format } from 'date-fns'
@@ -90,10 +91,17 @@ export function MealPlanQueueItem({ item, onDelete }: MealPlanQueueItemProps) {
         <div
           ref={setNodeRef}
           style={style}
-          {...listeners}
-          {...attributes}
-          className="group flex items-center gap-2 rounded-md border bg-emerald-50 border-emerald-200 dark:bg-emerald-950/30 dark:border-emerald-900/50 px-2 py-1.5 shadow-sm cursor-grab active:cursor-grabbing"
+          className="group flex items-center gap-2 rounded-md border bg-emerald-50 border-emerald-200 dark:bg-emerald-900/40 dark:border-emerald-700/50 dark:text-emerald-50 px-2 py-1.5 shadow-sm"
         >
+          <button
+            type="button"
+            aria-label="Drag to move"
+            className="inline-flex shrink-0 items-center justify-center text-muted-foreground hover:text-foreground cursor-grab active:cursor-grabbing touch-none -ml-0.5"
+            {...listeners}
+            {...attributes}
+          >
+            <HugeiconsIcon icon={DragDropIcon} className="size-4" />
+          </button>
           <HugeiconsIcon
             icon={StickyNote01Icon}
             className="size-3.5 shrink-0 text-muted-foreground"
@@ -105,8 +113,7 @@ export function MealPlanQueueItem({ item, onDelete }: MealPlanQueueItemProps) {
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-6 w-6 shrink-0 opacity-0 group-hover:opacity-100"
-                  onPointerDown={(e) => e.stopPropagation()}
+                  className="h-6 w-6 shrink-0 md:opacity-0 md:group-hover:opacity-100"
                 />
               }
             >
@@ -132,10 +139,17 @@ export function MealPlanQueueItem({ item, onDelete }: MealPlanQueueItemProps) {
         <div
           ref={setNodeRef}
           style={style}
-          {...listeners}
-          {...attributes}
-          className="group rounded-md border bg-card shadow-sm cursor-grab active:cursor-grabbing overflow-hidden"
+          className="group relative rounded-md border bg-card shadow-sm overflow-hidden"
         >
+          <button
+            type="button"
+            aria-label="Drag to move"
+            className="absolute top-1 left-1 z-10 inline-flex items-center justify-center rounded-md bg-background/80 backdrop-blur-sm p-1 text-muted-foreground hover:text-foreground cursor-grab active:cursor-grabbing touch-none shadow-sm"
+            {...listeners}
+            {...attributes}
+          >
+            <HugeiconsIcon icon={DragDropIcon} className="size-3.5" />
+          </button>
           {item.imageUrl ? (
             <img
               src={item.imageUrl}
@@ -167,8 +181,7 @@ export function MealPlanQueueItem({ item, onDelete }: MealPlanQueueItemProps) {
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-6 w-6 shrink-0 opacity-0 group-hover:opacity-100"
-                    onPointerDown={(e) => e.stopPropagation()}
+                    className="h-6 w-6 shrink-0 md:opacity-0 md:group-hover:opacity-100"
                   />
                 }
               >
