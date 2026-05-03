@@ -342,7 +342,9 @@ function RecipesIndexPage() {
   const filters = useMemo(() => {
     const parts: string[] = []
     if (debouncedSearch) {
-      parts.push(`title @=* "${debouncedSearch}"`)
+      parts.push(
+        `(title @=* "${debouncedSearch}" || ingredient @=* "${debouncedSearch}")`,
+      )
     }
     if (advancedFilterString) {
       parts.push(advancedFilterString)

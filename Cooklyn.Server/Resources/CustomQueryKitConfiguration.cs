@@ -16,6 +16,9 @@ public class CustomQueryKitConfiguration(Action<QueryKitSettings>? configureSett
             .HasQueryName("flags");
         settings.Property<Recipe>(x => x.Source)
             .HasQueryName("source");
+        settings.Property<Recipe>(x => x.Ingredients
+            .Select(i => i.Name))
+            .HasQueryName("ingredient");
         configureSettings?.Invoke(settings);
     })
 {
