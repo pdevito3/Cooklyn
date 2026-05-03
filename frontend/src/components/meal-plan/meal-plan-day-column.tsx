@@ -96,7 +96,7 @@ export function MealPlanDayColumn({
           </button>
         </div>
       </div>
-      <div className="flex-1 space-y-1 p-1.5">
+      <div className="flex-1 grid grid-cols-2 gap-1 p-1.5 content-start">
         {entries.map((entry) => (
           <MealPlanEntryCard
             key={entry.id}

@@ -109,10 +109,10 @@ export function MealPlanEntryCard({
           <img
             src={entry.imageUrl}
             alt=""
-            className="h-24 w-full object-cover"
+            className="aspect-square w-full object-cover"
           />
         ) : (
-          <div className="flex h-16 w-full items-center justify-center bg-muted">
+          <div className="flex aspect-square w-full items-center justify-center bg-muted">
             <HugeiconsIcon icon={Image01Icon} className="size-6 text-muted-foreground" />
           </div>
         )}
@@ -189,7 +189,7 @@ export function MealPlanEntryCard({
       ref={setNodeRef}
       style={style}
       className={cn(
-        'group flex gap-1.5 rounded-md border shadow-sm hover:shadow',
+        'group flex col-span-2 gap-1.5 rounded-md border shadow-sm hover:shadow',
         isFreeText
           ? 'items-start bg-emerald-50 border-emerald-200 dark:bg-emerald-900/40 dark:border-emerald-700/50 dark:text-emerald-50 px-2 py-3 text-sm'
           : 'items-center bg-card px-2 py-1.5 text-sm',
