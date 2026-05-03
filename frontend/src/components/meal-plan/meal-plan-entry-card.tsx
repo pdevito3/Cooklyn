@@ -18,7 +18,6 @@ import {
   Delete01Icon,
   RestaurantIcon,
   StickyNote01Icon,
-  Image01Icon,
   ArrowUpRight01Icon,
   DragDropIcon,
   ShoppingCart01Icon,
@@ -43,7 +42,6 @@ export function MealPlanEntryCard({
   onDelete,
   onAddToShoppingList,
   compact = false,
-  density = 'condensed',
 }: MealPlanEntryCardProps) {
   const navigate = useNavigate()
 
@@ -59,7 +57,6 @@ export function MealPlanEntryCard({
   }
 
   const isFreeText = entry.entryType === 'FreeText'
-  const isNormalRecipe = !compact && density === 'normal' && !isFreeText
 
   if (compact) {
     return (
@@ -89,97 +86,85 @@ export function MealPlanEntryCard({
     )
   }
 
-  if (isNormalRecipe) {
+  const entryMenu = (
+    <DropdownMenu>
+      <DropdownMenuTrigger
+        render={
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-7 w-7 shrink-0 md:opacity-0 md:group-hover:opacity-100"
+          />
+        }
+      >
+        <HugeiconsIcon icon={MoreVerticalIcon} className="size-4" />
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-44">
+        {entry.recipeId && (
+          <DropdownMenuItem
+            onClick={() =>
+              navigate({
+                to: '/recipes/$id/',
+                params: { id: entry.recipeId! },
+              })
+            }
+          >
+            <HugeiconsIcon icon={ArrowUpRight01Icon} className="size-4" />
+            View Recipe
+          </DropdownMenuItem>
+        )}
+        {entry.recipeId && onAddToShoppingList && (
+          <DropdownMenuItem
+            onClick={() => onAddToShoppingList(entry.recipeId!)}
+          >
+            <HugeiconsIcon icon={ShoppingCart01Icon} className="size-4" />
+            Add to Shopping List
+          </DropdownMenuItem>
+        )}
+        <DropdownMenuItem onClick={() => onEdit(entry)}>
+          <HugeiconsIcon icon={Edit01Icon} className="size-4" />
+          Edit
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => onCopy(entry)}>
+          <HugeiconsIcon icon={Copy01Icon} className="size-4" />
+          Copy
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem
+          variant="destructive"
+          onClick={() => onDelete(entry.id)}
+        >
+          <HugeiconsIcon icon={Delete01Icon} className="size-4" />
+          Delete
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  )
+
+  if (isFreeText) {
     return (
       <div
         ref={setNodeRef}
         style={style}
-        className="group relative rounded-md border bg-card shadow-sm hover:shadow overflow-hidden"
+        className="group flex items-start gap-1.5 rounded-md border bg-emerald-50 border-emerald-200 dark:bg-emerald-900/40 dark:border-emerald-700/50 dark:text-emerald-50 px-2 py-2 text-sm shadow-sm hover:shadow"
       >
         <button
           type="button"
           aria-label="Drag to move"
-          className="absolute top-1 left-1 z-10 inline-flex h-7 w-7 items-center justify-center rounded-md bg-background/80 backdrop-blur-sm text-muted-foreground hover:text-foreground cursor-grab active:cursor-grabbing touch-none shadow-sm"
+          className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:text-foreground cursor-grab active:cursor-grabbing touch-none -ml-1"
           {...listeners}
           {...attributes}
         >
           <HugeiconsIcon icon={DragDropIcon} className="size-4" />
         </button>
-        {entry.imageUrl ? (
-          <img
-            src={entry.imageUrl}
-            alt=""
-            className="aspect-square w-full object-cover"
-          />
-        ) : (
-          <div className="flex aspect-square w-full items-center justify-center bg-muted">
-            <HugeiconsIcon icon={Image01Icon} className="size-6 text-muted-foreground" />
-          </div>
-        )}
-        <div className="flex items-start gap-1 p-2">
-          <div className="flex-1 min-w-0">
-            <span className="text-sm font-medium leading-tight line-clamp-2">
-              {entry.title}
-            </span>
-            {entry.scale !== 1 && (
-              <span className="text-xs text-muted-foreground">
-                {entry.scale}x
-              </span>
-            )}
-          </div>
-          <DropdownMenu>
-            <DropdownMenuTrigger
-              render={
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-8 w-8 shrink-0 md:opacity-0 md:group-hover:opacity-100"
-                />
-              }
-            >
-              <HugeiconsIcon icon={MoreVerticalIcon} className="size-4" />
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-44">
-              {entry.recipeId && (
-                <DropdownMenuItem
-                  onClick={() =>
-                    navigate({
-                      to: '/recipes/$id/',
-                      params: { id: entry.recipeId! },
-                    })
-                  }
-                >
-                  <HugeiconsIcon icon={ArrowUpRight01Icon} className="size-4" />
-                  View Recipe
-                </DropdownMenuItem>
-              )}
-              {entry.recipeId && onAddToShoppingList && (
-                <DropdownMenuItem
-                  onClick={() => onAddToShoppingList(entry.recipeId!)}
-                >
-                  <HugeiconsIcon icon={ShoppingCart01Icon} className="size-4" />
-                  Add to Shopping List
-                </DropdownMenuItem>
-              )}
-              <DropdownMenuItem onClick={() => onEdit(entry)}>
-                <HugeiconsIcon icon={Edit01Icon} className="size-4" />
-                Edit
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => onCopy(entry)}>
-                <HugeiconsIcon icon={Copy01Icon} className="size-4" />
-                Copy
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem
-                variant="destructive"
-                onClick={() => onDelete(entry.id)}
-              >
-                <HugeiconsIcon icon={Delete01Icon} className="size-4" />
-                Delete
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
+        <HugeiconsIcon
+          icon={StickyNote01Icon}
+          className="size-4 shrink-0 mt-1 text-muted-foreground"
+        />
+        <span className="flex-1 min-w-0 whitespace-pre-line break-words pt-0.5">
+          {entry.title}
+        </span>
+        <div className="-mr-1 mt-[-2px]">{entryMenu}</div>
       </div>
     )
   }
@@ -188,84 +173,42 @@ export function MealPlanEntryCard({
     <div
       ref={setNodeRef}
       style={style}
-      className={cn(
-        'group flex items-center col-span-2 gap-1.5 rounded-md border shadow-sm hover:shadow',
-        isFreeText
-          ? 'bg-emerald-50 border-emerald-200 dark:bg-emerald-900/40 dark:border-emerald-700/50 dark:text-emerald-50 px-2 py-3 text-sm'
-          : 'bg-card px-2 py-1.5 text-sm',
-      )}
+      className="group relative rounded-md border bg-card shadow-sm hover:shadow overflow-hidden"
     >
       <button
         type="button"
         aria-label="Drag to move"
-        className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:text-foreground cursor-grab active:cursor-grabbing touch-none -ml-1"
+        className={cn(
+          'inline-flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground hover:text-foreground cursor-grab active:cursor-grabbing touch-none shadow-sm',
+          entry.imageUrl
+            ? 'absolute top-1 left-1 z-10 bg-background/80 backdrop-blur-sm'
+            : 'absolute top-1 left-1 z-10',
+        )}
         {...listeners}
         {...attributes}
       >
         <HugeiconsIcon icon={DragDropIcon} className="size-4" />
       </button>
-      <HugeiconsIcon
-        icon={isFreeText ? StickyNote01Icon : RestaurantIcon}
-        className="size-4 shrink-0 text-muted-foreground"
-      />
-      <span className={cn('flex-1', isFreeText ? 'whitespace-pre-line' : 'truncate')}>{entry.title}</span>
-      {!isFreeText && entry.scale !== 1 && (
-        <span className="text-xs text-muted-foreground shrink-0">
-          {entry.scale}x
-        </span>
+      {entry.imageUrl && (
+        <img
+          src={entry.imageUrl}
+          alt=""
+          className="aspect-[4/3] w-full object-cover"
+        />
       )}
-      <DropdownMenu>
-        <DropdownMenuTrigger
-          render={
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-7 w-7 shrink-0 md:opacity-0 md:group-hover:opacity-100"
-            />
-          }
-        >
-          <HugeiconsIcon icon={MoreVerticalIcon} className="size-4" />
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-44">
-          {entry.recipeId && (
-            <DropdownMenuItem
-              onClick={() =>
-                navigate({
-                  to: '/recipes/$id/',
-                  params: { id: entry.recipeId! },
-                })
-              }
-            >
-              <HugeiconsIcon icon={ArrowUpRight01Icon} className="size-4" />
-              View Recipe
-            </DropdownMenuItem>
+      <div className={cn('flex items-start gap-1 p-2', !entry.imageUrl && 'pl-10')}>
+        <div className="flex-1 min-w-0">
+          <span className="text-sm font-medium leading-tight break-words">
+            {entry.title}
+          </span>
+          {entry.scale !== 1 && (
+            <span className="ml-1 text-xs text-muted-foreground">
+              {entry.scale}x
+            </span>
           )}
-          {entry.recipeId && onAddToShoppingList && (
-            <DropdownMenuItem
-              onClick={() => onAddToShoppingList(entry.recipeId!)}
-            >
-              <HugeiconsIcon icon={ShoppingCart01Icon} className="size-4" />
-              Add to Shopping List
-            </DropdownMenuItem>
-          )}
-          <DropdownMenuItem onClick={() => onEdit(entry)}>
-            <HugeiconsIcon icon={Edit01Icon} className="size-4" />
-            Edit
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => onCopy(entry)}>
-            <HugeiconsIcon icon={Copy01Icon} className="size-4" />
-            Copy
-          </DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem
-            variant="destructive"
-            onClick={() => onDelete(entry.id)}
-          >
-            <HugeiconsIcon icon={Delete01Icon} className="size-4" />
-            Delete
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
+        </div>
+        {entryMenu}
+      </div>
     </div>
   )
 }
