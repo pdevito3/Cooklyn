@@ -91,7 +91,7 @@ export function MealPlanQueueItem({ item, onDelete }: MealPlanQueueItemProps) {
         <div
           ref={setNodeRef}
           style={style}
-          className="group flex items-center gap-2 rounded-md border bg-emerald-50 border-emerald-200 dark:bg-emerald-900/40 dark:border-emerald-700/50 dark:text-emerald-50 px-2 py-1.5 shadow-sm"
+          className="group flex items-center gap-2 rounded-md border bg-emerald-50 border-emerald-200 dark:bg-emerald-900/40 dark:border-emerald-700/50 dark:text-emerald-50 px-2 py-3 shadow-sm"
         >
           <button
             type="button"

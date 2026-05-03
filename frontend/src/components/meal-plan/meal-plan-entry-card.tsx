@@ -66,10 +66,10 @@ export function MealPlanEntryCard({
         {...listeners}
         {...attributes}
         className={cn(
-          'group flex gap-1 rounded px-1.5 py-0.5 text-xs cursor-grab active:cursor-grabbing',
+          'group flex gap-1 rounded text-xs cursor-grab active:cursor-grabbing',
           isFreeText
-            ? 'items-start bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-900/40 dark:hover:bg-emerald-900/60 dark:text-emerald-50'
-            : 'items-center hover:bg-accent',
+            ? 'items-start bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-900/40 dark:hover:bg-emerald-900/60 dark:text-emerald-50 px-1.5 py-2'
+            : 'items-center hover:bg-accent px-1.5 py-0.5',
         )}
       >
         <HugeiconsIcon
@@ -180,7 +180,7 @@ export function MealPlanEntryCard({
       className={cn(
         'group flex gap-1.5 rounded-md border shadow-sm hover:shadow',
         isFreeText
-          ? 'items-start bg-emerald-50 border-emerald-200 dark:bg-emerald-900/40 dark:border-emerald-700/50 dark:text-emerald-50 px-2 py-1.5 text-sm'
+          ? 'items-start bg-emerald-50 border-emerald-200 dark:bg-emerald-900/40 dark:border-emerald-700/50 dark:text-emerald-50 px-2 py-3 text-sm'
           : 'items-center bg-card px-2 py-1.5 text-sm',
       )}
     >
