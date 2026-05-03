@@ -14,4 +14,5 @@ export const RecipeKeys = {
   }) => [...RecipeKeys.lists(), params] as const,
   details: () => [...RecipeKeys.all, 'detail'] as const,
   detail: (id: string) => [...RecipeKeys.details(), id] as const,
+  sourceDomains: () => [...RecipeKeys.all, 'source-domains'] as const,
 }

@@ -11,6 +11,12 @@ import { RECIPE_RATINGS } from '@/domain/recipes/types'
 const EXPAND_IN_PROPERTIES = new Set(['tags', 'flags', 'rating'])
 
 /**
+ * Frontend-only pseudo-property that maps to substring matches against the
+ * `source` column. Each selected domain is rewritten to `source @=* "<domain>"`.
+ */
+const SOURCE_DOMAIN_PROPERTY = 'sourceDomain'
+
+/**
  * Flag filter options mapping SmartEnum names (DB values) to display labels.
  */
 export const FLAG_FILTER_OPTIONS: FilterOption[] = [
@@ -85,17 +91,29 @@ export function transformCollectionFilters(queryKitString: string): string {
   return queryKitString.replace(
     /(\w+)\s+(%?!?\^\^\*?)\s+\[([^\]]*)\]/g,
     (match, property: string, operator: string, valuesStr: string) => {
-      if (!EXPAND_IN_PROPERTIES.has(property)) {
-        return match
-      }
-
       const values = parseArrayValues(valuesStr)
       if (values.length === 0) return match
 
       const isMatchAll = operator.startsWith('%')
       const isNegated = operator.includes('!')
-      const isCaseInsensitive = operator.endsWith('*')
 
+      if (property === SOURCE_DOMAIN_PROPERTY) {
+        const containsOp = isNegated ? '!@=*' : '@=*'
+        const joinOp = isMatchAll || isNegated ? ' && ' : ' || '
+        const conditions = values.map((v) => {
+          const quoted = v.startsWith('"') && v.endsWith('"')
+            ? v
+            : `"${v.replace(/"/g, '\\"')}"`
+          return `source ${containsOp} ${quoted}`
+        })
+        return `(${conditions.join(joinOp)})`
+      }
+
+      if (!EXPAND_IN_PROPERTIES.has(property)) {
+        return match
+      }
+
+      const isCaseInsensitive = operator.endsWith('*')
       const equalOp = isNegated ? '!=' : '=='
       const caseSuffix = isCaseInsensitive ? '*' : ''
       const joinOp = isMatchAll || isNegated ? ' && ' : ' || '

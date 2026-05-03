@@ -3,6 +3,8 @@ import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useHotkeys } from 'react-hotkeys-hook'
 import {
   Add01Icon,
+  Cancel01Icon,
+  FilterIcon,
   RotateClockwiseIcon,
   Search01Icon,
   Loading03Icon,
@@ -12,6 +14,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import { AnimatePresence, motion } from 'motion/react'
 
 import { useInfiniteRecipes } from '@/domain/recipes/apis/get-recipes'
+import { useRecipeSourceDomains } from '@/domain/recipes/apis/get-recipe-source-domains'
 import { RecipeKeys } from '@/domain/recipes/apis/recipe.keys'
 import { useDeleteRecipe } from '@/domain/recipes/apis/recipe-mutations'
 import {
@@ -68,21 +71,32 @@ import { useDebouncedValue } from '@/hooks/use-debounced-value'
 
 const PAGE_SIZE = 24
 
+function formatUrlFilterLabel(filter: string): string {
+  const sourceDomainMatch = filter.match(/^source\s+@=\*\s+"([^"]+)"$/)
+  if (sourceDomainMatch) return `Source: ${sourceDomainMatch[1]}`
+  return filter
+}
+
 type RecipesIndexSearch = {
   q?: string
+  filter?: string
 }
 
 export const Route = createFileRoute('/recipes/')({
   component: RecipesIndexPage,
   validateSearch: (search: Record<string, unknown>): RecipesIndexSearch => ({
     q: typeof search.q === 'string' && search.q ? search.q : undefined,
+    filter:
+      typeof search.filter === 'string' && search.filter
+        ? search.filter
+        : undefined,
   }),
 })
 
 function RecipesIndexPage() {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
-  const { q: initialQuery } = Route.useSearch()
+  const { q: initialQuery, filter: urlFilter } = Route.useSearch()
   const [viewMode, setViewMode] = useState<RecipeViewMode>(() => {
     const stored = localStorage.getItem('recipe-view-mode')
     if (stored === 'cards' || stored === 'small-cards' || stored === 'list')
@@ -163,6 +177,15 @@ function RecipesIndexPage() {
     [tagsData],
   )
 
+  // Fetch source domains for filter options
+  const { data: sourceDomainsData } = useRecipeSourceDomains()
+
+  const sourceDomainOptions = useMemo(
+    () =>
+      sourceDomainsData?.map((d) => ({ value: d, label: d })) ?? [],
+    [sourceDomainsData],
+  )
+
   // Build filter configuration
   const filterOptions: FilterConfig[] = useMemo(
     () => [
@@ -195,6 +218,12 @@ function RecipesIndexPage() {
         options: tagOptions,
       },
       {
+        propertyKey: 'sourceDomain',
+        propertyLabel: 'Source Domain',
+        controlType: 'multiselect',
+        options: sourceDomainOptions,
+      },
+      {
         propertyKey: 'Servings',
         propertyLabel: 'Servings',
         controlType: 'number',
@@ -220,7 +249,7 @@ function RecipesIndexPage() {
         dateType: 'datetimeOffset',
       },
     ],
-    [tagOptions],
+    [tagOptions, sourceDomainOptions],
   )
 
   // Build filter presets
@@ -309,7 +338,7 @@ function RecipesIndexPage() {
     return transformCollectionFilters(raw)
   }, [filterBuilderState])
 
-  // Combine search bar + filter builder into unified filter string
+  // Combine search bar + filter builder + URL filter into unified filter string
   const filters = useMemo(() => {
     const parts: string[] = []
     if (debouncedSearch) {
@@ -318,11 +347,16 @@ function RecipesIndexPage() {
     if (advancedFilterString) {
       parts.push(advancedFilterString)
     }
+    if (urlFilter) {
+      parts.push(`(${urlFilter})`)
+    }
     return parts.length > 0 ? parts.join(' && ') : undefined
-  }, [debouncedSearch, advancedFilterString])
+  }, [debouncedSearch, advancedFilterString, urlFilter])
 
   const hasActiveFilters =
-    searchQuery.length > 0 || filterBuilderState.filters.length > 0
+    searchQuery.length > 0 ||
+    filterBuilderState.filters.length > 0 ||
+    Boolean(urlFilter)
 
   const {
     data,
@@ -381,6 +415,13 @@ function RecipesIndexPage() {
     setSearchQuery('')
     setFilterBuilderState({ filters: [], rootLogicalOperator: 'AND' })
     setFilterBuilderKey((prev) => prev + 1)
+    if (urlFilter) {
+      navigate({ to: '/recipes', search: (prev) => ({ ...prev, filter: undefined }) })
+    }
+  }
+
+  const handleClearUrlFilter = () => {
+    navigate({ to: '/recipes', search: (prev) => ({ ...prev, filter: undefined }) })
   }
 
   useHotkeys(
@@ -481,6 +522,29 @@ function RecipesIndexPage() {
           </Button>
         </div>
       </div>
+
+      {/* URL filter chip */}
+      {urlFilter && (
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="inline-flex items-center gap-2 rounded-full border bg-muted/60 px-3 py-1 text-sm">
+            <HugeiconsIcon
+              icon={FilterIcon}
+              className="h-3.5 w-3.5 text-muted-foreground"
+            />
+            <span className="font-mono text-xs">
+              {formatUrlFilterLabel(urlFilter)}
+            </span>
+            <button
+              type="button"
+              onClick={handleClearUrlFilter}
+              className="rounded-full p-0.5 hover:bg-muted"
+              aria-label="Clear linked filter"
+            >
+              <HugeiconsIcon icon={Cancel01Icon} className="h-3.5 w-3.5" />
+            </button>
+          </span>
+        </div>
+      )}
 
       {/* Advanced Filters */}
       <FilterBuilder

@@ -43,6 +43,18 @@ public sealed class RecipesController(IMediator mediator) : ControllerBase
     }
 
     /// <summary>
+    /// Gets the distinct domains parsed from existing recipe sources.
+    /// </summary>
+    [HttpGet("source-domains", Name = "GetRecipeSourceDomains")]
+    [ProducesResponseType(typeof(IReadOnlyList<string>), StatusCodes.Status200OK)]
+    public async Task<ActionResult<IReadOnlyList<string>>> GetSourceDomains()
+    {
+        var query = new GetRecipeSourceDomains.Query();
+        var result = await mediator.Send(query);
+        return Ok(result);
+    }
+
+    /// <summary>
     /// Creates a new Recipe.
     /// </summary>
     [HttpPost(Name = "AddRecipe")]

@@ -1,4 +1,6 @@
+import { useState } from "react";
 import { RatingIcon } from "@/components/rating-icon";
+import { RecipeSourceActionSheet } from "@/components/recipe-source-action-sheet";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -7,19 +9,26 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { useLongPress } from "@/hooks/use-long-press";
 import type { RecipeSummaryDto } from "@/domain/recipes/types";
 import { formatSourceDisplay, isSourceUrl } from "@/domain/recipes/utils/source";
+import {
+  buildSourceDomainFilter,
+  getRecipeSourceDomain,
+} from "@/domain/recipes/utils/source-filter";
 import {
   Calendar03Icon,
   Delete01Icon,
   Edit01Icon,
+  FilterIcon,
   LinkSquare02Icon,
   MoreVerticalIcon,
   ShoppingCart01Icon,
   SpoonAndForkIcon,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 
 interface RecipeCardProps {
   recipe: RecipeSummaryDto;
@@ -36,6 +45,24 @@ export function RecipeCard({
   onAddToShoppingList,
   onAddToMealPlan,
 }: RecipeCardProps) {
+  const navigate = useNavigate();
+  const isMobile = useIsMobile();
+  const sourceDomain = getRecipeSourceDomain(recipe.source);
+  const [sourceSheetOpen, setSourceSheetOpen] = useState(false);
+
+  const goToDomainFilter = (domain: string) => {
+    navigate({
+      to: "/recipes",
+      search: { filter: buildSourceDomainFilter(domain) },
+    });
+  };
+
+  const longPressHandlers = useLongPress({
+    onLongPress: () => {
+      if (isMobile && sourceDomain) setSourceSheetOpen(true);
+    },
+  });
+
   return (
     <div className="group relative aspect-[4/3] overflow-hidden rounded-xl shadow-md transition-all hover:shadow-xl">
       {/* Full card background image */}
@@ -113,6 +140,12 @@ export function RecipeCard({
                 Add to Meal Plan
               </DropdownMenuItem>
             )}
+            {sourceDomain && (
+              <DropdownMenuItem onClick={() => goToDomainFilter(sourceDomain)}>
+                <HugeiconsIcon icon={FilterIcon} className="mr-2 h-4 w-4" />
+                Filter by {sourceDomain}
+              </DropdownMenuItem>
+            )}
             {onDelete && (
               <>
                 <DropdownMenuSeparator />
@@ -144,6 +177,12 @@ export function RecipeCard({
               target="_blank"
               rel="noopener noreferrer"
               onClick={(e) => e.stopPropagation()}
+              onContextMenu={
+                isMobile && sourceDomain
+                  ? (e) => e.preventDefault()
+                  : undefined
+              }
+              {...(isMobile && sourceDomain ? longPressHandlers : {})}
               className="mt-1 inline-flex max-w-full items-center gap-1 text-xs text-white/80 hover:text-white hover:underline"
             >
               <HugeiconsIcon
@@ -167,6 +206,16 @@ export function RecipeCard({
           </p>
         )}
       </div>
+
+      {sourceDomain && recipe.source && (
+        <RecipeSourceActionSheet
+          open={sourceSheetOpen}
+          onOpenChange={setSourceSheetOpen}
+          source={recipe.source}
+          domain={sourceDomain}
+          onFilterByDomain={() => goToDomainFilter(sourceDomain)}
+        />
+      )}
     </div>
   );
 }
