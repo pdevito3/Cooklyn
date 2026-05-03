@@ -17,6 +17,7 @@ interface MealPlanDayColumnProps {
   onEditEntry: (entry: MealPlanEntryDto) => void
   onCopyEntry: (entry: MealPlanEntryDto) => void
   onDeleteEntry: (id: string) => void
+  onAddToShoppingList?: (recipeId: string) => void
 }
 
 export function MealPlanDayColumn({
@@ -29,6 +30,7 @@ export function MealPlanDayColumn({
   onEditEntry,
   onCopyEntry,
   onDeleteEntry,
+  onAddToShoppingList,
 }: MealPlanDayColumnProps) {
   const { setNodeRef, isOver } = useDroppable({
     id: `day-${dateStr}`,
@@ -103,6 +105,7 @@ export function MealPlanDayColumn({
             onEdit={onEditEntry}
             onCopy={onCopyEntry}
             onDelete={onDeleteEntry}
+            onAddToShoppingList={onAddToShoppingList}
           />
         ))}
       </div>

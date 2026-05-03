@@ -13,6 +13,7 @@ interface MealPlanWeekViewProps {
   onEditEntry: (entry: MealPlanEntryDto) => void
   onCopyEntry: (entry: MealPlanEntryDto) => void
   onDeleteEntry: (id: string) => void
+  onAddToShoppingList?: (recipeId: string) => void
 }
 
 export function MealPlanWeekView({
@@ -25,6 +26,7 @@ export function MealPlanWeekView({
   onEditEntry,
   onCopyEntry,
   onDeleteEntry,
+  onAddToShoppingList,
 }: MealPlanWeekViewProps) {
   const daysByDate = new Map(days.map((d) => [d.date, d]))
   const weekDays = Array.from({ length: 7 }, (_, i) => addDays(weekStart, i))
@@ -47,6 +49,7 @@ export function MealPlanWeekView({
               onEditEntry={onEditEntry}
               onCopyEntry={onCopyEntry}
               onDeleteEntry={onDeleteEntry}
+              onAddToShoppingList={onAddToShoppingList}
             />
           )
         })}
@@ -71,6 +74,7 @@ export function MealPlanWeekView({
             onEditEntry={onEditEntry}
             onCopyEntry={onCopyEntry}
             onDeleteEntry={onDeleteEntry}
+            onAddToShoppingList={onAddToShoppingList}
           />
         )
       })}

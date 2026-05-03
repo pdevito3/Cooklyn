@@ -28,6 +28,7 @@ interface MealPlanMonthViewProps {
   onEditEntry: (entry: MealPlanEntryDto) => void
   onCopyEntry: (entry: MealPlanEntryDto) => void
   onDeleteEntry: (id: string) => void
+  onAddToShoppingList?: (recipeId: string) => void
 }
 
 export function MealPlanMonthView({
@@ -40,6 +41,7 @@ export function MealPlanMonthView({
   onEditEntry,
   onCopyEntry,
   onDeleteEntry,
+  onAddToShoppingList,
 }: MealPlanMonthViewProps) {
   const daysByDate = new Map(days.map((d) => [d.date, d]))
 
@@ -66,6 +68,7 @@ export function MealPlanMonthView({
               onEditEntry={onEditEntry}
               onCopyEntry={onCopyEntry}
               onDeleteEntry={onDeleteEntry}
+              onAddToShoppingList={onAddToShoppingList}
             />
           )
         })}
@@ -120,6 +123,7 @@ export function MealPlanMonthView({
                 onEditEntry={onEditEntry}
                 onCopyEntry={onCopyEntry}
                 onDeleteEntry={onDeleteEntry}
+                onAddToShoppingList={onAddToShoppingList}
               />
             )
           })}
@@ -139,6 +143,7 @@ interface MonthDayCellProps {
   onEditEntry: (entry: MealPlanEntryDto) => void
   onCopyEntry: (entry: MealPlanEntryDto) => void
   onDeleteEntry: (id: string) => void
+  onAddToShoppingList?: (recipeId: string) => void
 }
 
 function MonthDayCell({
@@ -151,6 +156,7 @@ function MonthDayCell({
   onEditEntry,
   onCopyEntry,
   onDeleteEntry,
+  onAddToShoppingList,
 }: MonthDayCellProps) {
   const { setNodeRef, isOver } = useDroppable({
     id: `day-${dateStr}`,
@@ -205,6 +211,7 @@ function MonthDayCell({
             onEdit={onEditEntry}
             onCopy={onCopyEntry}
             onDelete={onDeleteEntry}
+            onAddToShoppingList={onAddToShoppingList}
             compact={!isNormal}
             density={density}
           />

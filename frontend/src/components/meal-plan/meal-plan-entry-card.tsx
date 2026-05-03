@@ -21,6 +21,7 @@ import {
   Image01Icon,
   ArrowUpRight01Icon,
   DragDropIcon,
+  ShoppingCart01Icon,
 } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
 import { cn } from '@/lib/utils'
@@ -30,6 +31,7 @@ interface MealPlanEntryCardProps {
   onEdit: (entry: MealPlanEntryDto) => void
   onCopy: (entry: MealPlanEntryDto) => void
   onDelete: (id: string) => void
+  onAddToShoppingList?: (recipeId: string) => void
   compact?: boolean
   density?: MealPlanDensity
 }
@@ -39,6 +41,7 @@ export function MealPlanEntryCard({
   onEdit,
   onCopy,
   onDelete,
+  onAddToShoppingList,
   compact = false,
   density = 'condensed',
 }: MealPlanEntryCardProps) {
@@ -136,7 +139,7 @@ export function MealPlanEntryCard({
             >
               <HugeiconsIcon icon={MoreVerticalIcon} className="size-4" />
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-36">
+            <DropdownMenuContent align="end" className="w-44">
               {entry.recipeId && (
                 <DropdownMenuItem
                   onClick={() =>
@@ -148,6 +151,14 @@ export function MealPlanEntryCard({
                 >
                   <HugeiconsIcon icon={ArrowUpRight01Icon} className="size-4" />
                   View Recipe
+                </DropdownMenuItem>
+              )}
+              {entry.recipeId && onAddToShoppingList && (
+                <DropdownMenuItem
+                  onClick={() => onAddToShoppingList(entry.recipeId!)}
+                >
+                  <HugeiconsIcon icon={ShoppingCart01Icon} className="size-4" />
+                  Add to Shopping List
                 </DropdownMenuItem>
               )}
               <DropdownMenuItem onClick={() => onEdit(entry)}>
@@ -218,7 +229,7 @@ export function MealPlanEntryCard({
         >
           <HugeiconsIcon icon={MoreVerticalIcon} className="size-4" />
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-36">
+        <DropdownMenuContent align="end" className="w-44">
           {entry.recipeId && (
             <DropdownMenuItem
               onClick={() =>
@@ -230,6 +241,14 @@ export function MealPlanEntryCard({
             >
               <HugeiconsIcon icon={ArrowUpRight01Icon} className="size-4" />
               View Recipe
+            </DropdownMenuItem>
+          )}
+          {entry.recipeId && onAddToShoppingList && (
+            <DropdownMenuItem
+              onClick={() => onAddToShoppingList(entry.recipeId!)}
+            >
+              <HugeiconsIcon icon={ShoppingCart01Icon} className="size-4" />
+              Add to Shopping List
             </DropdownMenuItem>
           )}
           <DropdownMenuItem onClick={() => onEdit(entry)}>

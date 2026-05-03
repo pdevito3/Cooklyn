@@ -26,6 +26,7 @@ import {
 import { MealPlanWeekView } from '@/components/meal-plan/meal-plan-week-view'
 import { MealPlanMonthView } from '@/components/meal-plan/meal-plan-month-view'
 import { MealPlanEntryDialog } from '@/components/meal-plan/meal-plan-entry-dialog'
+import { AddRecipeToShoppingListDialog } from '@/components/add-recipe-to-shopping-list-dialog'
 import { useIsMobile } from '@/hooks/use-mobile'
 
 function getStoredView(): MealPlanView {
@@ -57,6 +58,7 @@ export function MealPlanCalendar() {
   const [editEntry, setEditEntry] = useState<MealPlanEntryDto | null>(null)
   const [copyEntry, setCopyEntry] = useState<MealPlanEntryDto | null>(null)
   const [copyDialogOpen, setCopyDialogOpen] = useState(false)
+  const [shoppingListRecipeId, setShoppingListRecipeId] = useState<string | null>(null)
 
   const weekStart = startOfWeek(currentDate, { weekStartsOn: 0 })
   const weekEnd = endOfWeek(currentDate, { weekStartsOn: 0 })
@@ -136,6 +138,10 @@ export function MealPlanCalendar() {
     [deleteEntry],
   )
 
+  const handleAddToShoppingList = useCallback((recipeId: string) => {
+    setShoppingListRecipeId(recipeId)
+  }, [])
+
   const handleConfirmCopy = useCallback(() => {
     if (!copyEntry || !dialogDate) return
     copyEntryMutation.mutate(
@@ -181,6 +187,7 @@ export function MealPlanCalendar() {
           onEditEntry={handleEditEntry}
           onCopyEntry={handleCopyEntry}
           onDeleteEntry={handleDeleteEntry}
+          onAddToShoppingList={handleAddToShoppingList}
         />
       ) : (
         <MealPlanMonthView
@@ -193,6 +200,7 @@ export function MealPlanCalendar() {
           onEditEntry={handleEditEntry}
           onCopyEntry={handleCopyEntry}
           onDeleteEntry={handleDeleteEntry}
+          onAddToShoppingList={handleAddToShoppingList}
         />
       )}
 
@@ -214,6 +222,17 @@ export function MealPlanCalendar() {
           onConfirm={handleConfirmCopy}
           isPending={copyEntryMutation.isPending}
           entryTitle={copyEntry.title}
+        />
+      )}
+
+      {/* Add to shopping list dialog */}
+      {shoppingListRecipeId && (
+        <AddRecipeToShoppingListDialog
+          open={shoppingListRecipeId !== null}
+          onOpenChange={(open) => {
+            if (!open) setShoppingListRecipeId(null)
+          }}
+          recipeId={shoppingListRecipeId}
         />
       )}
     </div>

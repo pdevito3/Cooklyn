@@ -37,7 +37,9 @@ import {
   Calendar01Icon,
   Image01Icon,
   DragDropIcon,
+  ShoppingCart01Icon,
 } from '@hugeicons/core-free-icons'
+import { AddRecipeToShoppingListDialog } from '@/components/add-recipe-to-shopping-list-dialog'
 import { HugeiconsIcon } from '@hugeicons/react'
 import { format } from 'date-fns'
 
@@ -49,6 +51,7 @@ interface MealPlanQueueItemProps {
 export function MealPlanQueueItem({ item, onDelete }: MealPlanQueueItemProps) {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [addDialogOpen, setAddDialogOpen] = useState(false)
+  const [shoppingListDialogOpen, setShoppingListDialogOpen] = useState(false)
   const [targetDate, setTargetDate] = useState(() =>
     format(new Date(), 'yyyy-MM-dd'),
   )
@@ -192,6 +195,17 @@ export function MealPlanQueueItem({ item, onDelete }: MealPlanQueueItemProps) {
                   <HugeiconsIcon icon={Calendar01Icon} className="size-4" />
                   Add to Meal Plan
                 </DropdownMenuItem>
+                {item.recipeId && (
+                  <DropdownMenuItem
+                    onClick={() => setShoppingListDialogOpen(true)}
+                  >
+                    <HugeiconsIcon
+                      icon={ShoppingCart01Icon}
+                      className="size-4"
+                    />
+                    Add to Shopping List
+                  </DropdownMenuItem>
+                )}
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                   variant="destructive"
@@ -249,6 +263,15 @@ export function MealPlanQueueItem({ item, onDelete }: MealPlanQueueItemProps) {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Add to shopping list dialog */}
+      {item.recipeId && (
+        <AddRecipeToShoppingListDialog
+          open={shoppingListDialogOpen}
+          onOpenChange={setShoppingListDialogOpen}
+          recipeId={item.recipeId}
+        />
+      )}
 
       {/* Delete confirmation dialog */}
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
