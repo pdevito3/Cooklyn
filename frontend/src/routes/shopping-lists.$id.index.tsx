@@ -328,16 +328,12 @@ function ShoppingListDetailPage() {
               value={quickAddText}
               onChange={(e) => setQuickAddText(e.target.value)}
               onKeyDown={(e) => {
-                if (
-                  e.key === 'Enter' &&
-                  !e.shiftKey &&
-                  !quickAddText.includes('\n')
-                ) {
+                if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
                   e.preventDefault()
                   handleQuickAdd()
                 }
               }}
-              className="min-h-10"
+              rows={6}
             />
             <Button
               onClick={handleQuickAdd}
@@ -345,6 +341,7 @@ function ShoppingListDetailPage() {
               className="self-end"
             >
               <HugeiconsIcon icon={Add01Icon} className="h-4 w-4" />
+              <Kbd>⌘↵</Kbd>
             </Button>
           </div>
           <div className="flex gap-2">
