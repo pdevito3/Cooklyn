@@ -96,11 +96,11 @@ export function MealPlanEntryCard({
         <button
           type="button"
           aria-label="Drag to move"
-          className="absolute top-1 left-1 z-10 inline-flex items-center justify-center rounded-md bg-background/80 backdrop-blur-sm p-1 text-muted-foreground hover:text-foreground cursor-grab active:cursor-grabbing touch-none shadow-sm"
+          className="absolute top-1 left-1 z-10 inline-flex h-7 w-7 items-center justify-center rounded-md bg-background/80 backdrop-blur-sm text-muted-foreground hover:text-foreground cursor-grab active:cursor-grabbing touch-none shadow-sm"
           {...listeners}
           {...attributes}
         >
-          <HugeiconsIcon icon={DragDropIcon} className="size-3.5" />
+          <HugeiconsIcon icon={DragDropIcon} className="size-4" />
         </button>
         {entry.imageUrl ? (
           <img
@@ -130,11 +130,11 @@ export function MealPlanEntryCard({
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-6 w-6 shrink-0 md:opacity-0 md:group-hover:opacity-100"
+                  className="h-8 w-8 shrink-0 md:opacity-0 md:group-hover:opacity-100"
                 />
               }
             >
-              <HugeiconsIcon icon={MoreVerticalIcon} className="size-3.5" />
+              <HugeiconsIcon icon={MoreVerticalIcon} className="size-4" />
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-36">
               {entry.recipeId && (
@@ -188,7 +188,7 @@ export function MealPlanEntryCard({
         type="button"
         aria-label="Drag to move"
         className={cn(
-          'inline-flex shrink-0 items-center justify-center text-muted-foreground hover:text-foreground cursor-grab active:cursor-grabbing touch-none -ml-0.5',
+          'inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:text-foreground cursor-grab active:cursor-grabbing touch-none -ml-1',
           isFreeText && 'mt-0.5',
         )}
         {...listeners}
@@ -198,7 +198,7 @@ export function MealPlanEntryCard({
       </button>
       <HugeiconsIcon
         icon={isFreeText ? StickyNote01Icon : RestaurantIcon}
-        className={cn('size-3.5 shrink-0 text-muted-foreground', isFreeText && 'mt-0.5')}
+        className={cn('size-4 shrink-0 text-muted-foreground', isFreeText && 'mt-0.5')}
       />
       <span className={cn('flex-1', isFreeText ? 'whitespace-pre-line' : 'truncate')}>{entry.title}</span>
       {!isFreeText && entry.scale !== 1 && (
@@ -212,11 +212,11 @@ export function MealPlanEntryCard({
             <Button
               variant="ghost"
               size="icon"
-              className="h-5 w-5 shrink-0 md:opacity-0 md:group-hover:opacity-100"
+              className="h-7 w-7 shrink-0 md:opacity-0 md:group-hover:opacity-100"
             />
           }
         >
-          <HugeiconsIcon icon={MoreVerticalIcon} className="size-3" />
+          <HugeiconsIcon icon={MoreVerticalIcon} className="size-4" />
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-36">
           {entry.recipeId && (

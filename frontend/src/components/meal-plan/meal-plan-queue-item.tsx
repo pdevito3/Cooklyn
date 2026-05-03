@@ -96,7 +96,7 @@ export function MealPlanQueueItem({ item, onDelete }: MealPlanQueueItemProps) {
           <button
             type="button"
             aria-label="Drag to move"
-            className="inline-flex shrink-0 items-center justify-center text-muted-foreground hover:text-foreground cursor-grab active:cursor-grabbing touch-none -ml-0.5"
+            className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:text-foreground cursor-grab active:cursor-grabbing touch-none -ml-1"
             {...listeners}
             {...attributes}
           >
@@ -104,7 +104,7 @@ export function MealPlanQueueItem({ item, onDelete }: MealPlanQueueItemProps) {
           </button>
           <HugeiconsIcon
             icon={StickyNote01Icon}
-            className="size-3.5 shrink-0 text-muted-foreground"
+            className="size-4 shrink-0 text-muted-foreground"
           />
           <span className="flex-1 truncate text-sm">{item.title}</span>
           <DropdownMenu>
@@ -113,11 +113,11 @@ export function MealPlanQueueItem({ item, onDelete }: MealPlanQueueItemProps) {
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-6 w-6 shrink-0 md:opacity-0 md:group-hover:opacity-100"
+                  className="h-7 w-7 shrink-0 md:opacity-0 md:group-hover:opacity-100"
                 />
               }
             >
-              <HugeiconsIcon icon={MoreVerticalIcon} className="size-3.5" />
+              <HugeiconsIcon icon={MoreVerticalIcon} className="size-4" />
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-44">
               <DropdownMenuItem onClick={() => setAddDialogOpen(true)}>
@@ -144,11 +144,11 @@ export function MealPlanQueueItem({ item, onDelete }: MealPlanQueueItemProps) {
           <button
             type="button"
             aria-label="Drag to move"
-            className="absolute top-1 left-1 z-10 inline-flex items-center justify-center rounded-md bg-background/80 backdrop-blur-sm p-1 text-muted-foreground hover:text-foreground cursor-grab active:cursor-grabbing touch-none shadow-sm"
+            className="absolute top-1 left-1 z-10 inline-flex h-7 w-7 items-center justify-center rounded-md bg-background/80 backdrop-blur-sm text-muted-foreground hover:text-foreground cursor-grab active:cursor-grabbing touch-none shadow-sm"
             {...listeners}
             {...attributes}
           >
-            <HugeiconsIcon icon={DragDropIcon} className="size-3.5" />
+            <HugeiconsIcon icon={DragDropIcon} className="size-4" />
           </button>
           {item.imageUrl ? (
             <img
@@ -181,11 +181,11 @@ export function MealPlanQueueItem({ item, onDelete }: MealPlanQueueItemProps) {
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-6 w-6 shrink-0 md:opacity-0 md:group-hover:opacity-100"
+                    className="h-8 w-8 shrink-0 md:opacity-0 md:group-hover:opacity-100"
                   />
                 }
               >
-                <HugeiconsIcon icon={MoreVerticalIcon} className="size-3.5" />
+                <HugeiconsIcon icon={MoreVerticalIcon} className="size-4" />
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-44">
                 <DropdownMenuItem onClick={() => setAddDialogOpen(true)}>
