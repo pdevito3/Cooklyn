@@ -69,15 +69,15 @@ export function MealPlanEntryCard({
         {...listeners}
         {...attributes}
         className={cn(
-          'group flex gap-1 rounded text-xs cursor-grab active:cursor-grabbing',
+          'group flex items-center gap-1 rounded text-xs cursor-grab active:cursor-grabbing',
           isFreeText
-            ? 'items-start bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-900/40 dark:hover:bg-emerald-900/60 dark:text-emerald-50 px-1.5 py-2'
-            : 'items-center hover:bg-accent px-1.5 py-0.5',
+            ? 'bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-900/40 dark:hover:bg-emerald-900/60 dark:text-emerald-50 px-1.5 py-2'
+            : 'hover:bg-accent px-1.5 py-0.5',
         )}
       >
         <HugeiconsIcon
           icon={isFreeText ? StickyNote01Icon : RestaurantIcon}
-          className={cn('size-3 shrink-0 text-muted-foreground', isFreeText && 'mt-0.5')}
+          className="size-3 shrink-0 text-muted-foreground"
         />
         <span className={isFreeText ? 'whitespace-pre-line' : 'truncate'}>{entry.title}</span>
         {!isFreeText && entry.scale !== 1 && (
@@ -189,19 +189,16 @@ export function MealPlanEntryCard({
       ref={setNodeRef}
       style={style}
       className={cn(
-        'group flex col-span-2 gap-1.5 rounded-md border shadow-sm hover:shadow',
+        'group flex items-center col-span-2 gap-1.5 rounded-md border shadow-sm hover:shadow',
         isFreeText
-          ? 'items-start bg-emerald-50 border-emerald-200 dark:bg-emerald-900/40 dark:border-emerald-700/50 dark:text-emerald-50 px-2 py-3 text-sm'
-          : 'items-center bg-card px-2 py-1.5 text-sm',
+          ? 'bg-emerald-50 border-emerald-200 dark:bg-emerald-900/40 dark:border-emerald-700/50 dark:text-emerald-50 px-2 py-3 text-sm'
+          : 'bg-card px-2 py-1.5 text-sm',
       )}
     >
       <button
         type="button"
         aria-label="Drag to move"
-        className={cn(
-          'inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:text-foreground cursor-grab active:cursor-grabbing touch-none -ml-1',
-          isFreeText && 'mt-0.5',
-        )}
+        className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:text-foreground cursor-grab active:cursor-grabbing touch-none -ml-1"
         {...listeners}
         {...attributes}
       >
@@ -209,7 +206,7 @@ export function MealPlanEntryCard({
       </button>
       <HugeiconsIcon
         icon={isFreeText ? StickyNote01Icon : RestaurantIcon}
-        className={cn('size-4 shrink-0 text-muted-foreground', isFreeText && 'mt-0.5')}
+        className="size-4 shrink-0 text-muted-foreground"
       />
       <span className={cn('flex-1', isFreeText ? 'whitespace-pre-line' : 'truncate')}>{entry.title}</span>
       {!isFreeText && entry.scale !== 1 && (
